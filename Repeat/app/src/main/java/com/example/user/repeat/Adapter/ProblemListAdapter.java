@@ -16,11 +16,11 @@ import java.util.List;
 /**
  * Created by user on 2015/12/10.
  */
-public class ProblemList extends BaseAdapter {
+public class ProblemListAdapter extends BaseAdapter {
     List<ProblemRecord> list;
     private LayoutInflater myInflater;
 
-    public ProblemList(Context context, List<ProblemRecord> list){
+    public ProblemListAdapter(Context context, List<ProblemRecord> list){
         myInflater = LayoutInflater.from(context);
         this.list = list;
     }

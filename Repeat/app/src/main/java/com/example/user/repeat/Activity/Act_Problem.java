@@ -1,12 +1,15 @@
-package com.example.user.repeat;
+package com.example.user.repeat.Activity;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
-public class Act_Problem extends AppCompatActivity {
+import com.example.user.repeat.R;
+
+public class Act_Problem extends Activity {
     String createproblemdate,problemdescription,managercontent,problemstatus;
     TextView txt_problem_createdate,txt_customercontent,txt_managercontent;
     RatingBar rb_score;

@@ -1,4 +1,4 @@
-package com.example.user.repeat;
+package com.example.user.repeat.Activity;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -7,6 +7,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.example.user.repeat.R;
 
 public class Act_Addwindow extends AppCompatActivity {
     Button bt_submit;
