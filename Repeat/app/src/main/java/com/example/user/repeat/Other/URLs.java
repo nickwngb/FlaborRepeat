@@ -4,7 +4,8 @@ package com.example.user.repeat.Other;
  * Created by v on 2015/12/12.
  */
 public class URLs {
-    public static final String url_login = "";
-    public static final String url_allproblem = "";
-    public static final String url_addproblem = "";
+    private static final String serverip = "http://140.131.115.47/php/";
+    public static final String url_login = serverip + "pb_login.php";
+    public static final String url_allproblem = serverip + "pb_allproblem.php";
+    public static final String url_addproblem = serverip + "pb_addproblem.php";
 }

@@ -158,7 +158,6 @@ public class Act_MainScreen extends Activity {
         public void onClick(View v) {
             Intent i = new Intent();
             i.setClass(ctxt, Act_Addwindow.class);
-            startActivity(i);
             startActivityForResult(i, AddAct);
         }
     };
