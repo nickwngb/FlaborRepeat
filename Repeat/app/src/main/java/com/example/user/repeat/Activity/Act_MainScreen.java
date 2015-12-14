@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
@@ -13,9 +14,19 @@ import android.widget.Button;
 import android.widget.ListView;
 
 import com.example.user.repeat.Adapter.ProblemListAdapter;
+import com.example.user.repeat.Other.HttpConnection;
 import com.example.user.repeat.Other.Net;
 import com.example.user.repeat.Other.ProblemRecord;
+import com.example.user.repeat.Other.URLs;
+import com.example.user.repeat.Other.User;
+import com.example.user.repeat.Other.Uti;
 import com.example.user.repeat.R;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +34,10 @@ import java.util.List;
 public class Act_MainScreen extends Activity {
     //
     private Context ctxt = Act_MainScreen.this;
+    private Resources res;
+    private HttpConnection conn;
+    public static User user = Act_Login.user;
+    private final int AddAct = 0;
     // UI
     private Button bt_repeat;
     private ListView list_reaprethistory;
@@ -37,36 +52,87 @@ public class Act_MainScreen extends Activity {
         InitialSomething();
         InitialUI();
         InitialAction();
+        LoadingAllProblem();
     }
 
 
     private void LoadingAllProblem() {
-//        if (Net.isNetWork(ctxt)) {
-//
-//        } else {
-//
-//        }
+        if (Net.isNetWork(ctxt)) {
+            new LoadingAllProblemTask().execute();
+        } else {
+            Uti.t(ctxt, res.getString(R.string.msg_err_network));
+        }
     }
-    class LoadingAllProblemTask extends AsyncTask<String,String,String>{
+
+    class LoadingAllProblemTask extends AsyncTask<String, Integer, Integer> {
+        private final int CONNECT_FAIL = -1;
+        private final int SUCCESS = 1;
 
         protected void onPreExecute() {
-            super.onPreExecute();
+
         }
 
         @Override
-        protected String doInBackground(String... strings) {
+        protected Integer doInBackground(String... strings) {
+            Integer result = CONNECT_FAIL;
+            try {
+                problemlist.clear();
+                // put "phone" post out, get json
+                List<NameValuePair> postFields = new ArrayList<>();
+                postFields.add(new BasicNameValuePair("CustomerNo", user.getCustomerNo()));
+                postFields.add(new BasicNameValuePair("FLaborNo", user.getFLaborNo()));
+                JSONObject jobj = conn.PostGetJson(URLs.url_allproblem, postFields);
+                if (jobj != null) {
+                    result = jobj.getInt("success");
+                    if (result == SUCCESS) {
+                        JSONArray array = jobj.getJSONArray("fproblems");
+                        for (int i = 0; i < array.length(); i++) {
+                            JSONObject ajobj = array.getJSONObject(i);
+                            ProblemRecord fproblem = new ProblemRecord();
+                            fproblem.setPRSNo(ajobj.getInt("PRSNo"));
+                            fproblem.setCustomerNo(ajobj.getString("CustomerNo"));
+                            fproblem.setFLaborNo(ajobj.getString("FLaborNo"));
+                            fproblem.setProblemDescription(ajobj.getString("ProblemDescription"));
+                            fproblem.setCreateProblemDate(ajobj.getString("CreateProblemDate"));
+                            fproblem.setResponseResult(ajobj.getString("ResponseResult"));
+                            fproblem.setResponseDate(ajobj.getString("ResponseDate"));
+                            fproblem.setResponseID(ajobj.getString("ResponseID"));
+                            fproblem.setProblemStatus(ajobj.getString("ProblemStatus"));
+                            fproblem.setSatisfactionDegree(ajobj.getString("SatisfactionDegree"));
+                            problemlist.add(fproblem);
+                        }
+                    }
+                }
 
-            return null;
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return result;
         }
 
         @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
+        protected void onPostExecute(Integer result) {
+            switch (result) {
+                case SUCCESS:
+                    if (!problemlist.isEmpty()) {
+                        refreshProblemList();
+                    } else {
+                        Uti.t(ctxt, "Empty");
+                    }
+                    break;
+                case CONNECT_FAIL:
+                    break;
+                default:
+                    Uti.t(ctxt, "Error : " + result);
+            }
         }
     }
+
     private void InitialSomething() {
+        res = getResources();
+        conn = new HttpConnection();
         problemlist = new ArrayList<ProblemRecord>();
-        catchdata(); //假設內容
+        pl_adapter = new ProblemListAdapter(this, problemlist);
     }
 
     private void InitialUI() {
@@ -77,8 +143,13 @@ public class Act_MainScreen extends Activity {
     private void InitialAction() {
         bt_repeat.setOnClickListener(onclicklistener);
         list_reaprethistory.setOnItemClickListener(onitemclicklistener);
-        pl_adapter = new ProblemListAdapter(this, problemlist);
         list_reaprethistory.setAdapter(pl_adapter);
+    }
+
+    private void refreshProblemList() {
+        if (pl_adapter != null) {
+            pl_adapter.notifyDataSetChanged();
+        }
     }
 
     private View.OnClickListener onclicklistener = new View.OnClickListener() {
@@ -88,26 +159,16 @@ public class Act_MainScreen extends Activity {
             Intent i = new Intent();
             i.setClass(ctxt, Act_Addwindow.class);
             startActivity(i);
+            startActivityForResult(i, AddAct);
         }
     };
     private AdapterView.OnItemClickListener onitemclicklistener = new AdapterView.OnItemClickListener() {
 
         @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) { //按一次Item事件
-            Intent i = new Intent();
+        public void onItemClick(AdapterView<?> parent, View view, int pos, long id) { //按一次Item事件
+            Intent i = new Intent(ctxt, Act_Problem.class);
             Bundle b = new Bundle();
-            i.setClass(ctxt, Act_Problem.class);
-            b.putString("createproblemdate", problemlist.get(position).createproblemdate);
-            b.putString("problemdescription", "Me:\n" + problemlist.get(position).problemdescription);
-            b.putString("problemstatus", problemlist.get(position).problemstatus);
-
-            if (position == 0) {
-                b.putString("managercontent", "Manager:\nYou can buy something to eat");
-            } else {
-                b.putString("managercontent", "Manager:");
-            }
-
-
+            b.putSerializable("ProblemRecord", problemlist.get(pos));
             i.putExtras(b);
             startActivity(i);
         }
@@ -124,29 +185,17 @@ public class Act_MainScreen extends Activity {
                 Act_MainScreen.super.onBackPressed();
             }
         }).show();
-
     }
 
-    private void catchdata() {
-        ProblemRecord pr = new ProblemRecord();
-        pr.createproblemdate = "2015-12-25";
-        pr.problemdescription = "I want to eat some food";
-        pr.problemstatus = "Complete";
-
-        problemlist.add(pr);
-
-        pr = new ProblemRecord();
-        pr.createproblemdate = "2015-12-24";
-        pr.problemdescription = "Tell me how to go to supermarket??";
-        pr.problemstatus = "Processing";
-
-        problemlist.add(pr);
-
-        pr = new ProblemRecord();
-        pr.createproblemdate = "2015-12-23";
-        pr.problemdescription = "Give me a pillow";
-        pr.problemstatus = "Untreated";
-
-        problemlist.add(pr);
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == AddAct) {
+            if (resultCode == RESULT_OK) {
+                boolean Success = data.getBooleanExtra("SUCCESS", false);
+                if (Success) { // if success , refresh
+                    LoadingAllProblem();
+                }
+            }
+        }
     }
 }

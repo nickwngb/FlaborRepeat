@@ -1,5 +1,5 @@
 <?php
-.
+
  
 	if (isset($_POST['CustomerNo']) &&	isset($_POST['FLaborNo']) && isset($_POST['ProblemDescription']) && isset($_POST['CreateProblemDate']) && isset($_POST['ProblemStatus'])){
 		$cNo = $_POST['CustomerNo'];

@@ -13,7 +13,7 @@ if (isset($_POST['CustomerNo'])&&isset($_POST['FLaborNo'])){
 		
 	// connecting to db
 	$db = new DB_CONNECT();
-	$result = mysql_query("SELECT PRSNo,ProblemDescription,CreateProblemDate,ResponseResult,ResponseDate,ResponseID,ProblemStatus,SatisfactionDegree FROM gbdormitory.APP_ProblemRecord where CustomerNo = '$cNo' and FLaborNo = '$fNo';") or die(mysql_error());
+	$result = mysql_query("SELECT * FROM gbdormitory.APP_ProblemRecord where CustomerNo = '$cNo' and FLaborNo = '$fNo';") or die(mysql_error());
 		
 	if (mysql_num_rows($result) > 0) {
 			
@@ -23,6 +23,8 @@ if (isset($_POST['CustomerNo'])&&isset($_POST['FLaborNo'])){
 
 			$record = array();
 			$record["PRSNo"] = $row["PRSNo"];
+			$record["CustomerNo"] = $row["CustomerNo"];
+			$record["FLaborNo"] = $row["FLaborNo"];
 			$record["ProblemDescription"] = $row["ProblemDescription"];
 			$record["CreateProblemDate"] = $row["CreateProblemDate"];
 			$record["ResponseResult"] = $row["ResponseResult"];
