@@ -8,12 +8,14 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 
 import com.example.user.repeat.Adapter.ProblemListAdapter;
+import com.example.user.repeat.Other.Code;
 import com.example.user.repeat.Other.HttpConnection;
 import com.example.user.repeat.Other.Net;
 import com.example.user.repeat.Other.ProblemRecord;
@@ -21,6 +23,7 @@ import com.example.user.repeat.Other.URLs;
 import com.example.user.repeat.Other.User;
 import com.example.user.repeat.Other.Uti;
 import com.example.user.repeat.R;
+import com.example.user.repeat.UseForGCM.GoldBrotherGCM;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -31,11 +34,12 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Act_MainScreen extends Activity {
+public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenGCMListener {
     //
     private Context ctxt = Act_MainScreen.this;
     private Resources res;
     private HttpConnection conn;
+    private GoldBrotherGCM mGBGCM;
     public static User user = Act_Login.user;
     private final int AddAct = 0;
     // UI
@@ -53,6 +57,79 @@ public class Act_MainScreen extends Activity {
         InitialUI();
         InitialAction();
         LoadingAllProblem();
+    }
+
+    // implements methods
+    public void gcmRegistered(boolean successfull, String regID) {
+        Log.i("RegId!!", regID);
+        if (successfull) {
+            AddRegIdToAPPServer(regID);
+        }
+    }
+
+    public boolean gcmSendRegistrationIdToAppServer(String regID) {
+        return true;
+    }
+
+    // implements methods end
+    private void AddRegIdToAPPServer(String... datas) {
+        if (Net.isNetWork(ctxt)) {
+            new AddRegIdToAPPServer().execute(datas);
+        } else {
+            Uti.t(ctxt, res.getString(R.string.msg_err_network));
+        }
+    }
+
+
+    class AddRegIdToAPPServer extends AsyncTask<String, Integer, Integer> {
+        private final int CONNECT_FAIL = -1;
+        private final int REGID_ISEMPTY = -2;
+        private final int SUCCESS = 1;
+        private final int FAIL = 0;
+        private String regid = "";
+
+        @Override
+        protected Integer doInBackground(String... datas) {
+            Integer result = CONNECT_FAIL;
+            regid = datas[0];
+            if (regid.isEmpty()) {
+                return REGID_ISEMPTY;
+            }
+            try {
+                // put "phone" post out, get json
+                List<NameValuePair> postFields = new ArrayList<>();
+                postFields.add(new BasicNameValuePair("CustomerNo", user.getCustomerNo()));
+                postFields.add(new BasicNameValuePair("FLaborNo", user.getFLaborNo()));
+                postFields.add(new BasicNameValuePair("RegId", regid));
+
+                JSONObject jobj = conn.PostGetJson(URLs.url_gcm_register, postFields);
+                if (jobj != null) {
+                    result = jobj.getInt("success");
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return result;
+        }
+
+        @Override
+        protected void onPostExecute(Integer result) {
+            switch (result) {
+                case SUCCESS:
+                    Uti.t(ctxt, "Push notification Success\n" + regid);
+                    break;
+                case REGID_ISEMPTY:
+                    Uti.t(ctxt, "RegId is Empty");
+                    break;
+                case CONNECT_FAIL:
+                    break;
+                case FAIL:
+                    Uti.t(ctxt, "Push notification Fail\n" + "Insert Error");
+                    break;
+            }
+            Log.i("AddRegIdToAPPServer ", "Result : " + result);
+        }
     }
 
 
@@ -131,6 +208,7 @@ public class Act_MainScreen extends Activity {
     private void InitialSomething() {
         res = getResources();
         conn = new HttpConnection();
+        mGBGCM = new GoldBrotherGCM(this);
         problemlist = new ArrayList<ProblemRecord>();
         pl_adapter = new ProblemListAdapter(this, problemlist);
     }
@@ -141,6 +219,14 @@ public class Act_MainScreen extends Activity {
     }
 
     private void InitialAction() {
+        // Other
+        if (mGBGCM.getRegistrationId().isEmpty()) {
+            mGBGCM.setMagicLenGCMListener(this);
+            mGBGCM.openGCM();
+        } else {
+            Log.i("RegId!!", mGBGCM.getRegistrationId());
+        }
+        // UI
         bt_repeat.setOnClickListener(onclicklistener);
         list_reaprethistory.setOnItemClickListener(onitemclicklistener);
         list_reaprethistory.setAdapter(pl_adapter);

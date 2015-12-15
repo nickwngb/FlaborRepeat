@@ -23,13 +23,13 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
  *
  * @author magiclen
  */
-public class MagicLenGCM {
+public class GoldBrotherGCM {
 
     // ----------類別常數(須自行修改)----------
     /**
      * Google Developers Console 的 Project Number
      */
-    public final static String SENDER_ID = "997072174196";
+    public final static String SENDER_ID = "461166332052";
 
     // ----------類別列舉----------
     public static enum PlayServicesState {
@@ -109,11 +109,11 @@ public class MagicLenGCM {
     private MagicLenGCMListener listener;
 
     // ----------建構子----------
-    public MagicLenGCM(Activity activity) {
+    public GoldBrotherGCM(Activity activity) {
         this(activity, null);
     }
 
-    public MagicLenGCM(Activity activity, MagicLenGCMListener listener) {
+    public GoldBrotherGCM(Activity activity, MagicLenGCMListener listener) {
         this.activity = activity;
         setMagicLenGCMListener(listener);
     }
@@ -171,7 +171,7 @@ public class MagicLenGCM {
             return "";
         }
         // 檢查程式是否有更新過
-        int registeredVersion = prefs.getInt(MagicLenGCM.PROPERTY_APP_VERSION,
+        int registeredVersion = prefs.getInt(GoldBrotherGCM.PROPERTY_APP_VERSION,
                 Integer.MIN_VALUE);
         int currentVersion = getAppVersion();
         if (registeredVersion != currentVersion) {
@@ -239,12 +239,12 @@ public class MagicLenGCM {
                 // 儲存regID
                 storeRegistrationId(regid);
 
-                if (listener != null) {
-                    if (!listener.gcmSendRegistrationIdToAppServer(regid)) {
-                        storeRegistrationId("");
-                        return "";
-                    }
-                }
+//                if (listener != null) {
+//                    if (!listener.gcmSendRegistrationIdToAppServer(regid)) {
+//                        storeRegistrationId("");
+//                        return "";
+//                    }
+//                }
             } catch (IOException ex) {
 
             }

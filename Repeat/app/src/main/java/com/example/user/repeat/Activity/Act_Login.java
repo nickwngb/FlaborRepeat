@@ -106,8 +106,6 @@ public class Act_Login extends AppCompatActivity {
                 default:
                     Uti.t(ctxt, "Error : " + result);
             }
-
-
         }
     }
 

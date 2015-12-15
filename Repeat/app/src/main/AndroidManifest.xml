@@ -2,8 +2,20 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.user.repeat">
 
+    <!-- 使用GCM -->
+    <uses-permission android:name="com.example.user.repeat.permission.C2D_MESSAGE" />
+    <!-- 存取 internet -->
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <!-- 存取 internet 狀態-->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- App receives GCM messages. -->
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+    <!-- GCM requires a Google account. -->
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <!-- Keeps the processor from sleeping when a message is received. -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <!-- 手機震動 -->
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
         android:allowBackup="true"
@@ -28,6 +40,20 @@
         <activity
             android:name=".Activity.Act_Addwindow"
             android:label="@string/app_name" />
+
+
+        <!-- 接收 GCM 的 receiver -->
+        <receiver
+            android:name=".Receiver.GcmBroadcastReceiver"
+            android:permission="com.google.android.c2dm.permission.SEND">
+
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+
+                <category android:name="com.example.user.repeat" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
