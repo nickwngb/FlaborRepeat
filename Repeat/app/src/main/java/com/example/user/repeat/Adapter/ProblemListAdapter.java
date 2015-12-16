@@ -23,11 +23,13 @@ public class ProblemListAdapter extends BaseAdapter {
     private LayoutInflater myInflater;
     private Resources res;
     private List<ProblemRecord> list;
+    private String[] code;
 
     public ProblemListAdapter(Context context, List<ProblemRecord> list) {
         ctxt = context;
         myInflater = LayoutInflater.from(context);
         res = ctxt.getResources();
+        code = res.getStringArray(R.array.code);
         this.list = list;
     }
 
@@ -58,23 +60,28 @@ public class ProblemListAdapter extends BaseAdapter {
         } else {
             tag = (ViewTag) v.getTag();
         }
+        ProblemRecord pr = getItem(position);
         // setText
-        tag.CreateProblemDate.setText(getItem(position).getCreateProblemDate());
-        tag.ProblemContent.setText(getItem(position).getProblemDescription());
-        tag.ProblemStatus.setText(getItem(position).getProblemStatus());
-        // setStatus Color
+        tag.CreateProblemDate.setText(pr.getCreateProblemDate());
+        tag.ProblemContent.setText(pr.getProblemDescription());
+        // set status Color & Text
+        String statusText = "";
         int statusColor = 0;
         switch (getItem(position).getProblemStatus()) {
-            case Code.Completed:
-                statusColor = res.getColor(R.color.green);
+            case Code.Untreated:
+                statusText = code[0];
+                statusColor = res.getColor(R.color.Untreated);
                 break;
             case Code.Processing:
-                statusColor = res.getColor(R.color.red);
+                statusText = code[1];
+                statusColor = res.getColor(R.color.Processing);
                 break;
-            case Code.Untreated:
-                statusColor = res.getColor(R.color.yellow);
+            case Code.Completed:
+                statusText = code[2];
+                statusColor = res.getColor(R.color.Completed);
                 break;
         }
+        tag.ProblemStatus.setText(statusText);
         tag.ProblemStatus.setTextColor(statusColor);
         return v;
     }

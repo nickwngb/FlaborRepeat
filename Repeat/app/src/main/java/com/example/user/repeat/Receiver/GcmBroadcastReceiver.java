@@ -36,8 +36,8 @@ public class GcmBroadcastReceiver extends WakefulBroadcastReceiver {
                 i.setAction("android.intent.action.MAIN");
                 i.addCategory("android.intent.category.LAUNCHER");
                 GoldBrotherGCM.sendLocalNotification(context, NOTIFICATION_ID,
-                        R.drawable.chrome, "GCM 通知", extras
-                                .getString("message"), "test", false,
+                        R.drawable.chrome, "你有一個通知", extras
+                                .getString("message"), "gold brother", true,
                         PendingIntent.getActivity(context, 0, i,
                                 PendingIntent.FLAG_CANCEL_CURRENT));
             }

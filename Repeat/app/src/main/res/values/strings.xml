@@ -2,4 +2,15 @@
     <string name="app_name">Golden Brother</string>
 
     <string name="msg_err_network">No NetWork</string>
+
+
+    <!-- Code -->
+    <string-array name="code">
+        <item>@string/Untreated</item>
+        <item>@string/Processing</item>
+        <item>@string/Completed</item>
+    </string-array>
+    <string name="Untreated">Untreated</string>
+    <string name="Processing">Processing</string>
+    <string name="Completed">Completed</string>
 </resources>

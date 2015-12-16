@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * Created by user on 2015/12/10.
  */
-public class ProblemRecord implements Serializable{
+public class ProblemRecord implements Serializable {
     private int PRSNo;
     private String CustomerNo;
     private String FLaborNo;
@@ -67,6 +67,10 @@ public class ProblemRecord implements Serializable{
     }
 
     public void setResponseResult(String responseResult) {
+        if (responseResult.length() == 4) {
+            if (responseResult.equals("null") || responseResult.equals("NULL"))
+                responseResult = "";
+        }
         ResponseResult = responseResult;
     }
 
@@ -75,6 +79,10 @@ public class ProblemRecord implements Serializable{
     }
 
     public void setResponseDate(String responseDate) {
+        if (responseDate.length() == 4) {
+            if (responseDate.equals("null") || responseDate.equals("NULL"))
+                responseDate = "";
+        }
         ResponseDate = responseDate;
     }
 
@@ -83,6 +91,10 @@ public class ProblemRecord implements Serializable{
     }
 
     public void setResponseID(String responseID) {
+        if (responseID.length() == 4) {
+            if (responseID.equals("null") || responseID.equals("NULL"))
+                responseID = "";
+        }
         ResponseID = responseID;
     }
 

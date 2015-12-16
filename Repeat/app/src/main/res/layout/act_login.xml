@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
     <!--
         <include
             android:id="@+id/toobarlayout"
@@ -15,22 +15,31 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="40dp"
         android:orientation="vertical"
         android:padding="16dp">
-
 
         <EditText
             android:id="@+id/edit_loginphone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:hint="phone number" />
+            android:gravity="center"
+            android:hint="phone number"
+            android:inputType="number"
+            android:textSize="24sp"/>
 
         <Button
             android:id="@+id/bt_login"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:text="Login" />
+            android:paddingBottom="20dp"
+            android:paddingTop="20dp"
+            android:text="Login"
+            android:textAllCaps="false"
+            android:textSize="24sp"/>
     </LinearLayout>
 </LinearLayout>
