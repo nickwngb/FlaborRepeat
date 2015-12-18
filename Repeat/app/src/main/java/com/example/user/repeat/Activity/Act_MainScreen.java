@@ -61,8 +61,9 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
 
     // implements methods
     public void gcmRegistered(boolean successfull, String regID) {
-        Log.i("RegId!!", regID);
+        Log.i("RegId Listener!!", successfull + " " + regID);
         if (successfull) {
+            Log.i("AddRegIdToAPPServer!", "Execute");
             AddRegIdToAPPServer(regID);
         }
     }
@@ -98,9 +99,9 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
             try {
                 // put "phone" post out, get json
                 List<NameValuePair> postFields = new ArrayList<>();
+                postFields.add(new BasicNameValuePair("RegId", regid));
                 postFields.add(new BasicNameValuePair("CustomerNo", user.getCustomerNo()));
                 postFields.add(new BasicNameValuePair("FLaborNo", user.getFLaborNo()));
-                postFields.add(new BasicNameValuePair("RegId", regid));
 
                 JSONObject jobj = conn.PostGetJson(URLs.url_gcm_register, postFields);
                 if (jobj != null) {
@@ -115,9 +116,10 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
 
         @Override
         protected void onPostExecute(Integer result) {
+            Log.i("AddRegIdToAPPServer ", "Result : " + result);
             switch (result) {
                 case SUCCESS:
-                    Uti.t(ctxt, "Push notification Success\n" + regid);
+                    Uti.t(ctxt, "Set Push notification Success");
                     break;
                 case REGID_ISEMPTY:
                     Uti.t(ctxt, "RegId is Empty");
@@ -128,7 +130,7 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
                     Uti.t(ctxt, "Push notification Fail\n" + "Insert Error");
                     break;
             }
-            Log.i("AddRegIdToAPPServer ", "Result : " + result);
+
         }
     }
 
@@ -144,6 +146,7 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
     class LoadingAllProblemTask extends AsyncTask<String, Integer, Integer> {
         private final int CONNECT_FAIL = -1;
         private final int SUCCESS = 1;
+        private final int NODATA = 0;
 
         protected void onPreExecute() {
 
@@ -189,8 +192,10 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
 
         @Override
         protected void onPostExecute(Integer result) {
+            Log.i("LoadingAllProblemTask ", "Result " + result);
             switch (result) {
                 case SUCCESS:
+                case NODATA:
                     if (!problemlist.isEmpty()) {
                         refreshProblemList();
                     } else {
@@ -224,7 +229,7 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
             mGBGCM.setMagicLenGCMListener(this);
             mGBGCM.openGCM();
         } else {
-            Log.i("RegId!!", mGBGCM.getRegistrationId());
+            Log.i("RegId is Exsit:", mGBGCM.getRegistrationId());
         }
         // UI
         bt_repeat.setOnClickListener(onclicklistener);

@@ -2,25 +2,44 @@ package com.example.user.repeat.Activity;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.example.user.repeat.Other.Code;
+import com.example.user.repeat.Other.HttpConnection;
+import com.example.user.repeat.Other.Net;
 import com.example.user.repeat.Other.ProblemRecord;
+import com.example.user.repeat.Other.URLs;
 import com.example.user.repeat.Other.Uti;
 import com.example.user.repeat.R;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class Act_Problem extends Activity {
     //
     private Context ctxt = Act_Problem.this;
+    private HttpConnection conn;
     private Resources res;
     private ProblemRecord pr;
     // UI
     private TextView txt_problem_createdate, txt_customercontent, txt_managercontent, txt_problem_repeatedate;
+    private LinearLayout ll_givestart;
+    private Button bt_givestart;
     private RatingBar rb_score;
     // other
 
@@ -36,11 +55,72 @@ public class Act_Problem extends Activity {
         InitialAction();
     }
 
+    private void UpdateStartTask(String... datas) {
+        if (Net.isNetWork(ctxt)) {
+            new UpdateStartTask().execute(datas);
+        } else {
+            Uti.t(ctxt, res.getString(R.string.msg_err_network));
+        }
+    }
+
+    class UpdateStartTask extends AsyncTask<String, Integer, Integer> {
+        private final int CONNECT_FAIL = -1;
+        private final int SUCCESS = 1;
+        private final int FAIL = 0;
+        private String start;
+
+        @Override
+        protected void onPreExecute() {
+
+        }
+
+        @Override
+        protected Integer doInBackground(String... datas) {
+            Integer result = CONNECT_FAIL;
+            start = datas[0];
+            try {
+                // put "phone" post out, get json
+                List<NameValuePair> postFields = new ArrayList<>();
+                postFields.add(new BasicNameValuePair("PRSNo", String.valueOf(pr.getPRSNo())));
+                postFields.add(new BasicNameValuePair("Start", start));
+
+                JSONObject jobj = conn.PostGetJson(URLs.url_updatestart, postFields);
+                if (jobj != null) {
+                    result = jobj.getInt("success");
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return result;
+        }
+
+        @Override
+        protected void onPostExecute(Integer result) {
+            switch (result) {
+                case SUCCESS:
+                    Uti.t(ctxt, "Give Start Success");
+                    break;
+                case FAIL:
+                    Uti.t(ctxt, "Give Start Fail");
+                    break;
+                case CONNECT_FAIL:
+                    Uti.t(ctxt, "Connection Fail");
+                    break;
+                default:
+                    Uti.t(ctxt, "Error : " + result);
+            }
+        }
+    }
+
     private void InitialSomething() {
         res = getResources();
+        conn = new HttpConnection();
     }
 
     private void InitialUI() {
+        ll_givestart = (LinearLayout) findViewById(R.id.ll_givestart);
+        bt_givestart = (Button) findViewById(R.id.bt_givestart);
         rb_score = (RatingBar) findViewById(R.id.rb_score);
         txt_problem_createdate = (TextView) findViewById(R.id.txt_problem_createdate);
         txt_customercontent = (TextView) findViewById(R.id.txt_customercontent);
@@ -55,9 +135,16 @@ public class Act_Problem extends Activity {
         txt_managercontent.setText(pr.getResponseResult());
 
         if (pr.getProblemStatus().equals(Code.Completed)) {
-            rb_score.setVisibility(View.VISIBLE);
-            Uti.t(ctxt,"give your start !");
+            ll_givestart.setVisibility(View.VISIBLE);
+            Uti.t(ctxt, "give your Start !");
         }
+
+        bt_givestart.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                String start = String.valueOf((int) rb_score.getRating());
+                UpdateStartTask(start);
+            }
+        });
     }
 
     private void getExtras() {

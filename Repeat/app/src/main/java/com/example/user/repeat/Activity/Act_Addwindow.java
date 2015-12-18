@@ -142,6 +142,10 @@ public class Act_Addwindow extends Activity {
         public void onClick(View v) {
             // get Content
             String content = edit_problemcontent.getText().toString();
+            if (content.isEmpty()) {
+                Uti.t(ctxt, res.getString(R.string.msg_err_empty));
+                return;
+            }
             // Add Problem Task
             AddProblem(content);
         }

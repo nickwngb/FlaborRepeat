@@ -8,6 +8,7 @@ public class URLs {
     public static final String url_login = serverip + "pb_login.php";
     public static final String url_allproblem = serverip + "pb_allproblem.php";
     public static final String url_addproblem = serverip + "pb_addproblem.php";
+    public static final String url_updatestart = serverip + "pb_updatestart.php";
     public static final String url_gcm_register = serverip + "gcm_register.php";
 
 }
