@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
+              android:background="@drawable/enterbackground"
               android:orientation="vertical">
     <!--
         <include
@@ -17,15 +18,16 @@
         android:layout_height="match_parent"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="50dp"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="16dp"
+        android:weightSum="1">
 
         <EditText
             android:id="@+id/edit_loginphone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="20dp"
             android:gravity="center"
             android:hint="phone number"
             android:inputType="number"
@@ -33,13 +35,13 @@
 
         <Button
             android:id="@+id/bt_login"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:paddingBottom="20dp"
-            android:paddingTop="20dp"
+            android:layout_width="100sp"
+            android:layout_height="50sp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20sp"
+            android:background="@drawable/enterbutton"
             android:text="Login"
-            android:textAllCaps="false"
-            android:textSize="24sp"/>
+            android:textSize="20sp"/>
+
     </LinearLayout>
 </LinearLayout>

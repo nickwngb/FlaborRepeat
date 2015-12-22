@@ -15,7 +15,6 @@ import android.widget.Button;
 import android.widget.ListView;
 
 import com.example.user.repeat.Adapter.ProblemListAdapter;
-import com.example.user.repeat.Other.Code;
 import com.example.user.repeat.Other.HttpConnection;
 import com.example.user.repeat.Other.Net;
 import com.example.user.repeat.Other.ProblemRecord;

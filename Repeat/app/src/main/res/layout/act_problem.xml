@@ -1,23 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.ntub_student.answerproblem.Act_Problem">
+
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="match_parent"
+            android:layout_height="70sp"
+            android:background="@drawable/title" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
             android:orientation="horizontal">
 
             <TextView
@@ -26,16 +31,17 @@
                 android:layout_height="wrap_content"
                 android:text="Content : "
                 android:textColor="@color/black"
-                android:textSize="24sp"/>
+                android:textSize="24sp" />
 
             <TextView
                 android:id="@+id/txt_problem_createdate"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="42dp"
+                android:background="@drawable/mainlistbackground"
                 android:gravity="right"
                 android:text="Create Time"
                 android:textColor="@color/gray"
-                android:textSize="20sp"/>
+                android:textSize="20sp" />
         </LinearLayout>
 
         <TextView
@@ -43,12 +49,20 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
+            android:background="@drawable/maintextbox1"
+            android:layout_marginLeft="16sp"
+            android:layout_marginRight="16sp"
+            android:paddingLeft="16sp"
+            android:paddingRight="16sp"
+            android:paddingTop="32sp"
             android:textColor="@color/black"
-            android:textSize="20sp"/>
+            android:textSize="20sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="16sp"
+            android:layout_marginRight="16sp"
             android:orientation="horizontal">
 
             <TextView
@@ -57,16 +71,17 @@
                 android:layout_height="wrap_content"
                 android:text="Repeat : "
                 android:textColor="@color/black"
-                android:textSize="24sp"/>
+                android:textSize="24sp" />
 
             <TextView
                 android:id="@+id/txt_problem_repeatedate"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="42dp"
+                android:background="@drawable/mainlistbackground"
                 android:gravity="right"
                 android:text="Repeate Time"
                 android:textColor="@color/gray"
-                android:textSize="20sp"/>
+                android:textSize="20sp" />
 
         </LinearLayout>
 
@@ -75,13 +90,21 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
+            android:layout_marginLeft="16sp"
+            android:layout_marginRight="16sp"
+            android:paddingLeft="16sp"
+            android:paddingRight="16sp"
+            android:paddingTop="32sp"
+            android:background="@drawable/maintextbox2"
             android:textColor="@color/black"
-            android:textSize="20sp"/>
+            android:textSize="20sp" />
 
         <LinearLayout
             android:id="@+id/ll_givestart"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="16sp"
+            android:layout_marginRight="16sp"
             android:orientation="horizontal"
             android:visibility="gone">
 
@@ -89,9 +112,10 @@
                 android:id="@+id/rb_score"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:background="@drawable/mainstar"
                 android:numStars="5"
                 android:rating="3"
-                android:stepSize="1"/>
+                android:stepSize="1" />
 
             <Button
                 android:id="@+id/bt_givestart"
@@ -99,7 +123,7 @@
                 android:layout_height="wrap_content"
                 android:text="Give"
                 android:textAllCaps="false"
-                android:textSize="24sp"/>
+                android:textSize="24sp" />
         </LinearLayout>
 
     </LinearLayout>
