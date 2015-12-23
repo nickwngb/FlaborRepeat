@@ -1,6 +1,7 @@
 package com.example.user.repeat.Activity;
 
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -14,6 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.example.user.repeat.Other.Code;
 import com.example.user.repeat.Other.HttpConnection;
 import com.example.user.repeat.Other.Net;
 import com.example.user.repeat.Other.URLs;
@@ -44,7 +46,6 @@ public class Act_Login extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act_login);
-        //InitialToolBar();
         InitialSomething();
         InitialUI();
         InitialAction();
@@ -59,18 +60,21 @@ public class Act_Login extends AppCompatActivity {
     }
 
     class LoginTask extends AsyncTask<String, String, Integer> {
+        private ProgressDialog pDialog;
         private String mPhone;
-        private final int CONNECT_FAIL = -1;
-        private final int SUCCESS = 1;
 
         @Override
         protected void onPreExecute() {
-
+            pDialog = new ProgressDialog(ctxt);
+            pDialog.setMessage("Login...");
+            pDialog.setIndeterminate(false);
+            pDialog.setCancelable(true);
+            pDialog.show();
         }
 
         @Override
         protected Integer doInBackground(String... datas) {
-            Integer result = CONNECT_FAIL;
+            Integer result = Code.ConnectTimeOut;
             mPhone = datas[0];
             try {
                 // put "phone" post out, get json
@@ -79,7 +83,7 @@ public class Act_Login extends AppCompatActivity {
                 JSONObject jobj = conn.PostGetJson(URLs.url_login, postFields);
                 if (jobj != null) {
                     result = jobj.getInt("success");
-                    if (result == SUCCESS) {
+                    if (result == Code.Success) {
                         JSONArray array = jobj.getJSONArray("finfo");
                         JSONObject finfo = array.getJSONObject(0);
                         user.setCustomerNo(finfo.getString("CustomerNo"));
@@ -96,14 +100,15 @@ public class Act_Login extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Integer result) {
+            pDialog.dismiss();
             Log.i("LoginTask ", "Result " + result);
             switch (result) {
-                case SUCCESS:
+                case Code.Success:
                     Intent i = new Intent(ctxt, Act_MainScreen.class);
                     startActivity(i);
                     finish();
                     break;
-                case CONNECT_FAIL:
+                case Code.ConnectTimeOut:
                     break;
                 default:
                     Uti.t(ctxt, "Error : " + result);
@@ -126,12 +131,6 @@ public class Act_Login extends AppCompatActivity {
         user = new User();
     }
 
-    private void InitialToolBar() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        ActionBar actionbar = getSupportActionBar();
-        actionbar.setTitle("Hello");
-    }
 
     private View.OnClickListener onclicklistener = new View.OnClickListener() {
 

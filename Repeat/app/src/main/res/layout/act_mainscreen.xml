@@ -15,18 +15,20 @@
             android:layout_width="match_parent"
             android:layout_height="70sp"
             android:id="@+id/imageView"
-            android:background="@drawable/title" />
+            android:background="@drawable/title1" />
 
         <Button
             android:id="@+id/bt_repeat"
-            android:layout_width="131dp"
+            android:layout_width="142dp"
             android:layout_height="42dp"
+            android:layout_marginTop="16sp"
+            android:layout_marginBottom="16sp"
             android:paddingLeft="16sp"
             android:paddingRight="16sp"
-            android:text="Create problem"
+            android:text="Questions"
             android:textAllCaps="false"
             android:textStyle="bold|italic"
-            android:background="@drawable/manubutton" />
+            android:background="@drawable/addproblembutton" />
 
         <ListView
             android:id="@+id/list_repeathistory"

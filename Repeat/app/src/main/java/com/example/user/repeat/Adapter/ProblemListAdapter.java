@@ -2,11 +2,11 @@ package com.example.user.repeat.Adapter;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.user.repeat.Other.Code;
@@ -56,6 +56,7 @@ public class ProblemListAdapter extends BaseAdapter {
             tag.CreateProblemDate = (TextView) v.findViewById(R.id.txt_item_createproblemdate);
             tag.ProblemContent = (TextView) v.findViewById(R.id.txt_problemcontent);
             tag.ProblemStatus = (TextView) v.findViewById(R.id.txt_problemstatus);
+            tag.linear_back = (LinearLayout) v.findViewById(R.id.linear_back);
             v.setTag(tag);
         } else {
             tag = (ViewTag) v.getTag();
@@ -71,14 +72,17 @@ public class ProblemListAdapter extends BaseAdapter {
             case Code.Untreated:
                 statusText = code[0];
                 statusColor = res.getColor(R.color.Untreated);
+                tag.linear_back.setBackground(ctxt.getResources().getDrawable(R.drawable.manulist3));
                 break;
             case Code.Processing:
                 statusText = code[1];
                 statusColor = res.getColor(R.color.Processing);
+                tag.linear_back.setBackground(ctxt.getResources().getDrawable(R.drawable.manulist2));
                 break;
             case Code.Completed:
                 statusText = code[2];
                 statusColor = res.getColor(R.color.Completed);
+                tag.linear_back.setBackground(ctxt.getResources().getDrawable(R.drawable.manulist1));
                 break;
         }
         tag.ProblemStatus.setText(statusText);
@@ -90,5 +94,6 @@ public class ProblemListAdapter extends BaseAdapter {
         TextView CreateProblemDate;
         TextView ProblemContent;
         TextView ProblemStatus;
+        LinearLayout linear_back;
     }
 }

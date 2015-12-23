@@ -1,6 +1,7 @@
 package com.example.user.repeat.Activity;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -64,19 +65,21 @@ public class Act_Problem extends Activity {
     }
 
     class UpdateStartTask extends AsyncTask<String, Integer, Integer> {
-        private final int CONNECT_FAIL = -1;
-        private final int SUCCESS = 1;
-        private final int FAIL = 0;
+        private ProgressDialog pDialog;
         private String start;
 
         @Override
         protected void onPreExecute() {
-
+            pDialog = new ProgressDialog(ctxt);
+            pDialog.setMessage("Loading...");
+            pDialog.setIndeterminate(false);
+            pDialog.setCancelable(true);
+            pDialog.show();
         }
 
         @Override
         protected Integer doInBackground(String... datas) {
-            Integer result = CONNECT_FAIL;
+            Integer result = Code.ConnectTimeOut;
             start = datas[0];
             try {
                 // put "phone" post out, get json
@@ -97,14 +100,15 @@ public class Act_Problem extends Activity {
 
         @Override
         protected void onPostExecute(Integer result) {
+            pDialog.dismiss();
             switch (result) {
-                case SUCCESS:
+                case Code.Success:
                     Uti.t(ctxt, "Give Start Success");
                     break;
-                case FAIL:
+                case Code.ResultEmpty:
                     Uti.t(ctxt, "Give Start Fail");
                     break;
-                case CONNECT_FAIL:
+                case Code.ConnectTimeOut:
                     Uti.t(ctxt, "Connection Fail");
                     break;
                 default:

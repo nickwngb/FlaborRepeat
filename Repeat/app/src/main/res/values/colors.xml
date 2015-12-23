@@ -13,6 +13,7 @@
     <color name="green">#00FF00</color>
     <color name="red">#FF0000</color>
     <color name="yellow">#FFFF00</color>
+    <color name="trans">#00FFFFFF</color>
 
     <!-- Code Color -->
     <color name="Untreated">#EA7500</color>

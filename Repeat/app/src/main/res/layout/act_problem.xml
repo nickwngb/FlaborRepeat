@@ -16,7 +16,7 @@
             android:id="@+id/imageView2"
             android:layout_width="match_parent"
             android:layout_height="70sp"
-            android:background="@drawable/title" />
+            android:background="@drawable/title1" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -31,17 +31,18 @@
                 android:layout_height="wrap_content"
                 android:text="Content : "
                 android:textColor="@color/black"
-                android:textSize="24sp" />
+                android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/txt_problem_createdate"
                 android:layout_width="match_parent"
                 android:layout_height="42dp"
                 android:background="@drawable/mainlistbackground"
-                android:gravity="right"
+                android:paddingTop="5dp"
                 android:text="Create Time"
                 android:textColor="@color/gray"
-                android:textSize="20sp" />
+                android:textSize="20sp"
+                android:gravity="center_vertical|right" />
         </LinearLayout>
 
         <TextView
@@ -69,19 +70,20 @@
                 android:id="@+id/textView2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Repeat : "
+                android:text="Response:"
                 android:textColor="@color/black"
-                android:textSize="24sp" />
+                android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/txt_problem_repeatedate"
                 android:layout_width="match_parent"
                 android:layout_height="42dp"
+                android:paddingTop="10dp"
                 android:background="@drawable/mainlistbackground"
-                android:gravity="right"
                 android:text="Repeate Time"
                 android:textColor="@color/gray"
-                android:textSize="20sp" />
+                android:textSize="20sp"
+                android:gravity="right" />
 
         </LinearLayout>
 
@@ -112,10 +114,10 @@
                 android:id="@+id/rb_score"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/mainstar"
                 android:numStars="5"
                 android:rating="3"
-                android:stepSize="1" />
+                android:stepSize="1"
+                android:background="@drawable/mainstar" />
 
             <Button
                 android:id="@+id/bt_givestart"

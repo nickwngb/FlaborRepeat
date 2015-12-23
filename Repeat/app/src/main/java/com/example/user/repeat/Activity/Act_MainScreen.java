@@ -2,6 +2,7 @@ package com.example.user.repeat.Activity;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -15,6 +16,7 @@ import android.widget.Button;
 import android.widget.ListView;
 
 import com.example.user.repeat.Adapter.ProblemListAdapter;
+import com.example.user.repeat.Other.Code;
 import com.example.user.repeat.Other.HttpConnection;
 import com.example.user.repeat.Other.Net;
 import com.example.user.repeat.Other.ProblemRecord;
@@ -82,18 +84,14 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
 
 
     class AddRegIdToAPPServer extends AsyncTask<String, Integer, Integer> {
-        private final int CONNECT_FAIL = -1;
-        private final int REGID_ISEMPTY = -2;
-        private final int SUCCESS = 1;
-        private final int FAIL = 0;
         private String regid = "";
 
         @Override
         protected Integer doInBackground(String... datas) {
-            Integer result = CONNECT_FAIL;
+            Integer result = Code.ConnectTimeOut;
             regid = datas[0];
             if (regid.isEmpty()) {
-                return REGID_ISEMPTY;
+                return Code.RegIdEmpty;
             }
             try {
                 // put "phone" post out, get json
@@ -117,15 +115,15 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
         protected void onPostExecute(Integer result) {
             Log.i("AddRegIdToAPPServer ", "Result : " + result);
             switch (result) {
-                case SUCCESS:
+                case Code.Success:
                     Uti.t(ctxt, "Set Push notification Success");
                     break;
-                case REGID_ISEMPTY:
+                case Code.RegIdEmpty:
                     Uti.t(ctxt, "RegId is Empty");
                     break;
-                case CONNECT_FAIL:
+                case Code.ConnectTimeOut:
                     break;
-                case FAIL:
+                case Code.RegIdFail:
                     Uti.t(ctxt, "Push notification Fail\n" + "Insert Error");
                     break;
             }
@@ -143,17 +141,19 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
     }
 
     class LoadingAllProblemTask extends AsyncTask<String, Integer, Integer> {
-        private final int CONNECT_FAIL = -1;
-        private final int SUCCESS = 1;
-        private final int NODATA = 0;
+        private ProgressDialog pDialog;
 
         protected void onPreExecute() {
-
+            pDialog = new ProgressDialog(ctxt);
+            pDialog.setMessage("Loading...");
+            pDialog.setIndeterminate(false);
+            pDialog.setCancelable(true);
+            pDialog.show();
         }
 
         @Override
         protected Integer doInBackground(String... strings) {
-            Integer result = CONNECT_FAIL;
+            Integer result = Code.ConnectTimeOut;
             try {
                 problemlist.clear();
                 // put "phone" post out, get json
@@ -163,7 +163,7 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
                 JSONObject jobj = conn.PostGetJson(URLs.url_allproblem, postFields);
                 if (jobj != null) {
                     result = jobj.getInt("success");
-                    if (result == SUCCESS) {
+                    if (result == Code.Success) {
                         JSONArray array = jobj.getJSONArray("fproblems");
                         for (int i = 0; i < array.length(); i++) {
                             JSONObject ajobj = array.getJSONObject(i);
@@ -191,17 +191,18 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
 
         @Override
         protected void onPostExecute(Integer result) {
+            pDialog.dismiss();
             Log.i("LoadingAllProblemTask ", "Result " + result);
             switch (result) {
-                case SUCCESS:
-                case NODATA:
+                case Code.Success:
+                case Code.ResultEmpty:
                     if (!problemlist.isEmpty()) {
                         refreshProblemList();
                     } else {
                         Uti.t(ctxt, "Empty");
                     }
                     break;
-                case CONNECT_FAIL:
+                case Code.ConnectTimeOut:
                     break;
                 default:
                     Uti.t(ctxt, "Error : " + result);
@@ -213,7 +214,7 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
         res = getResources();
         conn = new HttpConnection();
         mGBGCM = new GoldBrotherGCM(this);
-        problemlist = new ArrayList<ProblemRecord>();
+        problemlist = new ArrayList<>();
         pl_adapter = new ProblemListAdapter(this, problemlist);
     }
 
