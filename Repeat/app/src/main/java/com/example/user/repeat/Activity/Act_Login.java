@@ -108,7 +108,11 @@ public class Act_Login extends AppCompatActivity {
                     startActivity(i);
                     finish();
                     break;
+                case Code.ResultEmpty:
+                    Uti.t(ctxt, "Phone number does not exist");
+                    break;
                 case Code.ConnectTimeOut:
+                    Uti.t(ctxt, "Server no response");
                     break;
                 default:
                     Uti.t(ctxt, "Error : " + result);

@@ -3,6 +3,7 @@ package com.example.user.repeat.Activity;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -14,6 +15,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.example.user.repeat.Adapter.ProblemListAdapter;
 import com.example.user.repeat.Other.Code;
@@ -24,6 +26,7 @@ import com.example.user.repeat.Other.URLs;
 import com.example.user.repeat.Other.User;
 import com.example.user.repeat.Other.Uti;
 import com.example.user.repeat.R;
+import com.example.user.repeat.Receiver.GcmBroadcastReceiver;
 import com.example.user.repeat.UseForGCM.GoldBrotherGCM;
 
 import org.apache.http.NameValuePair;
@@ -33,6 +36,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenGCMListener {
@@ -41,6 +45,7 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
     private Resources res;
     private HttpConnection conn;
     private GoldBrotherGCM mGBGCM;
+
     public static User user = Act_Login.user;
     private final int AddAct = 0;
     // UI
@@ -116,15 +121,15 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
             Log.i("AddRegIdToAPPServer ", "Result : " + result);
             switch (result) {
                 case Code.Success:
-                    Uti.t(ctxt, "Set Push notification Success");
+                    //Uti.t(ctxt, "Set Push notification Success");
                     break;
                 case Code.RegIdEmpty:
-                    Uti.t(ctxt, "RegId is Empty");
+                    //Uti.t(ctxt, "RegId is Empty");
                     break;
                 case Code.ConnectTimeOut:
                     break;
                 case Code.RegIdFail:
-                    Uti.t(ctxt, "Push notification Fail\n" + "Insert Error");
+                    //Uti.t(ctxt, "Push notification Fail\n" + "Insert Error");
                     break;
             }
 
@@ -197,6 +202,7 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
                 case Code.Success:
                 case Code.ResultEmpty:
                     if (!problemlist.isEmpty()) {
+                        Collections.reverse(problemlist);
                         refreshProblemList();
                     } else {
                         Uti.t(ctxt, "Empty");
@@ -230,11 +236,14 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
             mGBGCM.openGCM();
         } else {
             Log.i("RegId is Exsit:", mGBGCM.getRegistrationId());
+            AddRegIdToAPPServer(mGBGCM.getRegistrationId());
         }
         // UI
         bt_repeat.setOnClickListener(onclicklistener);
         list_reaprethistory.setOnItemClickListener(onitemclicklistener);
         list_reaprethistory.setAdapter(pl_adapter);
+        //GCM Refresh
+
     }
 
     private void refreshProblemList() {

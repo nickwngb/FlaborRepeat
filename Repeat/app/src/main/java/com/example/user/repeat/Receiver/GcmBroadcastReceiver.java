@@ -14,7 +14,6 @@ import com.example.user.repeat.UseForGCM.GoldBrotherGCM;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 public class GcmBroadcastReceiver extends WakefulBroadcastReceiver {
-
     public static final int NOTIFICATION_ID = 0;
 
     @Override
@@ -44,5 +43,4 @@ public class GcmBroadcastReceiver extends WakefulBroadcastReceiver {
         }
         setResultCode(Activity.RESULT_OK);
     }
-
 }

@@ -12,10 +12,10 @@
         android:orientation="vertical">
 
         <ImageView
+            android:id="@+id/imageView"
             android:layout_width="match_parent"
             android:layout_height="70sp"
-            android:id="@+id/imageView"
-            android:background="@drawable/title1" />
+            android:background="@drawable/title1"/>
 
         <Button
             android:id="@+id/bt_repeat"

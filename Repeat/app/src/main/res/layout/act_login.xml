@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical"
-    android:background="@drawable/enterbackground">
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/enterbackground"
+    android:orientation="vertical">
 
 
     <LinearLayout
@@ -12,9 +13,9 @@
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:layout_marginTop="50dp"
+        android:orientation="vertical"
         android:padding="16dp"
-        android:weightSum="1"
-        android:orientation="vertical">
+        android:weightSum="1">
 
         <EditText
             android:id="@+id/edit_loginphone"
@@ -24,17 +25,17 @@
             android:gravity="center"
             android:hint="phone number"
             android:inputType="number"
-            android:textSize="24sp" />
+            android:textSize="24sp"/>
 
         <Button
             android:id="@+id/bt_login"
             android:layout_width="100sp"
             android:layout_height="50sp"
-            android:layout_marginTop="14sp"
-            android:text="Login"
-            android:textSize="20sp"
             android:layout_gravity="center_horizontal"
-            android:background="@drawable/enterbutton" />
+            android:layout_marginTop="14sp"
+            android:background="@drawable/enterbutton"
+            android:text="Login"
+            android:textSize="20sp"/>
 
     </LinearLayout>
 </LinearLayout>
