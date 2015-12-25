@@ -23,13 +23,11 @@ public class ProblemListAdapter extends BaseAdapter {
     private LayoutInflater myInflater;
     private Resources res;
     private List<ProblemRecord> list;
-    private String[] code;
 
     public ProblemListAdapter(Context context, List<ProblemRecord> list) {
         ctxt = context;
         myInflater = LayoutInflater.from(context);
         res = ctxt.getResources();
-        code = res.getStringArray(R.array.code);
         this.list = list;
     }
 
@@ -55,7 +53,6 @@ public class ProblemListAdapter extends BaseAdapter {
             v = myInflater.inflate(R.layout.item_problemlist, null);
             tag.CreateProblemDate = (TextView) v.findViewById(R.id.txt_item_createproblemdate);
             tag.ProblemContent = (TextView) v.findViewById(R.id.txt_problemcontent);
-            tag.ProblemStatus = (TextView) v.findViewById(R.id.txt_problemstatus);
             tag.linear_back = (LinearLayout) v.findViewById(R.id.linear_back);
             v.setTag(tag);
         } else {
@@ -65,35 +62,24 @@ public class ProblemListAdapter extends BaseAdapter {
         // setText
         tag.CreateProblemDate.setText(pr.getCreateProblemDate());
         tag.ProblemContent.setText(pr.getProblemDescription());
-        // set status Color & Text
-        String statusText = "";
-        int statusColor = 0;
+        // set status
         switch (getItem(position).getProblemStatus()) {
             case Code.Untreated:
-                statusText = code[0];
-                statusColor = res.getColor(R.color.Untreated);
-                tag.linear_back.setBackground(ctxt.getResources().getDrawable(R.drawable.manulist3));
+                tag.linear_back.setBackground(res.getDrawable(R.drawable.item_bg_untreated));
                 break;
             case Code.Processing:
-                statusText = code[1];
-                statusColor = res.getColor(R.color.Processing);
-                tag.linear_back.setBackground(ctxt.getResources().getDrawable(R.drawable.manulist2));
+                tag.linear_back.setBackground(res.getDrawable(R.drawable.item_bg_processing));
                 break;
             case Code.Completed:
-                statusText = code[2];
-                statusColor = res.getColor(R.color.Completed);
-                tag.linear_back.setBackground(ctxt.getResources().getDrawable(R.drawable.manulist1));
+                tag.linear_back.setBackground(res.getDrawable(R.drawable.item_bg_completed));
                 break;
         }
-        tag.ProblemStatus.setText(statusText);
-        tag.ProblemStatus.setTextColor(statusColor);
         return v;
     }
 
     class ViewTag {
         TextView CreateProblemDate;
         TextView ProblemContent;
-        TextView ProblemStatus;
         LinearLayout linear_back;
     }
 }

@@ -1,7 +1,7 @@
 <?php
 
  
-	if (isset($_POST['CustomerNo']) &&	isset($_POST['FLaborNo']) && isset($_POST['ProblemDescription']) && isset($_POST['CreateProblemDate']) && isset($_POST['ProblemStatus'])){
+	if (isset($_POST['CustomerNo']) && isset($_POST['FLaborNo']) && isset($_POST['ProblemDescription']) && isset($_POST['CreateProblemDate']) && isset($_POST['ProblemStatus'])){
 		$cNo = $_POST['CustomerNo'];
 		$fNo = $_POST['FLaborNo'];
 		$pDescription = $_POST['ProblemDescription'];

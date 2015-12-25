@@ -3,7 +3,6 @@ package com.example.user.repeat.Activity;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -27,7 +26,6 @@ import com.example.user.repeat.Other.URLs;
 import com.example.user.repeat.Other.User;
 import com.example.user.repeat.Other.Uti;
 import com.example.user.repeat.R;
-import com.example.user.repeat.Receiver.GcmBroadcastReceiver;
 import com.example.user.repeat.Receiver.RefreshReceiver;
 import com.example.user.repeat.UseForGCM.GoldBrotherGCM;
 
