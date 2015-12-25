@@ -54,6 +54,8 @@
                 <category android:name="com.example.user.repeat" />
             </intent-filter>
         </receiver>
+        <!-- Refresh receiver -->
+        <receiver android:name=".Receiver.RefreshReceiver"></receiver>
     </application>
 
 </manifest>

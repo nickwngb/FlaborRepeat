@@ -7,6 +7,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -27,6 +28,7 @@ import com.example.user.repeat.Other.User;
 import com.example.user.repeat.Other.Uti;
 import com.example.user.repeat.R;
 import com.example.user.repeat.Receiver.GcmBroadcastReceiver;
+import com.example.user.repeat.Receiver.RefreshReceiver;
 import com.example.user.repeat.UseForGCM.GoldBrotherGCM;
 
 import org.apache.http.NameValuePair;
@@ -39,12 +41,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenGCMListener {
+public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenGCMListener, RefreshReceiver.OnrefreshListener {
     //
     private Context ctxt = Act_MainScreen.this;
     private Resources res;
     private HttpConnection conn;
     private GoldBrotherGCM mGBGCM;
+    private RefreshReceiver mRefreshReceiver;
 
     public static User user = Act_Login.user;
     private final int AddAct = 0;
@@ -136,6 +139,11 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
         }
     }
 
+    @Override
+    public void setRefresh(String text) {
+        Toast.makeText(ctxt, text, Toast.LENGTH_SHORT).show();
+        LoadingAllProblem();
+    }
 
     private void LoadingAllProblem() {
         if (Net.isNetWork(ctxt)) {
@@ -218,10 +226,15 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
 
     private void InitialSomething() {
         res = getResources();
+        // http
         conn = new HttpConnection();
+        // receiver
         mGBGCM = new GoldBrotherGCM(this);
+        mRefreshReceiver = new RefreshReceiver();
+        // List
         problemlist = new ArrayList<>();
         pl_adapter = new ProblemListAdapter(this, problemlist);
+
     }
 
     private void InitialUI() {
@@ -243,7 +256,13 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
         list_reaprethistory.setOnItemClickListener(onitemclicklistener);
         list_reaprethistory.setAdapter(pl_adapter);
         //GCM Refresh
+        mRefreshReceiver.setOnrefreshListener(this);
 
+        IntentFilter intentFilter = new IntentFilter();
+
+        intentFilter.addAction("Refresh");
+
+        registerReceiver(mRefreshReceiver, intentFilter);
     }
 
     private void refreshProblemList() {
@@ -286,6 +305,11 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
         }).show();
     }
 
+    public void onDestroy() {
+        unregisterReceiver(mRefreshReceiver);
+        super.onDestroy();
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == AddAct) {
@@ -297,4 +321,5 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
             }
         }
     }
+
 }

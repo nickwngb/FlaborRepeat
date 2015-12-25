@@ -4,6 +4,7 @@ package com.example.user.repeat.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -38,10 +39,15 @@ public class Act_Login extends AppCompatActivity {
     public static User user;
     private HttpConnection conn;
     private Resources res;
+    //
+    private SharedPreferences settings;
+    private static final String data = "DATA";
+    private static final String phoneField = "PHONE";
     // UI
     private Button bt_login;
     private EditText edit_loginphone;
     // Other
+    private String phone; // for preferences
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,6 +55,7 @@ public class Act_Login extends AppCompatActivity {
         InitialSomething();
         InitialUI();
         InitialAction();
+        readData();
     }
 
     private void LoginTask(String... datas) {
@@ -104,6 +111,8 @@ public class Act_Login extends AppCompatActivity {
             Log.i("LoginTask ", "Result " + result);
             switch (result) {
                 case Code.Success:
+                    phone = mPhone;
+                    saveData();
                     Intent i = new Intent(ctxt, Act_MainScreen.class);
                     startActivity(i);
                     finish();
@@ -146,4 +155,19 @@ public class Act_Login extends AppCompatActivity {
 
         }
     };
+
+    public void readData() {
+        settings = getSharedPreferences(data, 0);
+        phone = settings.getString(phoneField, "");
+        if (!phone.isEmpty()) {
+            LoginTask(phone);
+        }
+    }
+
+    public void saveData() {
+        settings = getSharedPreferences(data, 0);
+        settings.edit()
+                .putString(phoneField, phone)
+                .commit();
+    }
 }

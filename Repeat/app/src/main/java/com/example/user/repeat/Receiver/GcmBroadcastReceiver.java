@@ -31,14 +31,22 @@ public class GcmBroadcastReceiver extends WakefulBroadcastReceiver {
             } else if (GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE
                     .equals(messageType)) {
                 Log.i(getClass() + " GCM MESSAGE", extras.toString());
+                // if click will open Login (if not in app)
                 Intent i = new Intent(context, Act_Login.class);
                 i.setAction("android.intent.action.MAIN");
                 i.addCategory("android.intent.category.LAUNCHER");
+                // send a Notification
                 GoldBrotherGCM.sendLocalNotification(context, NOTIFICATION_ID,
-                        R.drawable.chrome, "你有一個通知", extras
-                                .getString("message"), "gold brother", true,
-                        PendingIntent.getActivity(context, 0, i,
-                                PendingIntent.FLAG_CANCEL_CURRENT));
+                        R.drawable.icon, "You have a notification", extras.getString("message"), "Gold Brother", true,
+                        PendingIntent.getActivity(context, 0, i, PendingIntent.FLAG_CANCEL_CURRENT));
+                // push a intent to refresh reveiver
+                Intent refresh_intent = new Intent();
+                // name = 'Refresh'
+                refresh_intent.setAction("Refresh");
+                // datas
+                refresh_intent.putExtra("message", extras.getString("message"));
+                // send
+                context.sendBroadcast(refresh_intent);
             }
         }
         setResultCode(Activity.RESULT_OK);
