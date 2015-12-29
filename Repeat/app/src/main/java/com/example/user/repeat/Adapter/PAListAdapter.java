@@ -2,6 +2,7 @@ package com.example.user.repeat.Adapter;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.user.repeat.Other.Code;
-import com.example.user.repeat.Other.ProblemRecord;
+import com.example.user.repeat.Other.PARecord;
 import com.example.user.repeat.R;
 
 import java.util.List;
@@ -18,13 +19,13 @@ import java.util.List;
 /**
  * Created by user on 2015/12/10.
  */
-public class ProblemListAdapter extends BaseAdapter {
+public class PAListAdapter extends BaseAdapter {
     private Context ctxt;
     private LayoutInflater myInflater;
     private Resources res;
-    private List<ProblemRecord> list;
+    private List<PARecord> list;
 
-    public ProblemListAdapter(Context context, List<ProblemRecord> list) {
+    public PAListAdapter(Context context, List<PARecord> list) {
         ctxt = context;
         myInflater = LayoutInflater.from(context);
         res = ctxt.getResources();
@@ -36,7 +37,7 @@ public class ProblemListAdapter extends BaseAdapter {
     }
 
     @Override
-    public ProblemRecord getItem(int position) {
+    public PARecord getItem(int position) {
         return list.get(position);
     }
 
@@ -58,21 +59,27 @@ public class ProblemListAdapter extends BaseAdapter {
         } else {
             tag = (ViewTag) v.getTag();
         }
-        ProblemRecord pr = getItem(position);
-        // setText
-        tag.CreateProblemDate.setText(pr.getCreateProblemDate());
-        tag.ProblemContent.setText(pr.getProblemDescription());
-        // set status
-        switch (getItem(position).getProblemStatus()) {
-            case Code.Untreated:
-                tag.linear_back.setBackground(res.getDrawable(R.drawable.item_bg_untreated));
-                break;
-            case Code.Processing:
-                tag.linear_back.setBackground(res.getDrawable(R.drawable.item_bg_processing));
-                break;
-            case Code.Completed:
-                tag.linear_back.setBackground(res.getDrawable(R.drawable.item_bg_completed));
-                break;
+        PARecord par = getItem(position);
+        if (par.tag.equals(PARecord.TAG_PRecord)) {
+            // setText
+            tag.CreateProblemDate.setText(par.getCreateProblemDate());
+            tag.ProblemContent.setText(par.getProblemDescription());
+            // set status
+            switch (getItem(position).getProblemStatus()) {
+                case Code.Untreated:
+                    tag.linear_back.setBackground(res.getDrawable(R.drawable.item_bg_untreated));
+                    break;
+                case Code.Processing:
+                    tag.linear_back.setBackground(res.getDrawable(R.drawable.item_bg_processing));
+                    break;
+                case Code.Completed:
+                    tag.linear_back.setBackground(res.getDrawable(R.drawable.item_bg_completed));
+                    break;
+            }
+        } else {
+            tag.CreateProblemDate.setText(par.getCreateDate());
+            tag.ProblemContent.setText(par.getPushContent());
+            tag.linear_back.setBackgroundColor(Color.TRANSPARENT);
         }
         return v;
     }

@@ -17,10 +17,12 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.example.user.repeat.Adapter.ProblemListAdapter;
+import com.example.user.repeat.Adapter.PAListAdapter;
+import com.example.user.repeat.Other.AnnouncementRecord;
 import com.example.user.repeat.Other.Code;
 import com.example.user.repeat.Other.HttpConnection;
 import com.example.user.repeat.Other.Net;
+import com.example.user.repeat.Other.PARecord;
 import com.example.user.repeat.Other.ProblemRecord;
 import com.example.user.repeat.Other.URLs;
 import com.example.user.repeat.Other.User;
@@ -35,9 +37,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Date;
 
 public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenGCMListener, RefreshReceiver.OnrefreshListener {
     //
@@ -54,7 +59,9 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
     private ListView list_reaprethistory;
     // Other
     private List<ProblemRecord> problemlist;
-    private ProblemListAdapter pl_adapter;
+    private List<AnnouncementRecord> announcementlist;
+    private List<PARecord> palist;
+    private PAListAdapter pa_adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -207,17 +214,86 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
             switch (result) {
                 case Code.Success:
                 case Code.ResultEmpty:
-                    if (!problemlist.isEmpty()) {
-                        Collections.reverse(problemlist);
-                        refreshProblemList();
-                    } else {
+                    LoadingAllAnnouncement();
+                    break;
+                case Code.ConnectTimeOut:
+                    break;
+                default:
+                    Uti.t(ctxt, "Loading Problem Error : " + result);
+            }
+        }
+    }
+
+    private void LoadingAllAnnouncement() {
+        if (Net.isNetWork(ctxt)) {
+            new LoadingAllAnnouncementTask().execute();
+        } else {
+            Uti.t(ctxt, res.getString(R.string.msg_err_network));
+        }
+    }
+
+    class LoadingAllAnnouncementTask extends AsyncTask<String, Integer, Integer> {
+        private ProgressDialog pDialog;
+        private String rrr;
+
+        protected void onPreExecute() {
+            pDialog = new ProgressDialog(ctxt);
+            pDialog.setMessage("Loading...");
+            pDialog.setIndeterminate(false);
+            pDialog.setCancelable(true);
+            pDialog.show();
+        }
+
+        @Override
+        protected Integer doInBackground(String... strings) {
+            Integer result = Code.ConnectTimeOut;
+            try {
+                announcementlist.clear();
+                List<NameValuePair> postFields = new ArrayList<>();
+                postFields.add(new BasicNameValuePair("CustomerNo", user.getCustomerNo()));
+                postFields.add(new BasicNameValuePair("FLaborNo", user.getFLaborNo()));
+                JSONObject jobj = conn.PostGetJson(URLs.url_allannouncement, postFields);
+                if (jobj != null) {
+                    result = jobj.getInt("success");
+                    if (result == Code.Success) {
+                        JSONArray array = jobj.getJSONArray("fannouncements");
+                        for (int i = 0; i < array.length(); i++) {
+                            JSONObject ajobj = array.getJSONObject(i);
+                            AnnouncementRecord fproblem = new AnnouncementRecord();
+                            fproblem.setMPSNo(ajobj.getInt("MPSNo"));
+                            fproblem.setPushContent(ajobj.getString("PushContent"));
+                            fproblem.setCreateID(ajobj.getString("CreateID"));
+                            fproblem.setCreateDate(ajobj.getString("CreateDate"));
+                            announcementlist.add(fproblem);
+                        }
+                    }
+                }
+
+            } catch (JSONException e) {
+                Log.i("JSONException", e.toString());
+            }
+            return result;
+        }
+
+        @Override
+        protected void onPostExecute(Integer result) {
+            pDialog.dismiss();
+            Log.i("LoadingAllAnnouncement", "Result " + result);
+            Toast.makeText(ctxt, announcementlist.size() + "", Toast.LENGTH_SHORT).show();
+            switch (result) {
+                case Code.Success:
+                case Code.ResultEmpty:
+                    if (problemlist.isEmpty() && announcementlist.isEmpty()) {
                         Uti.t(ctxt, "Empty");
+                    } else {
+                        refreshPAList();
                     }
                     break;
                 case Code.ConnectTimeOut:
                     break;
                 default:
-                    Uti.t(ctxt, "Error : " + result);
+                    //Uti.t(ctxt, "Loading Announcement Error: " + result);
+                    Uti.t(ctxt, rrr);
             }
         }
     }
@@ -230,8 +306,10 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
         mGBGCM = new GoldBrotherGCM(this);
         mRefreshReceiver = new RefreshReceiver();
         // List
+        palist = new ArrayList<>();
+        announcementlist = new ArrayList<>();
         problemlist = new ArrayList<>();
-        pl_adapter = new ProblemListAdapter(this, problemlist);
+        pa_adapter = new PAListAdapter(this, palist);
 
     }
 
@@ -252,7 +330,7 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
         // UI
         bt_repeat.setOnClickListener(onclicklistener);
         list_reaprethistory.setOnItemClickListener(onitemclicklistener);
-        list_reaprethistory.setAdapter(pl_adapter);
+        list_reaprethistory.setAdapter(pa_adapter);
         //GCM Refresh
         mRefreshReceiver.setOnrefreshListener(this);
 
@@ -263,9 +341,112 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
         registerReceiver(mRefreshReceiver, intentFilter);
     }
 
-    private void refreshProblemList() {
-        if (pl_adapter != null) {
-            pl_adapter.notifyDataSetChanged();
+    private void refreshPAList() {
+        sortByDate();
+        if (pa_adapter != null) {
+            pa_adapter.notifyDataSetChanged();
+        }
+    }
+
+    private void sortByDate() {
+        palist.clear();
+        for (ProblemRecord pr : problemlist) {
+            PARecord par = new PARecord();
+            par.tag = PARecord.TAG_PRecord;
+            par.setPRSNo(pr.getPRSNo());
+            par.setCustomerNo(pr.getCustomerNo());
+            par.setFLaborNo(pr.getFLaborNo());
+            par.setProblemDescription(pr.getProblemDescription());
+            par.setCreateProblemDate(pr.getCreateProblemDate());
+            par.setResponseResult(pr.getResponseResult());
+            par.setResponseDate(pr.getResponseDate());
+            par.setResponseID(pr.getResponseID());
+            par.setProblemStatus(pr.getProblemStatus());
+            par.setSatisfactionDegree(pr.getSatisfactionDegree());
+            palist.add(par);
+        }
+        for (AnnouncementRecord ar : announcementlist) {
+            PARecord par = new PARecord();
+            par.tag = PARecord.TAG_ARecord;
+            par.setMPSNo(ar.getMPSNo());
+            par.setPushContent(ar.getPushContent());
+            par.setCreateID(ar.getCreateID());
+            par.setCreateDate(ar.getCreateDate());
+            palist.add(par);
+        }
+
+        for (int i = 0; i < palist.size() - 1; i++) {
+            boolean swapped = false;
+            for (int j = 0; j < palist.size() - i - 1; j++) {
+                if (palist.get(j).tag.equals(PARecord.TAG_PRecord)) {
+                    if (palist.get(j + 1).tag.equals(PARecord.TAG_PRecord)) {
+                        String a = palist.get(j).getCreateProblemDate();
+                        String b = palist.get(j + 1).getCreateProblemDate();
+                        //設定日期格式
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                        try {
+                            Date date1 = sdf.parse(a);
+                            Date date2 = sdf.parse(b);
+                            if (date1.before(date2)) {
+                                Collections.swap(palist, j, j + 1);
+                                swapped = true;
+                            }
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        String a = palist.get(j).getCreateProblemDate();
+                        String b = palist.get(j + 1).getCreateDate();
+                        //設定日期格式
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                        try {
+                            Date date1 = sdf.parse(a);
+                            Date date2 = sdf.parse(b);
+                            if (date1.before(date2)) {
+                                Collections.swap(palist, j, j + 1);
+                                swapped = true;
+                            }
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                } else {
+                    if (palist.get(j + 1).tag.equals(PARecord.TAG_PRecord)) {
+                        String a = palist.get(j).getCreateDate();
+                        String b = palist.get(j + 1).getCreateProblemDate();
+                        //設定日期格式
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                        try {
+                            Date date1 = sdf.parse(a);
+                            Date date2 = sdf.parse(b);
+                            if (date1.before(date2)) {
+                                Collections.swap(palist, j, j + 1);
+                                swapped = true;
+                            }
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        String a = palist.get(j).getCreateDate();
+                        String b = palist.get(j + 1).getCreateDate();
+                        //設定日期格式
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                        try {
+                            Date date1 = sdf.parse(a);
+                            Date date2 = sdf.parse(b);
+                            if (date1.before(date2)) {
+                                Collections.swap(palist, j, j + 1);
+                                swapped = true;
+                            }
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+            if (!swapped) {
+                break;
+            }
         }
     }
 
@@ -282,11 +463,19 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
 
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int pos, long id) { //按一次Item事件
-            Intent i = new Intent(ctxt, Act_Problem.class);
-            Bundle b = new Bundle();
-            b.putSerializable("ProblemRecord", problemlist.get(pos));
-            i.putExtras(b);
-            startActivity(i);
+            if (palist.get(pos).tag.equals(PARecord.TAG_PRecord)) {
+                Intent i = new Intent(ctxt, Act_Problem.class);
+                Bundle b = new Bundle();
+                b.putSerializable("ProblemRecord", palist.get(pos));
+                i.putExtras(b);
+                startActivity(i);
+            }else{
+                //Intent i = new Intent(ctxt,Act_);
+                Bundle b = new Bundle();
+                b.putSerializable("AnnouncementRecord", palist.get(pos));
+                //i.putExtras(b);
+                //startActivity(i);
+            }
         }
     };
 

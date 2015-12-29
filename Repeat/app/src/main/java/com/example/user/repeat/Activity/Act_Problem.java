@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.example.user.repeat.Other.Code;
 import com.example.user.repeat.Other.HttpConnection;
 import com.example.user.repeat.Other.Net;
+import com.example.user.repeat.Other.PARecord;
 import com.example.user.repeat.Other.ProblemRecord;
 import com.example.user.repeat.Other.URLs;
 import com.example.user.repeat.Other.Uti;
@@ -36,7 +37,7 @@ public class Act_Problem extends Activity {
     private Context ctxt = Act_Problem.this;
     private HttpConnection conn;
     private Resources res;
-    private ProblemRecord pr;
+    private PARecord par;
     // UI
     private TextView txt_problem_createdate, txt_customercontent, txt_managercontent, txt_problem_repeatedate;
     private LinearLayout ll_givestart;
@@ -84,7 +85,7 @@ public class Act_Problem extends Activity {
             try {
                 // put "phone" post out, get json
                 List<NameValuePair> postFields = new ArrayList<>();
-                postFields.add(new BasicNameValuePair("PRSNo", String.valueOf(pr.getPRSNo())));
+                postFields.add(new BasicNameValuePair("PRSNo", String.valueOf(par.getPRSNo())));
                 postFields.add(new BasicNameValuePair("Start", start));
 
                 JSONObject jobj = conn.PostGetJson(URLs.url_updatestart, postFields);
@@ -133,14 +134,14 @@ public class Act_Problem extends Activity {
     }
 
     private void InitialAction() {
-        txt_problem_createdate.setText(pr.getCreateProblemDate());
-        txt_customercontent.setText(pr.getProblemDescription());
-        txt_problem_repeatedate.setText(pr.getResponseDate());
-        txt_managercontent.setText(pr.getResponseResult());
+        txt_problem_createdate.setText(par.getCreateProblemDate());
+        txt_customercontent.setText(par.getProblemDescription());
+        txt_problem_repeatedate.setText(par.getResponseDate());
+        txt_managercontent.setText(par.getResponseResult());
 
-        if (pr.getProblemStatus().equals(Code.Completed)) {
+        if (par.getProblemStatus().equals(Code.Completed)) {
             ll_givestart.setVisibility(View.VISIBLE);
-            Uti.t(ctxt, "give your Start !");
+            Uti.t(ctxt, "Give your Start !");
         }
 
         bt_givestart.setOnClickListener(new View.OnClickListener() {
@@ -153,6 +154,6 @@ public class Act_Problem extends Activity {
 
     private void getExtras() {
         Bundle b = getIntent().getExtras();
-        pr = (ProblemRecord) b.getSerializable("ProblemRecord");
+        par = (PARecord) b.getSerializable("ProblemRecord");
     }
 }
