@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingBottom="@dimen/activity_vertical_margin"
-                tools:context=".Act_main">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context=".Act_main">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -21,14 +21,14 @@
             android:id="@+id/bt_repeat"
             android:layout_width="142dp"
             android:layout_height="42dp"
-            android:layout_marginBottom="16sp"
             android:layout_marginTop="16sp"
-            android:background="@drawable/addproblembutton"
+            android:layout_marginBottom="16sp"
             android:paddingLeft="16sp"
             android:paddingRight="16sp"
             android:text="Questions"
             android:textAllCaps="false"
-            android:textStyle="bold|italic"/>
+            android:textStyle="bold|italic"
+            android:background="@drawable/addproblembutton" />
 
         <ListView
             android:id="@+id/list_repeathistory"
@@ -36,10 +36,9 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:layout_below="@+id/bt_repeat"
-            android:divider="@color/trans"
             android:paddingLeft="16sp"
-            android:paddingRight="16sp"/>
+            android:paddingRight="16sp"
+            android:layout_below="@+id/bt_repeat" />
 
     </LinearLayout>
 </RelativeLayout>

@@ -279,7 +279,6 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
         protected void onPostExecute(Integer result) {
             pDialog.dismiss();
             Log.i("LoadingAllAnnouncement", "Result " + result);
-            Toast.makeText(ctxt, announcementlist.size() + "", Toast.LENGTH_SHORT).show();
             switch (result) {
                 case Code.Success:
                 case Code.ResultEmpty:
@@ -470,11 +469,11 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
                 i.putExtras(b);
                 startActivity(i);
             }else{
-                //Intent i = new Intent(ctxt,Act_);
+                Intent i = new Intent(ctxt,Act_Announcement.class);
                 Bundle b = new Bundle();
                 b.putSerializable("AnnouncementRecord", palist.get(pos));
-                //i.putExtras(b);
-                //startActivity(i);
+                i.putExtras(b);
+                startActivity(i);
             }
         }
     };

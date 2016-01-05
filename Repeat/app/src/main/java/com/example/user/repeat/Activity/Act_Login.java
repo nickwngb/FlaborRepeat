@@ -8,13 +8,12 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 
 import com.example.user.repeat.Other.Code;
 import com.example.user.repeat.Other.HttpConnection;
@@ -44,10 +43,14 @@ public class Act_Login extends AppCompatActivity {
     private static final String data = "DATA";
     private static final String phoneField = "PHONE";
     // UI
-    private Button bt_login;
+    private Button bt_login,bt_tab;
     private EditText edit_loginphone;
+    private LinearLayout linear_customer;
     // Other
     private String phone; // for preferences
+
+    public Act_Login() {
+    }
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -143,7 +146,6 @@ public class Act_Login extends AppCompatActivity {
         conn = new HttpConnection();
         user = new User();
     }
-
 
     private View.OnClickListener onclicklistener = new View.OnClickListener() {
 

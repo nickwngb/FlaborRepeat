@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="16dp"
+    android:paddingTop="10dp"
     tools:context="com.example.user.repeat.item_problemlist">
 
     <LinearLayout
@@ -26,18 +26,22 @@
                 android:id="@+id/txt_item_createproblemdate"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true" />
+                android:layout_alignParentStart="true"
+                android:textSize="16dp" />
 
             <TextView
-                android:layout_marginTop="10dp"
-                android:layout_width="wrap_content"
+                android:layout_marginTop="12dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="Medium Text"
                 android:id="@+id/txt_problemcontent"
                 android:layout_below="@+id/txt_item_createproblemdate"
                 android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true" />
+                android:layout_alignParentStart="true"
+                android:textSize="20dp"
+                android:ellipsize="end"
+                android:singleLine="true"/>
 
         </LinearLayout>
 
