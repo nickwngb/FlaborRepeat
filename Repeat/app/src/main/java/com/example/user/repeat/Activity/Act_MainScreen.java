@@ -468,8 +468,8 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
                 b.putSerializable("ProblemRecord", palist.get(pos));
                 i.putExtras(b);
                 startActivity(i);
-            }else{
-                Intent i = new Intent(ctxt,Act_Announcement.class);
+            } else {
+                Intent i = new Intent(ctxt, Act_Announcement.class);
                 Bundle b = new Bundle();
                 b.putSerializable("AnnouncementRecord", palist.get(pos));
                 i.putExtras(b);
@@ -482,13 +482,13 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
         new AlertDialog.Builder(ctxt)
                 .setTitle("Exit?")
                 .setMessage("Are you sure to Exit?")
-                .setPositiveButton("No", null
-                ).setNegativeButton("Yes", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog,
-                                int which) {
-                Act_MainScreen.super.onBackPressed();
-            }
-        }).show();
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,
+                                                int which) {
+                                Act_MainScreen.super.onBackPressed();
+                            }
+                        }
+                ).setNegativeButton("No", null).show();
     }
 
     public void onDestroy() {
