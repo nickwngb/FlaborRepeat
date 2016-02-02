@@ -14,7 +14,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import com.example.user.repeat.Other.Code;
 import com.example.user.repeat.Other.HttpConnection;
@@ -44,7 +43,7 @@ public class Act_Login extends AppCompatActivity {
     private static final String data = "DATA";
     private static final String phoneField = "PHONE";
     // UI
-    private Button bt_login, bt_tab;
+    private Button bt_login,bt_tab;
     private EditText edit_loginphone;
     private LinearLayout linear_customer;
     // Other
@@ -93,7 +92,6 @@ public class Act_Login extends AppCompatActivity {
                 postFields.add(new BasicNameValuePair("phone", mPhone));
                 JSONObject jobj = conn.PostGetJson(URLs.url_login, postFields);
                 if (jobj != null) {
-                    Log.i("Json Object", jobj.toString());
                     result = jobj.getInt("success");
                     if (result == Code.Success) {
                         JSONArray array = jobj.getJSONArray("finfo");
@@ -118,10 +116,9 @@ public class Act_Login extends AppCompatActivity {
                 case Code.Success:
                     phone = mPhone;
                     saveData();
-                    Toast.makeText(ctxt, "OK", Toast.LENGTH_SHORT).show();
-//                    Intent i = new Intent(ctxt, Act_MainScreen.class);
-//                    startActivity(i);
-//                    finish();
+                    Intent i = new Intent(ctxt, Act_MainScreen.class);
+                    startActivity(i);
+                    finish();
                     break;
                 case Code.ResultEmpty:
                     Uti.t(ctxt, "Phone number does not exist");
@@ -136,16 +133,7 @@ public class Act_Login extends AppCompatActivity {
     }
 
     private void InitialAction() {
-        bt_login.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-                String phone = edit_loginphone.getText().toString();
-                if (isVaild(phone)) {
-                    LoginTask(phone);
-                }
-            }
-        });
-
-
+        bt_login.setOnClickListener(onclicklistener);
     }
 
     private void InitialUI() {
@@ -159,14 +147,16 @@ public class Act_Login extends AppCompatActivity {
         user = new User();
     }
 
-    private boolean isVaild(String phone) {
-        if (phone.isEmpty()) {
-            Toast.makeText(ctxt, "Phone can't be empty", Toast.LENGTH_SHORT).show();
-            return false;
+    private View.OnClickListener onclicklistener = new View.OnClickListener() {
+
+        public void onClick(View v) {
+            String phone = edit_loginphone.getText().toString();
+            if (phone.length() > 0) {
+                LoginTask(phone);
+            }
+
         }
-        String regex = "\\d{5,}";
-        return phone.matches(regex);
-    }
+    };
 
     public void readData() {
         settings = getSharedPreferences(data, 0);
