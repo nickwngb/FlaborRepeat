@@ -4,12 +4,17 @@ package com.example.user.repeat.Other;
  * Created by v on 2015/12/12.
  */
 public class User {
+    private static User user = new User();
     private String CustomerNo;
     private String FLaborNo;
     private String CellPhone;
 
-    public User() {
+    private User() {
 
+    }
+
+    public static User getUser() {
+        return user;
     }
 
     public String getCustomerNo() {

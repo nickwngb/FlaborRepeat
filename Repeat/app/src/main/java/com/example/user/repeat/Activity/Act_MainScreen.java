@@ -52,7 +52,7 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
     private GoldBrotherGCM mGBGCM;
     private RefreshReceiver mRefreshReceiver;
 
-    public static User user = Act_Login.user;
+    private User user;
     private final int AddAct = 0;
     // UI
     private Button bt_repeat;
@@ -234,7 +234,6 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
 
     class LoadingAllAnnouncementTask extends AsyncTask<String, Integer, Integer> {
         private ProgressDialog pDialog;
-        private String rrr;
 
         protected void onPreExecute() {
             pDialog = new ProgressDialog(ctxt);
@@ -291,13 +290,13 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
                 case Code.ConnectTimeOut:
                     break;
                 default:
-                    //Uti.t(ctxt, "Loading Announcement Error: " + result);
-                    Uti.t(ctxt, rrr);
+                    Uti.t(ctxt, "error : "+result);
             }
         }
     }
 
     private void InitialSomething() {
+        user = User.getUser();
         res = getResources();
         // http
         conn = new HttpConnection();

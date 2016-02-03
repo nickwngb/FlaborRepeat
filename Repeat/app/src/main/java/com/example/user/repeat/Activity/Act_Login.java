@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.example.user.repeat.Other.Code;
 import com.example.user.repeat.Other.HttpConnection;
@@ -35,7 +36,7 @@ import java.util.List;
 public class Act_Login extends AppCompatActivity {
     //
     private Context ctxt = Act_Login.this;
-    public static User user;
+    private User user;
     private HttpConnection conn;
     private Resources res;
     //
@@ -43,9 +44,8 @@ public class Act_Login extends AppCompatActivity {
     private static final String data = "DATA";
     private static final String phoneField = "PHONE";
     // UI
-    private Button bt_login,bt_tab;
+    private Button bt_login;
     private EditText edit_loginphone;
-    private LinearLayout linear_customer;
     // Other
     private String phone; // for preferences
 
@@ -98,7 +98,7 @@ public class Act_Login extends AppCompatActivity {
                         JSONObject finfo = array.getJSONObject(0);
                         user.setCustomerNo(finfo.getString("CustomerNo"));
                         user.setFLaborNo(finfo.getString("FLaborNo"));
-                        user.setCellPhone(finfo.getString("CellPhone"));
+                        user.setCellPhone(mPhone);
                     }
                 }
 
@@ -144,14 +144,14 @@ public class Act_Login extends AppCompatActivity {
     private void InitialSomething() {
         res = getResources();
         conn = new HttpConnection();
-        user = new User();
+        user = User.getUser();
     }
 
     private View.OnClickListener onclicklistener = new View.OnClickListener() {
 
         public void onClick(View v) {
             String phone = edit_loginphone.getText().toString();
-            if (phone.length() > 0) {
+            if (!phone.isEmpty()) {
                 LoginTask(phone);
             }
 

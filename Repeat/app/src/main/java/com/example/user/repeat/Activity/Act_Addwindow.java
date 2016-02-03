@@ -38,7 +38,7 @@ public class Act_Addwindow extends Activity {
     private Context ctxt = Act_Addwindow.this;
     private Resources res;
     private HttpConnection conn;
-    private User user = Act_MainScreen.user;
+    private User user;
     // UI
     private Button bt_submit;
     private EditText edit_problemcontent;
@@ -129,6 +129,7 @@ public class Act_Addwindow extends Activity {
     private void InitialSomething() {
         res = getResources();
         conn = new HttpConnection();
+        user = User.getUser();
     }
 
     private void InitialUI() {
