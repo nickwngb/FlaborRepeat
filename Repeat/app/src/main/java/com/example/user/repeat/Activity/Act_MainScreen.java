@@ -476,20 +476,6 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
             }
         }
     };
-
-    public void onBackPressed() {
-        new AlertDialog.Builder(ctxt)
-                .setTitle("Exit?")
-                .setMessage("Are you sure to Exit?")
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog,
-                                                int which) {
-                                Act_MainScreen.super.onBackPressed();
-                            }
-                        }
-                ).setNegativeButton("No", null).show();
-    }
-
     public void onDestroy() {
         unregisterReceiver(mRefreshReceiver);
         super.onDestroy();
@@ -504,6 +490,17 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
                     LoadingAllProblem();
                 }
             }
+        }
+    }
+    
+    private long lastpresstime = 0;
+    @Override
+    public void onBackPressed() {
+        if (System.currentTimeMillis() - lastpresstime < 2000) {
+            super.onBackPressed();
+        } else {
+            lastpresstime = System.currentTimeMillis();
+            Toast.makeText(ctxt, "Press again to leave", Toast.LENGTH_SHORT).show();
         }
     }
 

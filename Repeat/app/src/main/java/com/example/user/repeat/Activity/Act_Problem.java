@@ -57,22 +57,22 @@ public class Act_Problem extends Activity {
         InitialAction();
     }
 
-    private void UpdateStartTask(String... datas) {
+    private void RatingTask(String... datas) {
         if (Net.isNetWork(ctxt)) {
-            new UpdateStartTask().execute(datas);
+            new RatingTask().execute(datas);
         } else {
             Uti.t(ctxt, res.getString(R.string.msg_err_network));
         }
     }
 
-    class UpdateStartTask extends AsyncTask<String, Integer, Integer> {
+    class RatingTask extends AsyncTask<String, Integer, Integer> {
         private ProgressDialog pDialog;
-        private String start;
+        private String rating;
 
         @Override
         protected void onPreExecute() {
             pDialog = new ProgressDialog(ctxt);
-            pDialog.setMessage("Loading...");
+            pDialog.setMessage("Rating...");
             pDialog.setIndeterminate(false);
             pDialog.setCancelable(true);
             pDialog.show();
@@ -81,18 +81,17 @@ public class Act_Problem extends Activity {
         @Override
         protected Integer doInBackground(String... datas) {
             Integer result = Code.ConnectTimeOut;
-            start = datas[0];
+            rating = datas[0];
             try {
                 // put "phone" post out, get json
                 List<NameValuePair> postFields = new ArrayList<>();
                 postFields.add(new BasicNameValuePair("PRSNo", String.valueOf(par.getPRSNo())));
-                postFields.add(new BasicNameValuePair("Start", start));
+                postFields.add(new BasicNameValuePair("star", rating));
 
                 JSONObject jobj = conn.PostGetJson(URLs.url_updatestart, postFields);
                 if (jobj != null) {
                     result = jobj.getInt("success");
                 }
-
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -104,10 +103,10 @@ public class Act_Problem extends Activity {
             pDialog.dismiss();
             switch (result) {
                 case Code.Success:
-                    Uti.t(ctxt, "Give Start Success");
+                    Uti.t(ctxt, "Rating Success");
                     break;
                 case Code.ResultEmpty:
-                    Uti.t(ctxt, "Give Start Fail");
+                    Uti.t(ctxt, "Rating Fail");
                     break;
                 case Code.ConnectTimeOut:
                     Uti.t(ctxt, "Connection Fail");
@@ -141,13 +140,13 @@ public class Act_Problem extends Activity {
 
         if (par.getProblemStatus().equals(Code.Completed)) {
             ll_givestart.setVisibility(View.VISIBLE);
-            Uti.t(ctxt, "Give your Start !");
+            Uti.t(ctxt, "Rating me !");
         }
 
         bt_givestart.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 String start = String.valueOf((int) rb_score.getRating());
-                UpdateStartTask(start);
+                RatingTask(start);
             }
         });
     }
