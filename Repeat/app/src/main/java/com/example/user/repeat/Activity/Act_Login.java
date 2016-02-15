@@ -49,9 +49,6 @@ public class Act_Login extends AppCompatActivity {
     // Other
     private String phone; // for preferences
 
-    public Act_Login() {
-    }
-
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act_login);
@@ -94,11 +91,17 @@ public class Act_Login extends AppCompatActivity {
                 if (jobj != null) {
                     result = jobj.getInt("success");
                     if (result == Code.Success) {
-                        JSONArray array = jobj.getJSONArray("finfo");
-                        JSONObject finfo = array.getJSONObject(0);
-                        user.setCustomerNo(finfo.getString("CustomerNo"));
-                        user.setFLaborNo(finfo.getString("FLaborNo"));
-                        user.setCellPhone(mPhone);
+                        JSONArray jArray = jobj.getJSONArray("finfo");
+                        if (jArray != null) {
+                            JSONObject finfo = jArray.getJSONObject(0);
+                            if (finfo != null) {
+                                user.setCustomerNo(finfo.getString("CustomerNo"));
+                                user.setFLaborNo(finfo.getString("FLaborNo"));
+                                user.setCellPhone(mPhone);
+                                user.setChineseName(finfo.getString("ChineseName"));
+                                user.setLaborPhoto(finfo.getString("LaborPhoto"));
+                            }
+                        }
                     }
                 }
 
@@ -108,7 +111,6 @@ public class Act_Login extends AppCompatActivity {
             return result;
         }
 
-        @Override
         protected void onPostExecute(Integer result) {
             pDialog.dismiss();
             Log.i("LoginTask ", "Result " + result);

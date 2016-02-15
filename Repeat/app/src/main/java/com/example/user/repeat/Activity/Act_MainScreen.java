@@ -3,27 +3,37 @@ package com.example.user.repeat.Activity;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Resources;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.user.repeat.Adapter.PAListAdapter;
 import com.example.user.repeat.Other.AnnouncementRecord;
+import com.example.user.repeat.Other.BitmapTransformer;
 import com.example.user.repeat.Other.Code;
+import com.example.user.repeat.Other.Hardware;
 import com.example.user.repeat.Other.HttpConnection;
 import com.example.user.repeat.Other.Net;
 import com.example.user.repeat.Other.PARecord;
 import com.example.user.repeat.Other.ProblemRecord;
+import com.example.user.repeat.Other.Response;
 import com.example.user.repeat.Other.URLs;
 import com.example.user.repeat.Other.User;
 import com.example.user.repeat.Other.Uti;
@@ -52,13 +62,18 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
     private GoldBrotherGCM mGBGCM;
     private RefreshReceiver mRefreshReceiver;
 
+    //
     private User user;
-    private final int AddAct = 0;
+    private static final int AddAct = 0;
+    private static final int PICK_PICTURE = 1;
+    private static final int TAKE_PICTURE = 2;
+    private static final int TRIM_PICTURE = 3;
     // UI
-    private Button bt_repeat;
+    private Button bt_repeat, bt_image;
     private ListView list_reaprethistory;
     // Other
     private List<ProblemRecord> problemlist;
+    private List<Response> responselist;
     private List<AnnouncementRecord> announcementlist;
     private List<PARecord> palist;
     private PAListAdapter pa_adapter;
@@ -189,11 +204,6 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
                             fproblem.setPRSNo(ajobj.getInt("PRSNo"));
                             fproblem.setCustomerNo(ajobj.getString("CustomerNo"));
                             fproblem.setFLaborNo(ajobj.getString("FLaborNo"));
-                            fproblem.setProblemDescription(ajobj.getString("ProblemDescription"));
-                            fproblem.setCreateProblemDate(ajobj.getString("CreateProblemDate"));
-                            fproblem.setResponseResult(ajobj.getString("ResponseResult"));
-                            fproblem.setResponseDate(ajobj.getString("ResponseDate"));
-                            fproblem.setResponseID(ajobj.getString("ResponseID"));
                             fproblem.setProblemStatus(ajobj.getString("ProblemStatus"));
                             fproblem.setSatisfactionDegree(ajobj.getString("SatisfactionDegree"));
                             problemlist.add(fproblem);
@@ -213,13 +223,105 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
             Log.i("LoadingAllProblemTask ", "Result " + result);
             switch (result) {
                 case Code.Success:
+                    LoadAllResponse();
+                    break;
                 case Code.ResultEmpty:
-                    LoadingAllAnnouncement();
+
                     break;
                 case Code.ConnectTimeOut:
                     break;
                 default:
                     Uti.t(ctxt, "Loading Problem Error : " + result);
+            }
+        }
+    }
+
+    private void LoadAllResponse() {
+        if (Net.isNetWork(ctxt)) {
+            new LoadAllResponse().execute();
+        } else {
+            Uti.t(ctxt, res.getString(R.string.msg_err_network));
+        }
+    }
+
+    class LoadAllResponse extends AsyncTask<String, Integer, Integer> {
+        private ProgressDialog pDialog;
+        private List<Integer> PRSNos;
+
+        protected void onPreExecute() {
+            pDialog = new ProgressDialog(ctxt);
+            pDialog.setMessage("Loading...");
+            pDialog.setIndeterminate(false);
+            pDialog.setCancelable(true);
+            pDialog.show();
+            PRSNos = new ArrayList<>();
+            for (ProblemRecord pr : problemlist) {
+                PRSNos.add(pr.getPRSNo());
+            }
+        }
+
+        @Override
+        protected Integer doInBackground(String... strings) {
+            Integer result = Code.ConnectTimeOut;
+            try {
+                responselist.clear();
+                List<NameValuePair> postFields = new ArrayList<>();
+                for (Integer PRSNo : PRSNos) {
+                    postFields.add(new BasicNameValuePair("PRSNos[]", PRSNo + ""));
+                }
+                JSONObject jobj = conn.PostGetJson(URLs.url_response, postFields);
+                if (jobj != null) {
+                    result = jobj.getInt("success");
+                    if (result == Code.Success) {
+                        JSONArray array = jobj.getJSONArray("fannouncements");
+                        for (int i = 0; i < array.length(); i++) {
+                            JSONObject ajobj = array.getJSONObject(i);
+                            Response rs = new Response();
+                            rs.setPRSNo(ajobj.getInt("PRSNo"));
+                            rs.setResponseContent(ajobj.getString("ResponseContent"));
+                            rs.setResponseDate(ajobj.getString("ResponseDate"));
+                            rs.setResponseID(ajobj.getString("ResponseID"));
+                            rs.setResponseRole(ajobj.getString("ResponseRole"));
+                            responselist.add(rs);
+                        }
+                    }
+                }
+
+            } catch (JSONException e) {
+                Log.i("LoadAllResponse", e.toString());
+            }
+            return result;
+        }
+
+        @Override
+        protected void onPostExecute(Integer result) {
+            pDialog.dismiss();
+            Log.i("LoadAllResponse", "Result " + result);
+            switch (result) {
+                case Code.Success:
+                case Code.ResultEmpty:
+                    PairWithRecord();
+                    LoadingAllAnnouncement();
+                    break;
+                case Code.ConnectTimeOut:
+                    break;
+                default:
+                    Uti.t(ctxt, "error : " + result);
+            }
+        }
+
+        private void PairWithRecord() {
+            for (Response rs : responselist) {
+                int prsno = rs.getPRSNo();
+                for (ProblemRecord pr : problemlist) {
+                    if (prsno == pr.getPRSNo()) {
+                        pr.setResponseContent(rs.getResponseContent());
+                        pr.setResponseDate(rs.getResponseDate());
+                        pr.setResponseID(rs.getResponseID());
+                        pr.setResponseRole(rs.getResponseRole());
+                        break;
+                    }
+                }
             }
         }
     }
@@ -307,11 +409,13 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
         palist = new ArrayList<>();
         announcementlist = new ArrayList<>();
         problemlist = new ArrayList<>();
+        responselist = new ArrayList<>();
         pa_adapter = new PAListAdapter(this, palist);
     }
 
     private void InitialUI() {
         bt_repeat = (Button) findViewById(R.id.bt_repeat);
+        bt_image = (Button) findViewById(R.id.bt_image);
         list_reaprethistory = (ListView) findViewById(R.id.list_repeathistory);
     }
 
@@ -325,7 +429,22 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
 //            AddRegIdToAPPServer(mGBGCM.getRegistrationId());
 //        }
         // UI
-        bt_repeat.setOnClickListener(onclicklistener);
+        bt_repeat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent();
+                i.setClass(ctxt, Act_Addwindow.class);
+                startActivityForResult(i, AddAct);
+            }
+        });
+        bt_image.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Hardware.closeKeyBoard(ctxt, v);
+                Intent iPickPicture = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(iPickPicture, PICK_PICTURE);
+            }
+        });
         list_reaprethistory.setOnItemClickListener(onitemclicklistener);
         list_reaprethistory.setAdapter(pa_adapter);
         //GCM Refresh
@@ -353,13 +472,12 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
             par.setPRSNo(pr.getPRSNo());
             par.setCustomerNo(pr.getCustomerNo());
             par.setFLaborNo(pr.getFLaborNo());
-            par.setProblemDescription(pr.getProblemDescription());
-            par.setCreateProblemDate(pr.getCreateProblemDate());
-            par.setResponseResult(pr.getResponseResult());
-            par.setResponseDate(pr.getResponseDate());
-            par.setResponseID(pr.getResponseID());
             par.setProblemStatus(pr.getProblemStatus());
             par.setSatisfactionDegree(pr.getSatisfactionDegree());
+            par.setResponseContent(pr.getResponseContent());
+            par.setResponseDate(pr.getResponseDate());
+            par.setResponseID(pr.getResponseID());
+            par.setResponseRole(pr.getResponseRole());
             palist.add(par);
         }
         for (AnnouncementRecord ar : announcementlist) {
@@ -377,8 +495,8 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
             for (int j = 0; j < palist.size() - i - 1; j++) {
                 if (palist.get(j).tag.equals(PARecord.TAG_PRecord)) {
                     if (palist.get(j + 1).tag.equals(PARecord.TAG_PRecord)) {
-                        String a = palist.get(j).getCreateProblemDate();
-                        String b = palist.get(j + 1).getCreateProblemDate();
+                        String a = palist.get(j).getResponseDate();
+                        String b = palist.get(j + 1).getResponseDate();
                         //設定日期格式
                         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                         try {
@@ -392,7 +510,7 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
                             e.printStackTrace();
                         }
                     } else {
-                        String a = palist.get(j).getCreateProblemDate();
+                        String a = palist.get(j).getResponseDate();
                         String b = palist.get(j + 1).getCreateDate();
                         //設定日期格式
                         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -410,7 +528,7 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
                 } else {
                     if (palist.get(j + 1).tag.equals(PARecord.TAG_PRecord)) {
                         String a = palist.get(j).getCreateDate();
-                        String b = palist.get(j + 1).getCreateProblemDate();
+                        String b = palist.get(j + 1).getResponseDate();
                         //設定日期格式
                         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                         try {
@@ -447,13 +565,6 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
         }
     }
 
-    private View.OnClickListener onclicklistener = new View.OnClickListener() {
-        public void onClick(View v) {
-            Intent i = new Intent();
-            i.setClass(ctxt, Act_Addwindow.class);
-            startActivityForResult(i, AddAct);
-        }
-    };
     private AdapterView.OnItemClickListener onitemclicklistener = new AdapterView.OnItemClickListener() {
         public void onItemClick(AdapterView<?> parent, View view, int pos, long id) { //按一次Item事件
             if (palist.get(pos).tag.equals(PARecord.TAG_PRecord)) {
@@ -477,21 +588,66 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
         super.onDestroy();
     }
 
+    protected void doCropPhoto(Uri data) {
+        try {
+            //進行照片裁剪
+            Intent intent = new Intent("com.android.camera.action.CROP");
+            intent.setDataAndType(data, "image/*");
+//        intent.setType("image/*");
+//        intent.putExtra("data", data);
+            intent.putExtra("crop", "true");// crop=true 有這句才能叫出裁剪頁面.
+            intent.putExtra("aspectX", 1);// 这兩項為裁剪框的比例.
+            intent.putExtra("aspectY", 1);// x:y=1:1
+            intent.putExtra("outputX", 1000);//回傳照片比例X
+            intent.putExtra("outputY", 1000);//回傳照片比例Y
+            intent.putExtra("return-data", true);
+            startActivityForResult(intent, TRIM_PICTURE);
+        } catch (ActivityNotFoundException anfe) {
+            String errorMessage = "Whoops - your device doesn't support the crop action!";
+            Toast.makeText(ctxt, errorMessage, Toast.LENGTH_SHORT).show();
+        }
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == AddAct) {
-            if (resultCode == RESULT_OK) {
-                boolean Success = data.getBooleanExtra("SUCCESS", false);
-                if (Success) { // if success , refresh
-                    LoadingAllProblem();
-                }
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case AddAct:
+                    boolean Success = data.getBooleanExtra("SUCCESS", false);
+                    if (Success) { // if success , refresh
+                        LoadingAllProblem();
+                    }
+                    break;
+                case PICK_PICTURE:
+                    Uri uri = data.getData();
+                    doCropPhoto(uri);
+                    break;
+                case TAKE_PICTURE:
+                    Bitmap iBitmap = (Bitmap) data.getExtras().get("data");
+
+                    break;
+                case TRIM_PICTURE:
+                    Bitmap result = data.getParcelableExtra("data");
+
+                    ImageView iv = new ImageView(ctxt);
+                    iv.setImageBitmap(result);
+                    new AlertDialog.Builder(ctxt, AlertDialog.THEME_HOLO_LIGHT).setView(iv).setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialogInterface, int i) {
+
+                        }
+                    }).setNegativeButton("Cancel", null).show();
+                    break;
+            }
+
+
+            if (requestCode == AddAct) {
+
             }
         }
     }
 
     private long lastpresstime = 0;
 
-    @Override
     public void onBackPressed() {
         if (System.currentTimeMillis() - lastpresstime < 2000) {
             super.onBackPressed();

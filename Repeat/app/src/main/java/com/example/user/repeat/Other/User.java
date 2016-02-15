@@ -8,6 +8,8 @@ public class User {
     private String CustomerNo;
     private String FLaborNo;
     private String CellPhone;
+    private String ChineseName;
+    private String LaborPhoto;
 
     private User() {
 
@@ -16,6 +18,23 @@ public class User {
     public static User getUser() {
         return user;
     }
+
+    public String getChineseName() {
+        return ChineseName;
+    }
+
+    public void setChineseName(String chineseName) {
+        ChineseName = chineseName;
+    }
+
+    public String getLaborPhoto() {
+        return LaborPhoto;
+    }
+
+    public void setLaborPhoto(String laborPhoto) {
+        LaborPhoto = laborPhoto;
+    }
+
 
     public String getCustomerNo() {
         return CustomerNo;

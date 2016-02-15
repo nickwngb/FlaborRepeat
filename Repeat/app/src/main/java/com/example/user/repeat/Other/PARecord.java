@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * Created by user on 2015/12/29.
  */
-public class PARecord implements Serializable{ // For Adapter
+public class PARecord implements Serializable { // For Adapter
     // ARecord = AnnouncementRecord
     // PRecord = ProblemRecord
     public String tag;
@@ -15,13 +15,14 @@ public class PARecord implements Serializable{ // For Adapter
     private int PRSNo;
     private String CustomerNo;
     private String FLaborNo;
-    private String ProblemDescription;
-    private String CreateProblemDate;
-    private String ResponseResult;
-    private String ResponseDate;
-    private String ResponseID;
     private String SatisfactionDegree;
     private String ProblemStatus;
+
+    private String ResponseContent;
+    private String ResponseDate;
+    private String ResponseID;
+    private String ResponseRole;
+
     // AnnouncementRecord
     private int MPSNo;
     private String PushContent;
@@ -44,36 +45,28 @@ public class PARecord implements Serializable{ // For Adapter
         CustomerNo = customerNo;
     }
 
+    public String getResponseContent() {
+        return ResponseContent;
+    }
+
+    public void setResponseContent(String responseContent) {
+        ResponseContent = responseContent;
+    }
+
+    public String getResponseRole() {
+        return ResponseRole;
+    }
+
+    public void setResponseRole(String responseRole) {
+        ResponseRole = responseRole;
+    }
+
     public String getFLaborNo() {
         return FLaborNo;
     }
 
     public void setFLaborNo(String FLaborNo) {
         this.FLaborNo = FLaborNo;
-    }
-
-    public String getProblemDescription() {
-        return ProblemDescription;
-    }
-
-    public void setProblemDescription(String problemDescription) {
-        ProblemDescription = problemDescription;
-    }
-
-    public String getCreateProblemDate() {
-        return CreateProblemDate;
-    }
-
-    public void setCreateProblemDate(String createProblemDate) {
-        CreateProblemDate = createProblemDate;
-    }
-
-    public String getResponseResult() {
-        return ResponseResult;
-    }
-
-    public void setResponseResult(String responseResult) {
-        ResponseResult = responseResult;
     }
 
     public String getResponseDate() {
