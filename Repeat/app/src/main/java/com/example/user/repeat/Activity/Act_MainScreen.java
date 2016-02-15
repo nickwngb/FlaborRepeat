@@ -290,7 +290,7 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
                 case Code.ConnectTimeOut:
                     break;
                 default:
-                    Uti.t(ctxt, "error : "+result);
+                    Uti.t(ctxt, "error : " + result);
             }
         }
     }
@@ -301,14 +301,13 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
         // http
         conn = new HttpConnection();
         // receiver
-        mGBGCM = new GoldBrotherGCM(this);
-        mRefreshReceiver = new RefreshReceiver();
+//        mGBGCM = new GoldBrotherGCM(this);
+//        mRefreshReceiver = new RefreshReceiver();
         // List
         palist = new ArrayList<>();
         announcementlist = new ArrayList<>();
         problemlist = new ArrayList<>();
         pa_adapter = new PAListAdapter(this, palist);
-
     }
 
     private void InitialUI() {
@@ -318,25 +317,25 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
 
     private void InitialAction() {
         // Other
-        if (mGBGCM.getRegistrationId().isEmpty()) {
-            mGBGCM.setMagicLenGCMListener(this);
-            mGBGCM.openGCM();
-        } else {
-            Log.i("RegId is Exsit:", mGBGCM.getRegistrationId());
-            AddRegIdToAPPServer(mGBGCM.getRegistrationId());
-        }
+//        if (mGBGCM.getRegistrationId().isEmpty()) {
+//            mGBGCM.setMagicLenGCMListener(this);
+//            mGBGCM.openGCM();
+//        } else {
+//            Log.i("RegId is Exsit:", mGBGCM.getRegistrationId());
+//            AddRegIdToAPPServer(mGBGCM.getRegistrationId());
+//        }
         // UI
         bt_repeat.setOnClickListener(onclicklistener);
         list_reaprethistory.setOnItemClickListener(onitemclicklistener);
         list_reaprethistory.setAdapter(pa_adapter);
         //GCM Refresh
-        mRefreshReceiver.setOnrefreshListener(this);
-
-        IntentFilter intentFilter = new IntentFilter();
-
-        intentFilter.addAction("Refresh");
-
-        registerReceiver(mRefreshReceiver, intentFilter);
+//        mRefreshReceiver.setOnrefreshListener(this);
+//
+//        IntentFilter intentFilter = new IntentFilter();
+//
+//        intentFilter.addAction("Refresh");
+//
+//        registerReceiver(mRefreshReceiver, intentFilter);
     }
 
     private void refreshPAList() {
@@ -449,8 +448,6 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
     }
 
     private View.OnClickListener onclicklistener = new View.OnClickListener() {
-
-        @Override
         public void onClick(View v) {
             Intent i = new Intent();
             i.setClass(ctxt, Act_Addwindow.class);
@@ -458,8 +455,6 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
         }
     };
     private AdapterView.OnItemClickListener onitemclicklistener = new AdapterView.OnItemClickListener() {
-
-        @Override
         public void onItemClick(AdapterView<?> parent, View view, int pos, long id) { //按一次Item事件
             if (palist.get(pos).tag.equals(PARecord.TAG_PRecord)) {
                 Intent i = new Intent(ctxt, Act_Problem.class);
@@ -476,8 +471,9 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
             }
         }
     };
+
     public void onDestroy() {
-        unregisterReceiver(mRefreshReceiver);
+        //unregisterReceiver(mRefreshReceiver);
         super.onDestroy();
     }
 
@@ -492,8 +488,9 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
             }
         }
     }
-    
+
     private long lastpresstime = 0;
+
     @Override
     public void onBackPressed() {
         if (System.currentTimeMillis() - lastpresstime < 2000) {

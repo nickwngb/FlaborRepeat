@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -15,6 +16,8 @@ import com.example.user.repeat.Other.PARecord;
 import com.example.user.repeat.R;
 
 import java.util.List;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by user on 2015/12/10.
@@ -26,9 +29,9 @@ public class PAListAdapter extends BaseAdapter {
     private List<PARecord> list;
 
     public PAListAdapter(Context context, List<PARecord> list) {
-        ctxt = context;
-        myInflater = LayoutInflater.from(context);
-        res = ctxt.getResources();
+        this.ctxt = context;
+        this.myInflater = LayoutInflater.from(context);
+        this.res = ctxt.getResources();
         this.list = list;
     }
 
@@ -50,11 +53,11 @@ public class PAListAdapter extends BaseAdapter {
     public View getView(int position, View v, ViewGroup parent) {
         ViewTag tag;
         if (v == null) {
-            tag = new ViewTag();
             v = myInflater.inflate(R.layout.item_problemlist, null);
-            tag.CreateProblemDate = (TextView) v.findViewById(R.id.txt_item_createproblemdate);
-            tag.ProblemContent = (TextView) v.findViewById(R.id.txt_problemcontent);
-            tag.linear_back = (LinearLayout) v.findViewById(R.id.linear_back);
+            tag = new ViewTag();
+            tag.CreateProblemDate = (TextView) v.findViewById(R.id.tv_item_createproblemdate);
+            tag.ProblemContent = (TextView) v.findViewById(R.id.tv_item_problemcontent);
+            tag.Status = (ImageView) v.findViewById(R.id.img_item_status);
             v.setTag(tag);
         } else {
             tag = (ViewTag) v.getTag();
@@ -67,26 +70,28 @@ public class PAListAdapter extends BaseAdapter {
             // set status
             switch (getItem(position).getProblemStatus()) {
                 case Code.Untreated:
-                    tag.linear_back.setBackground(res.getDrawable(R.drawable.item_bg_untreated));
+                    tag.Status.setBackground(res.getDrawable(R.drawable.item_bg_untreated));
                     break;
                 case Code.Processing:
-                    tag.linear_back.setBackground(res.getDrawable(R.drawable.item_bg_processing));
+                    tag.Status.setBackground(res.getDrawable(R.drawable.item_bg_processing));
                     break;
                 case Code.Completed:
-                    tag.linear_back.setBackground(res.getDrawable(R.drawable.item_bg_completed));
+                    tag.Status.setBackground(res.getDrawable(R.drawable.item_bg_completed));
                     break;
             }
         } else {
             tag.CreateProblemDate.setText(par.getCreateDate());
             tag.ProblemContent.setText(par.getPushContent());
-            tag.linear_back.setBackgroundColor(Color.TRANSPARENT);
+            tag.Status.setBackgroundColor(Color.TRANSPARENT);
         }
         return v;
     }
 
-    class ViewTag {
-        TextView CreateProblemDate;
-        TextView ProblemContent;
-        LinearLayout linear_back;
+    static class ViewTag {
+        public CircleImageView c;
+        public TextView CreateProblemDate;
+        public TextView ProblemContent;
+        public ImageView Status;
+
     }
 }

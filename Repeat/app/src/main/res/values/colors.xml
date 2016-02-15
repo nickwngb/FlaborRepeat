@@ -2,9 +2,9 @@
 <resources>
 
     <!-- THEME -->
-    <color name="colorPrimary">#039BE5</color>
+    <color name="colorPrimary">#01579B</color>
     <color name="colorAccent">#01579B</color>
-    <color name="colorPrimaryDark">#0288D1</color>
+    <color name="colorPrimaryDark">#01579B</color>
 
     <!--  Basic Color -->
     <color name="black">#000000</color>
