@@ -7,10 +7,13 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
@@ -22,6 +25,7 @@ import com.example.user.repeat.Other.ProblemRecord;
 import com.example.user.repeat.Other.URLs;
 import com.example.user.repeat.Other.Uti;
 import com.example.user.repeat.R;
+import com.example.user.repeat.UI.ItemOffsetDecoration;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -39,10 +43,7 @@ public class Act_Problem extends Activity {
     private Resources res;
     private PARecord par;
     // UI
-    private TextView txt_problem_createdate, txt_customercontent, txt_managercontent, txt_problem_repeatedate;
-    private LinearLayout ll_givestart;
-    private Button bt_givestart;
-    private RatingBar rb_score;
+    private ListView lv_responses;
     // other
 
 
@@ -50,11 +51,10 @@ public class Act_Problem extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act_problem);
-
-        getExtras();
         InitialSomething();
         InitialUI();
         InitialAction();
+        getExtrasAndExecute();
     }
 
     private void RatingTask(String... datas) {
@@ -123,36 +123,15 @@ public class Act_Problem extends Activity {
     }
 
     private void InitialUI() {
-        ll_givestart = (LinearLayout) findViewById(R.id.ll_givestart);
-        bt_givestart = (Button) findViewById(R.id.bt_givestart);
-        rb_score = (RatingBar) findViewById(R.id.rb_score);
-        txt_problem_createdate = (TextView) findViewById(R.id.txt_problem_createdate);
-        txt_customercontent = (TextView) findViewById(R.id.txt_customercontent);
-        txt_problem_repeatedate = (TextView) findViewById(R.id.txt_problem_repeatedate);
-        txt_managercontent = (TextView) findViewById(R.id.txt_managercontent);
+        lv_responses = (ListView) findViewById(R.id.lv_responses);
     }
 
     private void InitialAction() {
-        txt_problem_createdate.setText(par.getCreateProblemDate());
-        txt_customercontent.setText(par.getProblemDescription());
-        txt_problem_repeatedate.setText(par.getResponseDate());
-        txt_managercontent.setText(par.getResponseResult());
 
-        if (par.getProblemStatus().equals(Code.Completed)) {
-            ll_givestart.setVisibility(View.VISIBLE);
-            Uti.t(ctxt, "Rating me !");
-        }
 
-        bt_givestart.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                String start = String.valueOf((int) rb_score.getRating());
-                RatingTask(start);
-            }
-        });
     }
 
-    private void getExtras() {
-        Bundle b = getIntent().getExtras();
-        par = (PARecord) b.getSerializable("ProblemRecord");
+    private void getExtrasAndExecute() {
+        int PRSNo = getIntent().getIntExtra("PRSNo", 0);
     }
 }

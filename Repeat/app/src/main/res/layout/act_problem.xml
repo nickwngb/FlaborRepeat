@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin">
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
 
     <LinearLayout
@@ -11,100 +10,15 @@
         android:orientation="vertical">
 
         <ImageView
-        android:id="@+id/imageView2"
-        android:layout_width="match_parent"
-        android:layout_height="70sp"
-        android:background="@drawable/title" />
-
-        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:background="@drawable/maintextbox1_1">
+            android:layout_height="70sp"
+            android:background="@drawable/title"/>
 
-            <TextView
-                android:id="@+id/txt_problem_createdate"
-                android:layout_width="match_parent"
-                android:layout_height="25dp"
-                android:background="@drawable/mainlistbackground"
-                android:paddingLeft="40dp"
-                android:paddingTop="5dp"
-                android:layout_marginLeft="20dp"
-                android:text="Create Time"
-                android:textColor="@color/gray"
-                android:textSize="12sp" />
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/txt_customercontent"
+        <ListView
+            android:padding="10dp"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:background="@drawable/maintextbox1_2"
-            android:paddingLeft="16sp"
-            android:paddingRight="16sp"
-            android:textColor="@color/black"
-            android:textSize="20sp" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:background="@drawable/maintextbox2_1">
-
-            <TextView
-                android:id="@+id/txt_problem_repeatedate"
-                android:layout_width="match_parent"
-                android:layout_height="25dp"
-                android:background="@drawable/mainlistbackground"
-                android:layout_marginLeft="20dp"
-                android:paddingTop="5dp"
-                android:paddingLeft="40dp"
-                android:text="Create Time"
-                android:textColor="@color/gray"
-                android:textSize="12sp" />
-
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/txt_managercontent"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:background="@drawable/maintextbox2_2"
-            android:paddingLeft="16sp"
-            android:paddingRight="16sp"
-            android:textColor="@color/black"
-            android:textSize="20sp" />
-
-        <LinearLayout
-            android:id="@+id/ll_givestart"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16sp"
-            android:layout_marginRight="16sp"
-            android:orientation="horizontal"
-            android:visibility="gone">
-
-            <RatingBar
-                android:id="@+id/rb_score"
-                style="@style/myRatingBar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:numStars="5"
-                android:rating="5"
-                android:stepSize="1" />
-
-            <Button
-                android:id="@+id/bt_givestart"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:text="Give"
-                android:textAllCaps="false"
-                android:textSize="24sp" />
-        </LinearLayout>
-
+            android:layout_height="match_parent"
+            android:id="@+id/lv_responses"/>
     </LinearLayout>
 
 </RelativeLayout>

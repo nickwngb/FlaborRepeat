@@ -14,4 +14,7 @@ public class Code {
     public static final int RegIdFail = 0;
     public static final int ConnectTimeOut =-1;
     public static final int RegIdEmpty = -2;
+
+    public static final String Flabor = "0";
+    public static final String Manager = "1";
 }

@@ -58,7 +58,7 @@ public class HttpConnection {
             } else {
                 response = "";
             }
-            Log.i("Response", response);
+            Log.i("ProblemResult", response);
         } catch (Exception e) {
             Log.i("ResponseEX", response);
             e.printStackTrace();

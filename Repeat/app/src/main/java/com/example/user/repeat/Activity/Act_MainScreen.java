@@ -7,11 +7,8 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.res.Resources;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -26,14 +23,13 @@ import android.widget.Toast;
 
 import com.example.user.repeat.Adapter.PAListAdapter;
 import com.example.user.repeat.Other.AnnouncementRecord;
-import com.example.user.repeat.Other.BitmapTransformer;
 import com.example.user.repeat.Other.Code;
 import com.example.user.repeat.Other.Hardware;
 import com.example.user.repeat.Other.HttpConnection;
 import com.example.user.repeat.Other.Net;
 import com.example.user.repeat.Other.PARecord;
 import com.example.user.repeat.Other.ProblemRecord;
-import com.example.user.repeat.Other.Response;
+import com.example.user.repeat.Other.ProblemResponse;
 import com.example.user.repeat.Other.URLs;
 import com.example.user.repeat.Other.User;
 import com.example.user.repeat.Other.Uti;
@@ -73,7 +69,7 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
     private ListView list_reaprethistory;
     // Other
     private List<ProblemRecord> problemlist;
-    private List<Response> responselist;
+    private List<ProblemResponse> responselist;
     private List<AnnouncementRecord> announcementlist;
     private List<PARecord> palist;
     private PAListAdapter pa_adapter;
@@ -276,7 +272,7 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
                         JSONArray array = jobj.getJSONArray("fannouncements");
                         for (int i = 0; i < array.length(); i++) {
                             JSONObject ajobj = array.getJSONObject(i);
-                            Response rs = new Response();
+                            ProblemResponse rs = new ProblemResponse();
                             rs.setPRSNo(ajobj.getInt("PRSNo"));
                             rs.setResponseContent(ajobj.getString("ResponseContent"));
                             rs.setResponseDate(ajobj.getString("ResponseDate"));
@@ -311,7 +307,7 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
         }
 
         private void PairWithRecord() {
-            for (Response rs : responselist) {
+            for (ProblemResponse rs : responselist) {
                 int prsno = rs.getPRSNo();
                 for (ProblemRecord pr : problemlist) {
                     if (prsno == pr.getPRSNo()) {
@@ -566,12 +562,11 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
     }
 
     private AdapterView.OnItemClickListener onitemclicklistener = new AdapterView.OnItemClickListener() {
-        public void onItemClick(AdapterView<?> parent, View view, int pos, long id) { //按一次Item事件
-            if (palist.get(pos).tag.equals(PARecord.TAG_PRecord)) {
+        public void onItemClick(AdapterView<?> parent, View view, int pos, long id) {
+            PARecord par =palist.get(pos);
+            if (par.tag.equals(PARecord.TAG_PRecord)) {
                 Intent i = new Intent(ctxt, Act_Problem.class);
-                Bundle b = new Bundle();
-                b.putSerializable("ProblemRecord", palist.get(pos));
-                i.putExtras(b);
+                i.putExtra("PRSNo",par.getPRSNo());
                 startActivity(i);
             } else {
                 Intent i = new Intent(ctxt, Act_Announcement.class);
@@ -598,8 +593,8 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
             intent.putExtra("crop", "true");// crop=true 有這句才能叫出裁剪頁面.
             intent.putExtra("aspectX", 1);// 这兩項為裁剪框的比例.
             intent.putExtra("aspectY", 1);// x:y=1:1
-            intent.putExtra("outputX", 1000);//回傳照片比例X
-            intent.putExtra("outputY", 1000);//回傳照片比例Y
+            intent.putExtra("outputX", 300);//回傳照片比例X
+            intent.putExtra("outputY", 300);//回傳照片比例Y
             intent.putExtra("return-data", true);
             startActivityForResult(intent, TRIM_PICTURE);
         } catch (ActivityNotFoundException anfe) {

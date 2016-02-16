@@ -14,7 +14,7 @@ public class URLs {
      */
     public static final String url_allannouncement = serverip + "pb_allannouncements";
     /**
-     *   Response
+     *   ProblemResponse
      */
     public static final String url_response = serverip + "pb_response";
     public static final String url_allresponse = serverip + "pb_allresponse";
@@ -24,7 +24,17 @@ public class URLs {
     public static final String url_loadimage = serverip + "pb_loadimage";
 
     public static final String url_allproblem = serverip + "pb_allproblem";
+    /**
+     *   AddProblem
+     */
     public static final String url_addproblem = serverip + "pb_addproblem";
+    /**
+     *   AddResponse
+     */
+    public static final String url_addresponse = serverip + "pb_addresponse";
+    /**
+     *   UpdateRating
+     */
     public static final String url_updatestart = serverip + "pb_updatestar";
     public static final String url_gcm_register = serverip + "gcm_register";
 }

@@ -11,7 +11,7 @@ public class ProblemRecord implements Serializable {
     private String FLaborNo;
     private String SatisfactionDegree;
     private String ProblemStatus;
-    // Last Response
+    // Last ProblemResponse
     private String ResponseContent;
     private String ResponseDate;
     private String ResponseID;

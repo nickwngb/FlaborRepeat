@@ -36,16 +36,12 @@ import de.hdodenhof.circleimageview.CircleImageView;
 /**
  * Created by user on 2015/12/10.
  */
-public class PAListAdapter extends BaseAdapter {
-    private Context ctxt;
-    private LayoutInflater myInflater;
-    private Resources res;
+public class PAListAdapter extends MyBaseAdapter {
+
     private List<PARecord> list;
 
     public PAListAdapter(Context context, List<PARecord> list) {
-        this.ctxt = context;
-        this.myInflater = LayoutInflater.from(context);
-        this.res = ctxt.getResources();
+        super(context);
         this.list = list;
     }
 
@@ -67,7 +63,7 @@ public class PAListAdapter extends BaseAdapter {
     public View getView(int position, View v, ViewGroup parent) {
         ViewTag tag;
         if (v == null) {
-            v = myInflater.inflate(R.layout.item_problemlist, null);
+            v = getInflater().inflate(R.layout.item_problemlist, null);
             tag = new ViewTag();
             tag.Photo = (CircleImageView) v.findViewById(R.id.img_item_photo);
             tag.CreateProblemDate = (TextView) v.findViewById(R.id.tv_item_createproblemdate);
@@ -85,13 +81,13 @@ public class PAListAdapter extends BaseAdapter {
             // set status
             switch (getItem(position).getProblemStatus()) {
                 case Code.Untreated:
-                    tag.Status.setBackground(res.getDrawable(R.drawable.item_bg_untreated));
+                    tag.Status.setBackground(getResources().getDrawable(R.drawable.item_bg_untreated));
                     break;
                 case Code.Processing:
-                    tag.Status.setBackground(res.getDrawable(R.drawable.item_bg_processing));
+                    tag.Status.setBackground(getResources().getDrawable(R.drawable.item_bg_processing));
                     break;
                 case Code.Completed:
-                    tag.Status.setBackground(res.getDrawable(R.drawable.item_bg_completed));
+                    tag.Status.setBackground(getResources().getDrawable(R.drawable.item_bg_completed));
                     break;
             }
             LoadImage(tag.Photo, par.getResponseRole());
@@ -117,7 +113,7 @@ public class PAListAdapter extends BaseAdapter {
     private static final String M = "1";
 
     private void LoadImage(CircleImageView circleImageView, String... params) {
-        if (Net.isNetWork(ctxt)) {
+        if (Net.isNetWork(getContext())) {
             if (params.length == 2) {
                 new LoadImage(circleImageView, params[0], params[1]).execute();
             } else if (params.length == 1) {

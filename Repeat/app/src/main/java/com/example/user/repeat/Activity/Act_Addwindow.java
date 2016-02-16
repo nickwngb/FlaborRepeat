@@ -67,7 +67,7 @@ public class Act_Addwindow extends Activity {
         @Override
         protected void onPreExecute() {
             pDialog = new ProgressDialog(ctxt);
-            pDialog.setMessage("Login...");
+            pDialog.setMessage("Loading...");
             pDialog.setIndeterminate(false);
             pDialog.setCancelable(true);
             pDialog.show();
@@ -85,6 +85,8 @@ public class Act_Addwindow extends Activity {
                 postFields.add(new BasicNameValuePair("ProblemDescription", content));
                 postFields.add(new BasicNameValuePair("CreateProblemDate", getCurrentDateTime()));
                 postFields.add(new BasicNameValuePair("ProblemStatus", Code.Untreated));
+                postFields.add(new BasicNameValuePair("ResponseID", user.getChineseName()));
+                postFields.add(new BasicNameValuePair("ResponseRole", Code.Flabor));
 
                 JSONObject jobj = conn.PostGetJson(URLs.url_addproblem, postFields);
                 if (jobj != null) {
