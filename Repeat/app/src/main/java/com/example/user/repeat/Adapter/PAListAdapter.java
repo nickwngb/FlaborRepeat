@@ -90,7 +90,7 @@ public class PAListAdapter extends MyBaseAdapter {
                     tag.Status.setBackground(getResources().getDrawable(R.drawable.item_bg_completed));
                     break;
             }
-            LoadImage(tag.Photo, par.getResponseRole());
+            //LoadImage(tag.Photo, par.getResponseRole());
         } else {
             tag.CreateProblemDate.setText(par.getCreateDate());
             tag.ProblemContent.setText(par.getPushContent());

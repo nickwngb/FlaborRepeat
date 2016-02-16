@@ -135,7 +135,16 @@ public class Act_Login extends AppCompatActivity {
     }
 
     private void InitialAction() {
-        bt_login.setOnClickListener(onclicklistener);
+        bt_login.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+//                String phone = edit_loginphone.getText().toString();
+//                if (!phone.isEmpty()) {
+//                    LoginTask(phone);
+//                }
+                Intent i = new Intent(ctxt, Act_MainScreen.class);
+                startActivity(i);
+            }
+        });
     }
 
     private void InitialUI() {
@@ -149,23 +158,12 @@ public class Act_Login extends AppCompatActivity {
         user = User.getUser();
     }
 
-    private View.OnClickListener onclicklistener = new View.OnClickListener() {
-
-        public void onClick(View v) {
-            String phone = edit_loginphone.getText().toString();
-            if (!phone.isEmpty()) {
-                LoginTask(phone);
-            }
-
-        }
-    };
-
     public void readData() {
         settings = getSharedPreferences(data, 0);
         phone = settings.getString(phoneField, "");
-        if (!phone.isEmpty()) {
-            LoginTask(phone);
-        }
+//        if (!phone.isEmpty()) {
+//            LoginTask(phone);
+//        }
     }
 
     public void saveData() {

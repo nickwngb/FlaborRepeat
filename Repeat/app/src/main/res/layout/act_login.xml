@@ -1,41 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/enterbackground"
-    android:orientation="vertical">
+    android:background="@drawable/background_login">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginLeft="50dp"
-        android:layout_marginRight="50dp"
-        android:layout_marginTop="50dp"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp"
-        android:weightSum="1"
-        android:visibility="visible"
-        android:id="@+id/linear_customer">
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:id="@+id/linear_customer"
+        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
 
         <EditText
             android:id="@+id/edit_loginphone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20sp"
-            android:gravity="center"
             android:hint="phone number"
+			android:textColor="@color/white"
+            android:textColorHint="@color/white"
             android:inputType="number"
             android:textSize="24sp" />
 
         <Button
             android:id="@+id/bt_login"
-            android:layout_width="wrap_content"
-            android:layout_height="36dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="14sp"
-            android:background="@drawable/loginbutton"
+            android:textAllCaps="false"
+            android:textSize="20sp"
+            android:textColor="@color/white"
+            android:background="@color/button_color"
             android:text="Login" />
 
     </LinearLayout>
 
-</LinearLayout>
+    <ImageView
+        android:layout_width="110dp"
+        android:layout_height="110dp"
+        android:src="@drawable/img_login"
+        android:layout_above="@+id/linear_customer"
+        android:layout_centerHorizontal="true" />
+
+</RelativeLayout>

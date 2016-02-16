@@ -12,7 +12,7 @@ public class User {
     private String LaborPhoto;
 
     private User() {
-
+        this.ChineseName = "強森";
     }
 
     public static User getUser() {

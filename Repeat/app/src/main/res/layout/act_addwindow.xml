@@ -1,49 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                tools:context="com.example.ntub_student.answerproblem.Act_Addwindow">
+                android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <ImageView
+        <TextView
             android:layout_width="match_parent"
-            android:layout_height="70sp"
-            android:background="@drawable/title"
-            android:id="@+id/imageView3" />
-
-        <Button
-            android:id="@+id/bt_submit"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:layout_marginRight="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="16dp"
-            android:layout_marginLeft="16dp"
-            android:text="Submit"
-            android:textAllCaps="false"
+            android:layout_height="wrap_content"
+            android:text="NEW PROBLEM"
             android:textSize="24sp"
-            android:background="@drawable/submitbutton" />
+            android:paddingLeft="10dp"
+            android:textColor="@color/white"
+            android:gravity="center_vertical"
+            android:background="@drawable/newproblem_title"/>
 
         <EditText
             android:id="@+id/edit_problemcontent"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="5"
+            android:layout_height="match_parent"
             android:gravity="start"
+            android:textCursorDrawable="@color/black"
             android:hint="Enter problem"
-            android:layout_marginRight="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="16dp"
-            android:layout_marginLeft="16dp"
-
+            android:padding="10dp"
             android:textSize="24sp"/>
 
     </LinearLayout>
 
-</RelativeLayout>
+    <Button
+        android:id="@+id/bt_submit"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/send"
+        android:layout_gravity="right|top" />
+
+</FrameLayout>

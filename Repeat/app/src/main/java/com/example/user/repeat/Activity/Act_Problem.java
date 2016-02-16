@@ -16,12 +16,16 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.user.repeat.Adapter.ResponseListAdapter;
 import com.example.user.repeat.Other.Code;
+import com.example.user.repeat.Other.FakeData;
 import com.example.user.repeat.Other.HttpConnection;
 import com.example.user.repeat.Other.Net;
 import com.example.user.repeat.Other.PARecord;
 import com.example.user.repeat.Other.ProblemRecord;
+import com.example.user.repeat.Other.ProblemResponse;
 import com.example.user.repeat.Other.URLs;
 import com.example.user.repeat.Other.Uti;
 import com.example.user.repeat.R;
@@ -44,7 +48,10 @@ public class Act_Problem extends Activity {
     private PARecord par;
     // UI
     private ListView lv_responses;
+    // adapter
+    private ResponseListAdapter adapter;
     // other
+    private List<ProblemResponse> responses;
 
 
     @Override
@@ -120,6 +127,11 @@ public class Act_Problem extends Activity {
     private void InitialSomething() {
         res = getResources();
         conn = new HttpConnection();
+
+        int PRSNo = getIntent().getIntExtra("PRSNo", 0);
+//        responses = new ArrayList<>();
+        responses = FakeData.getResponse(PRSNo);
+        adapter = new ResponseListAdapter(ctxt, responses);
     }
 
     private void InitialUI() {
@@ -127,11 +139,10 @@ public class Act_Problem extends Activity {
     }
 
     private void InitialAction() {
-
-
+        lv_responses.setAdapter(adapter);
     }
 
     private void getExtrasAndExecute() {
-        int PRSNo = getIntent().getIntExtra("PRSNo", 0);
+//        int PRSNo = getIntent().getIntExtra("PRSNo", 0);
     }
 }

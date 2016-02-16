@@ -24,6 +24,7 @@ import android.widget.Toast;
 import com.example.user.repeat.Adapter.PAListAdapter;
 import com.example.user.repeat.Other.AnnouncementRecord;
 import com.example.user.repeat.Other.Code;
+import com.example.user.repeat.Other.FakeData;
 import com.example.user.repeat.Other.Hardware;
 import com.example.user.repeat.Other.HttpConnection;
 import com.example.user.repeat.Other.Net;
@@ -81,7 +82,7 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
         InitialSomething();
         InitialUI();
         InitialAction();
-        LoadingAllProblem();
+        //LoadingAllProblem();
     }
 
     // implements methods
@@ -406,6 +407,9 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
         announcementlist = new ArrayList<>();
         problemlist = new ArrayList<>();
         responselist = new ArrayList<>();
+
+        palist = FakeData.getPARecord();
+
         pa_adapter = new PAListAdapter(this, palist);
     }
 
