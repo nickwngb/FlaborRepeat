@@ -7,7 +7,7 @@ import android.content.Context;
  * Created by v on 2016/2/17.
  */
 public class FreeDialog {
-    public ProgressDialog getProgressDialog(Context ctxt, String message) {
+    public static ProgressDialog getProgressDialog(Context ctxt, String message) {
         ProgressDialog pDialog = new ProgressDialog(ctxt);
         pDialog.setMessage(message);
         pDialog.setIndeterminate(false);

@@ -23,6 +23,7 @@ import java.util.List;
 public class UploadPhoto extends AsyncTask<String, Integer, Integer> {
     public interface OnUpdatePhotoListener {
         void finish(Integer result);
+
     }
 
     private HttpConnection conn;

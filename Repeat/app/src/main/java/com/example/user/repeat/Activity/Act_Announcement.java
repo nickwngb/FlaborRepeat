@@ -9,15 +9,14 @@ import com.example.user.repeat.R;
 
 
 public class Act_Announcement extends AppCompatActivity {
-    private PARecord par;
     private TextView txt_announcementcreatedate, txt_announcemeantcontent;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act_announcement);
-        getExtras();
         InitialUI();
         InitialAction();
+        getExtras();
     }
 
     private void InitialUI() {
@@ -26,12 +25,12 @@ public class Act_Announcement extends AppCompatActivity {
     }
 
     private void InitialAction() {
-        txt_announcementcreatedate.setText(par.getCreateDate());
-        txt_announcemeantcontent.setText(par.getPushContent());
+//        txt_announcementcreatedate.setText(par.getCreateDate());
+//        txt_announcemeantcontent.setText(par.getPushContent());
     }
 
     private void getExtras() {
-        Bundle b = getIntent().getExtras();
-        par = (PARecord) b.getSerializable("AnnouncementRecord");
+        int MPSNo = getIntent().getIntExtra("MPSNo", 0);
+
     }
 }

@@ -1,10 +1,13 @@
 package com.example.user.repeat.Asyn;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
+import com.example.user.repeat.Other.AnnouncementRecord;
 import com.example.user.repeat.Other.Code;
 import com.example.user.repeat.Other.HttpConnection;
 import com.example.user.repeat.Other.ProblemRecord;
+import com.example.user.repeat.Other.ProblemResponse;
 import com.example.user.repeat.Other.URLs;
 
 import org.apache.http.NameValuePair;
@@ -17,20 +20,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by v on 2016/2/17.
+ * Created by hao_jun on 2016/2/17.
  */
-public class LoadAllProblem extends AsyncTask<String, Integer, Integer> {
-    public interface OnLoadAllProblemListener {
-        void finish(Integer result,List<ProblemRecord> list);
+public class LoadAllAnnouncement extends AsyncTask<String, Integer, Integer> {
+    public interface OnLoadAllAnnouncementListener {
+        void finish(Integer result, List<AnnouncementRecord> list);
     }
 
     private final HttpConnection conn;
-    private final OnLoadAllProblemListener mListener;
-    private List<ProblemRecord> list;
+    private final OnLoadAllAnnouncementListener mListener;
+    private List<AnnouncementRecord> list;
     private String fNo;
     private String cNo;
 
-    public LoadAllProblem(HttpConnection conn, OnLoadAllProblemListener mListener) {
+    public LoadAllAnnouncement(HttpConnection conn, OnLoadAllAnnouncementListener mListener) {
         this.conn = conn;
         this.mListener = mListener;
         this.list = new ArrayList<>();
@@ -42,29 +45,27 @@ public class LoadAllProblem extends AsyncTask<String, Integer, Integer> {
         fNo = datas[0];
         cNo = datas[1];
         try {
-            // put "phone" post out, get json
             List<NameValuePair> postFields = new ArrayList<>();
             postFields.add(new BasicNameValuePair("FLaborNo", fNo));
             postFields.add(new BasicNameValuePair("CustomerNo", cNo));
-            JSONObject jobj = conn.PostGetJson(URLs.url_allproblem, postFields);
+            JSONObject jobj = conn.PostGetJson(URLs.url_allannouncement, postFields);
             if (jobj != null) {
                 result = jobj.getInt("success");
                 if (result == Code.Success) {
-                    JSONArray array = jobj.getJSONArray("fproblems");
+                    JSONArray array = jobj.getJSONArray("fannouncements");
                     for (int i = 0; i < array.length(); i++) {
                         JSONObject ajobj = array.getJSONObject(i);
-                        ProblemRecord fproblem = new ProblemRecord();
-                        fproblem.setPRSNo(ajobj.getInt("PRSNo"));
-                        fproblem.setCustomerNo(ajobj.getString("CustomerNo"));
-                        fproblem.setFLaborNo(ajobj.getString("FLaborNo"));
-                        fproblem.setProblemStatus(ajobj.getString("ProblemStatus"));
-                        fproblem.setSatisfactionDegree(ajobj.getString("SatisfactionDegree"));
+                        AnnouncementRecord fproblem = new AnnouncementRecord();
+                        fproblem.setMPSNo(ajobj.getInt("MPSNo"));
+                        fproblem.setPushContent(ajobj.getString("PushContent"));
+                        fproblem.setCreateID(ajobj.getString("CreateID"));
+                        fproblem.setCreateDate(ajobj.getString("CreateDate"));
                         list.add(fproblem);
                     }
                 }
             }
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.i("LoadingAllAnnouncement", e.toString());
         }
         return result;
     }
@@ -72,6 +73,6 @@ public class LoadAllProblem extends AsyncTask<String, Integer, Integer> {
     @Override
     protected void onPostExecute(Integer result) {
         super.onPostExecute(result);
-        mListener.finish(result,list);
+        mListener.finish(result, list);
     }
 }

@@ -12,7 +12,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.user.repeat.Asyn.AddProblem;
 import com.example.user.repeat.Other.Code;
+import com.example.user.repeat.Other.FreeDialog;
+import com.example.user.repeat.Other.Hardware;
 import com.example.user.repeat.Other.HttpConnection;
 import com.example.user.repeat.Other.Net;
 import com.example.user.repeat.Other.URLs;
@@ -55,71 +58,33 @@ public class Act_Addwindow extends Activity {
 
     private void AddProblem() {
         if (Net.isNetWork(ctxt)) {
-            new AddProblemTask().execute();
+            AddProblem task = new AddProblem(conn, new AddProblem.OnAddProblemListener() {
+                final ProgressDialog fd = FreeDialog.getProgressDialog(ctxt, "Loading...");
+
+                public void finish(Integer result) {
+                    fd.dismiss();
+                    switch (result) {
+                        case Code.Success:
+                            Intent i = new Intent();
+                            i.putExtra("SUCCESS", true);
+                            setResult(RESULT_OK, i);
+                            finishActivity();
+                            break;
+                        case Code.ResultEmpty:
+                            Uti.t(ctxt, "Add Fail");
+                            break;
+                        case Code.ConnectTimeOut:
+                            Uti.t(ctxt, "Connection Fail");
+                            break;
+                        default:
+                            Uti.t(ctxt, "Error : " + result);
+                    }
+                }
+            });
+            String content = edit_problemcontent.getText().toString();
+            task.execute(user.getFLaborNo(), user.getCustomerNo(), content, getCurrentDateTime(), Code.Untreated, user.getChineseName(), Code.Flabor);
         } else {
             Uti.t(ctxt, res.getString(R.string.msg_err_network));
-        }
-    }
-
-    class AddProblemTask extends AsyncTask<String, Integer, Integer> {
-        private ProgressDialog pDialog;
-        private String content;
-
-        @Override
-        protected void onPreExecute() {
-            pDialog = new ProgressDialog(ctxt);
-            pDialog.setMessage("Loading...");
-            pDialog.setIndeterminate(false);
-            pDialog.setCancelable(true);
-            pDialog.show();
-            content = edit_problemcontent.getText().toString();
-        }
-
-        @Override
-        protected Integer doInBackground(String... datas) {
-            Integer result = Code.ConnectTimeOut;
-            try {
-                // put "phone" post out, get json
-                List<NameValuePair> postFields = new ArrayList<>();
-                postFields.add(new BasicNameValuePair("CustomerNo", user.getCustomerNo()));
-                postFields.add(new BasicNameValuePair("FLaborNo", user.getFLaborNo()));
-                postFields.add(new BasicNameValuePair("ProblemDescription", content));
-                postFields.add(new BasicNameValuePair("CreateProblemDate", getCurrentDateTime()));
-                postFields.add(new BasicNameValuePair("ProblemStatus", Code.Untreated));
-                postFields.add(new BasicNameValuePair("ResponseID", user.getChineseName()));
-                postFields.add(new BasicNameValuePair("ResponseRole", Code.Flabor));
-
-                JSONObject jobj = conn.PostGetJson(URLs.url_addproblem, postFields);
-                if (jobj != null) {
-                    result = jobj.getInt("success");
-                }
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            return result;
-        }
-
-        @Override
-        protected void onPostExecute(Integer result) {
-            pDialog.dismiss();
-            switch (result) {
-                case Code.Success:
-                    // put a boolean , request refresh
-                    Intent i = new Intent();
-                    i.putExtra("SUCCESS", true);
-                    setResult(RESULT_OK, i);
-                    finish();
-                    break;
-                case Code.ResultEmpty:
-                    Uti.t(ctxt, "Add Fail");
-                    break;
-                case Code.ConnectTimeOut:
-                    Uti.t(ctxt, "Connection Fail");
-                    break;
-                default:
-                    Uti.t(ctxt, "Error : " + result);
-            }
         }
     }
 
@@ -143,12 +108,17 @@ public class Act_Addwindow extends Activity {
     private void InitialAction() {
         bt_submit.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                Hardware.closeKeyBoard(ctxt, v);
                 String content = edit_problemcontent.getText().toString();
                 if (Vaild.addProblem(ctxt, content)) {
                     AddProblem();
                 }
             }
         });
+    }
+
+    private void finishActivity() {
+        this.finish();
     }
 
 }

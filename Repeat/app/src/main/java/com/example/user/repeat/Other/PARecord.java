@@ -9,8 +9,8 @@ public class PARecord implements Serializable { // For Adapter
     // ARecord = AnnouncementRecord
     // PRecord = ProblemRecord
     public String tag;
-    public static final String TAG_ARecord = "AnnouncementRecord";
-    public static final String TAG_PRecord = "ProblemRecord";
+    public static final String TAG_Announcement = "AnnouncementRecord";
+    public static final String TAG_Problem = "ProblemRecord";
     // ProblemRecord
     private int PRSNo;
     private String CustomerNo;

@@ -22,12 +22,17 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.user.repeat.Adapter.PAListAdapter;
+import com.example.user.repeat.Asyn.LoadAllAnnouncement;
+import com.example.user.repeat.Asyn.LoadAllProblem;
+import com.example.user.repeat.Asyn.LoadAllResponse;
 import com.example.user.repeat.Asyn.RegisterGCM;
+import com.example.user.repeat.Asyn.UpdateStatus;
 import com.example.user.repeat.Asyn.UploadPhoto;
 import com.example.user.repeat.Other.AnnouncementRecord;
 import com.example.user.repeat.Other.BitmapTransformer;
 import com.example.user.repeat.Other.Code;
 import com.example.user.repeat.Other.FakeData;
+import com.example.user.repeat.Other.FreeDialog;
 import com.example.user.repeat.Other.Hardware;
 import com.example.user.repeat.Other.HttpConnection;
 import com.example.user.repeat.Other.Net;
@@ -95,6 +100,7 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
             RegisterGCMTask(regID);
         }
     }
+
     public boolean gcmSendRegistrationIdToAppServer(String regID) {
         return true;
     }
@@ -102,17 +108,19 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
     // implements methods end
     private void RegisterGCMTask(String id) {
         if (Net.isNetWork(ctxt)) {
+            final ProgressDialog fd = FreeDialog.getProgressDialog(ctxt, "Loading...");
             RegisterGCM task = new RegisterGCM(conn, new RegisterGCM.OnRegisterGCMListener() {
                 public void finish(Integer result) {
+                    fd.dismiss();
                     Log.i("RegisterGCM ", "Result : " + result);
                 }
             });
-            task.execute(id,user.getFLaborNo(),user.getCustomerNo());
-
+            task.execute(id, user.getFLaborNo(), user.getCustomerNo());
         } else {
             Uti.t(ctxt, res.getString(R.string.msg_err_network));
         }
     }
+
     @Override
     public void setRefresh(String text) {
         Toast.makeText(ctxt, text, Toast.LENGTH_SHORT).show();
@@ -121,160 +129,78 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
 
     private void LoadingAllProblem() {
         if (Net.isNetWork(ctxt)) {
-            new LoadingAllProblemTask().execute();
-        } else {
-            Uti.t(ctxt, res.getString(R.string.msg_err_network));
-        }
-    }
-
-    class LoadingAllProblemTask extends AsyncTask<String, Integer, Integer> {
-        private ProgressDialog pDialog;
-
-        protected void onPreExecute() {
-            pDialog = new ProgressDialog(ctxt);
-            pDialog.setMessage("Loading...");
-            pDialog.setIndeterminate(false);
-            pDialog.setCancelable(true);
-            pDialog.show();
-        }
-
-        @Override
-        protected Integer doInBackground(String... strings) {
-            Integer result = Code.ConnectTimeOut;
-            try {
-                problemlist.clear();
-                // put "phone" post out, get json
-                List<NameValuePair> postFields = new ArrayList<>();
-                postFields.add(new BasicNameValuePair("CustomerNo", user.getCustomerNo()));
-                postFields.add(new BasicNameValuePair("FLaborNo", user.getFLaborNo()));
-                JSONObject jobj = conn.PostGetJson(URLs.url_allproblem, postFields);
-                if (jobj != null) {
-                    result = jobj.getInt("success");
-                    if (result == Code.Success) {
-                        JSONArray array = jobj.getJSONArray("fproblems");
-                        for (int i = 0; i < array.length(); i++) {
-                            JSONObject ajobj = array.getJSONObject(i);
-                            ProblemRecord fproblem = new ProblemRecord();
-                            fproblem.setPRSNo(ajobj.getInt("PRSNo"));
-                            fproblem.setCustomerNo(ajobj.getString("CustomerNo"));
-                            fproblem.setFLaborNo(ajobj.getString("FLaborNo"));
-                            fproblem.setProblemStatus(ajobj.getString("ProblemStatus"));
-                            fproblem.setSatisfactionDegree(ajobj.getString("SatisfactionDegree"));
-                            problemlist.add(fproblem);
-                        }
+            final ProgressDialog fd = FreeDialog.getProgressDialog(ctxt, "Loading...");
+            LoadAllProblem task = new LoadAllProblem(conn, new LoadAllProblem.OnLoadAllProblemListener() {
+                public void finish(Integer result, List<ProblemRecord> list) {
+                    fd.dismiss();
+                    problemlist = list;
+                    Log.i("LoadAllProblem ", "Result " + result);
+                    Log.i("LoadAllProblem", "ListSize " + problemlist.size());
+                    switch (result) {
+                        case Code.Success:
+                            LoadAllResponse();
+                            break;
+                        case Code.ResultEmpty:
+                            LoadingAllAnnouncement();
+                            break;
+                        case Code.ConnectTimeOut:
+                            Toast.makeText(ctxt, getResources().getString(R.string.msg_err_noresponse), Toast.LENGTH_SHORT).show();
+                            break;
+                        default:
+                            Uti.t(ctxt, "Loading Problem Error : " + result);
                     }
                 }
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            return result;
-        }
-
-        @Override
-        protected void onPostExecute(Integer result) {
-            pDialog.dismiss();
-            Log.i("LoadingAllProblemTask ", "Result " + result);
-            switch (result) {
-                case Code.Success:
-                    LoadAllResponse();
-                    break;
-                case Code.ResultEmpty:
-
-                    break;
-                case Code.ConnectTimeOut:
-                    break;
-                default:
-                    Uti.t(ctxt, "Loading Problem Error : " + result);
-            }
+            });
+            task.execute(user.getFLaborNo(), user.getCustomerNo());
+        } else {
+            Uti.t(ctxt, res.getString(R.string.msg_err_network));
         }
     }
 
     private void LoadAllResponse() {
         if (Net.isNetWork(ctxt)) {
-            new LoadAllResponse().execute();
+            final ProgressDialog fd = FreeDialog.getProgressDialog(ctxt, "Loading...");
+            LoadAllResponse task = new LoadAllResponse(conn, new LoadAllResponse.OnLoadAllResponseListener() {
+                public void finish(Integer result, List<ProblemResponse> list) {
+                    fd.dismiss();
+                    responselist = list;
+                    Log.i("LoadAllResponse", "Result " + result);
+                    Log.i("LoadAllResponse", "ListSize " + responselist.size());
+                    switch (result) {
+                        case Code.Success:
+                        case Code.ResultEmpty:
+                            PairWithRecord();
+                            LoadingAllAnnouncement();
+                            break;
+                        case Code.ConnectTimeOut:
+                            Toast.makeText(ctxt, getResources().getString(R.string.msg_err_noresponse), Toast.LENGTH_SHORT).show();
+                            break;
+                        default:
+                            Uti.t(ctxt, "error : " + result);
+                    }
+                }
+            });
+            List<Integer> PRSNos = new ArrayList<>();
+            for (ProblemRecord pr : problemlist) {
+                PRSNos.add(pr.getPRSNo());
+            }
+            task.execute(PRSNos);
+
         } else {
             Uti.t(ctxt, res.getString(R.string.msg_err_network));
         }
     }
 
-    class LoadAllResponse extends AsyncTask<String, Integer, Integer> {
-        private ProgressDialog pDialog;
-        private List<Integer> PRSNos;
-
-        protected void onPreExecute() {
-            pDialog = new ProgressDialog(ctxt);
-            pDialog.setMessage("Loading...");
-            pDialog.setIndeterminate(false);
-            pDialog.setCancelable(true);
-            pDialog.show();
-            PRSNos = new ArrayList<>();
+    private void PairWithRecord() {
+        for (ProblemResponse rs : responselist) {
+            int prsno = rs.getPRSNo();
             for (ProblemRecord pr : problemlist) {
-                PRSNos.add(pr.getPRSNo());
-            }
-        }
-
-        @Override
-        protected Integer doInBackground(String... strings) {
-            Integer result = Code.ConnectTimeOut;
-            try {
-                responselist.clear();
-                List<NameValuePair> postFields = new ArrayList<>();
-                for (Integer PRSNo : PRSNos) {
-                    postFields.add(new BasicNameValuePair("PRSNos[]", PRSNo + ""));
-                }
-                JSONObject jobj = conn.PostGetJson(URLs.url_response, postFields);
-                if (jobj != null) {
-                    result = jobj.getInt("success");
-                    if (result == Code.Success) {
-                        JSONArray array = jobj.getJSONArray("fannouncements");
-                        for (int i = 0; i < array.length(); i++) {
-                            JSONObject ajobj = array.getJSONObject(i);
-                            ProblemResponse rs = new ProblemResponse();
-                            rs.setPRSNo(ajobj.getInt("PRSNo"));
-                            rs.setResponseContent(ajobj.getString("ResponseContent"));
-                            rs.setResponseDate(ajobj.getString("ResponseDate"));
-                            rs.setResponseID(ajobj.getString("ResponseID"));
-                            rs.setResponseRole(ajobj.getString("ResponseRole"));
-                            responselist.add(rs);
-                        }
-                    }
-                }
-
-            } catch (JSONException e) {
-                Log.i("LoadAllResponse", e.toString());
-            }
-            return result;
-        }
-
-        @Override
-        protected void onPostExecute(Integer result) {
-            pDialog.dismiss();
-            Log.i("LoadAllResponse", "Result " + result);
-            switch (result) {
-                case Code.Success:
-                case Code.ResultEmpty:
-                    PairWithRecord();
-                    LoadingAllAnnouncement();
+                if (prsno == pr.getPRSNo()) {
+                    pr.setResponseContent(rs.getResponseContent());
+                    pr.setResponseDate(rs.getResponseDate());
+                    pr.setResponseID(rs.getResponseID());
+                    pr.setResponseRole(rs.getResponseRole());
                     break;
-                case Code.ConnectTimeOut:
-                    break;
-                default:
-                    Uti.t(ctxt, "error : " + result);
-            }
-        }
-
-        private void PairWithRecord() {
-            for (ProblemResponse rs : responselist) {
-                int prsno = rs.getPRSNo();
-                for (ProblemRecord pr : problemlist) {
-                    if (prsno == pr.getPRSNo()) {
-                        pr.setResponseContent(rs.getResponseContent());
-                        pr.setResponseDate(rs.getResponseDate());
-                        pr.setResponseID(rs.getResponseID());
-                        pr.setResponseRole(rs.getResponseRole());
-                        break;
-                    }
                 }
             }
         }
@@ -282,90 +208,83 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
 
     private void LoadingAllAnnouncement() {
         if (Net.isNetWork(ctxt)) {
-            new LoadingAllAnnouncementTask().execute();
+            final ProgressDialog fd = FreeDialog.getProgressDialog(ctxt, "Loading...");
+            LoadAllAnnouncement task = new LoadAllAnnouncement(conn, new LoadAllAnnouncement.OnLoadAllAnnouncementListener() {
+                public void finish(Integer result, List<AnnouncementRecord> list) {
+                    fd.dismiss();
+                    announcementlist = list;
+                    Log.i("LoadingAllAnnouncement", "Result " + result);
+                    switch (result) {
+                        case Code.Success:
+                        case Code.ResultEmpty:
+                            if (problemlist.isEmpty() && announcementlist.isEmpty()) {
+                                Uti.t(ctxt, "Empty");
+                            } else {
+                                refreshPAList();
+                            }
+                            break;
+                        case Code.ConnectTimeOut:
+                            Toast.makeText(ctxt, getResources().getString(R.string.msg_err_noresponse), Toast.LENGTH_SHORT).show();
+                            break;
+                        default:
+                            Uti.t(ctxt, "error : " + result);
+                    }
+                }
+            });
+            task.execute(user.getFLaborNo(), user.getCustomerNo());
         } else {
             Uti.t(ctxt, res.getString(R.string.msg_err_network));
         }
     }
 
-    class LoadingAllAnnouncementTask extends AsyncTask<String, Integer, Integer> {
-        private ProgressDialog pDialog;
-
-        protected void onPreExecute() {
-            pDialog = new ProgressDialog(ctxt);
-            pDialog.setMessage("Loading...");
-            pDialog.setIndeterminate(false);
-            pDialog.setCancelable(true);
-            pDialog.show();
-        }
-
-        @Override
-        protected Integer doInBackground(String... strings) {
-            Integer result = Code.ConnectTimeOut;
-            try {
-                announcementlist.clear();
-                List<NameValuePair> postFields = new ArrayList<>();
-                postFields.add(new BasicNameValuePair("CustomerNo", user.getCustomerNo()));
-                postFields.add(new BasicNameValuePair("FLaborNo", user.getFLaborNo()));
-                JSONObject jobj = conn.PostGetJson(URLs.url_allannouncement, postFields);
-                if (jobj != null) {
-                    result = jobj.getInt("success");
-                    if (result == Code.Success) {
-                        JSONArray array = jobj.getJSONArray("fannouncements");
-                        for (int i = 0; i < array.length(); i++) {
-                            JSONObject ajobj = array.getJSONObject(i);
-                            AnnouncementRecord fproblem = new AnnouncementRecord();
-                            fproblem.setMPSNo(ajobj.getInt("MPSNo"));
-                            fproblem.setPushContent(ajobj.getString("PushContent"));
-                            fproblem.setCreateID(ajobj.getString("CreateID"));
-                            fproblem.setCreateDate(ajobj.getString("CreateDate"));
-                            announcementlist.add(fproblem);
-                        }
-                    }
-                }
-
-            } catch (JSONException e) {
-                Log.i("LoadingAllAnnouncement", e.toString());
-            }
-            return result;
-        }
-
-        @Override
-        protected void onPostExecute(Integer result) {
-            pDialog.dismiss();
-            Log.i("LoadingAllAnnouncement", "Result " + result);
-            switch (result) {
-                case Code.Success:
-                case Code.ResultEmpty:
-                    if (problemlist.isEmpty() && announcementlist.isEmpty()) {
-                        Uti.t(ctxt, "Empty");
-                    } else {
-                        refreshPAList();
-                    }
-                    break;
-                case Code.ConnectTimeOut:
-                    break;
-                default:
-                    Uti.t(ctxt, "error : " + result);
-            }
-        }
-    }
-
     private void UploadPhoto(String photo) {
         if (Net.isNetWork(ctxt)) {
-            UploadPhoto task = new UploadPhoto(conn,new UploadPhoto.OnUpdatePhotoListener() {
+            final ProgressDialog fd = FreeDialog.getProgressDialog(ctxt, "Loading...");
+            UploadPhoto task = new UploadPhoto(conn, new UploadPhoto.OnUpdatePhotoListener() {
                 public void finish(Integer result) {
+                    fd.dismiss();
+                    Log.i("UploadPhoto", "Result " + result);
                     switch (result) {
                         case Code.Success:
+                            Toast.makeText(ctxt, "Upload Success", Toast.LENGTH_SHORT).show();
                             break;
                         case Code.ResultEmpty:
+                            Toast.makeText(ctxt, "Upload Fail", Toast.LENGTH_SHORT).show();
                             break;
                         case Code.ConnectTimeOut:
+                            Toast.makeText(ctxt, getResources().getString(R.string.msg_err_noresponse), Toast.LENGTH_SHORT).show();
                             break;
                     }
                 }
             });
             task.execute(Code.Flabor, photo, user.getFLaborNo(), user.getCustomerNo());
+        } else {
+            Toast.makeText(ctxt, getResources().getString(R.string.msg_err_network), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void UpdateStatus(int MPSNo, String status) {
+        if (Net.isNetWork(ctxt)) {
+            final ProgressDialog fd = FreeDialog.getProgressDialog(ctxt, "Loading...");
+            UpdateStatus task = new UpdateStatus(conn, new UpdateStatus.OnUpdateStatusListener() {
+                public void finish(Integer result) {
+                    fd.dismiss();
+                    Log.i("UpdateStatus", "Result " + result);
+                    switch (result) {
+                        case Code.Success:
+                            Toast.makeText(ctxt, "Completed", Toast.LENGTH_SHORT).show();
+                            LoadingAllProblem();
+                            break;
+                        case Code.ResultEmpty:
+                            Toast.makeText(ctxt, "Upload Fail", Toast.LENGTH_SHORT).show();
+                            break;
+                        case Code.ConnectTimeOut:
+                            Toast.makeText(ctxt, getResources().getString(R.string.msg_err_noresponse), Toast.LENGTH_SHORT).show();
+                            break;
+                    }
+                }
+            });
+            task.execute(MPSNo + "", status);
         } else {
             Toast.makeText(ctxt, getResources().getString(R.string.msg_err_network), Toast.LENGTH_SHORT).show();
         }
@@ -384,9 +303,7 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
         announcementlist = new ArrayList<>();
         problemlist = new ArrayList<>();
         responselist = new ArrayList<>();
-
         palist = FakeData.getPARecord();
-
         pa_adapter = new PAListAdapter(this, palist);
     }
 
@@ -421,7 +338,36 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
                 startActivityForResult(iPickPicture, PICK_PICTURE);
             }
         });
-        list_reaprethistory.setOnItemClickListener(onitemclicklistener);
+        list_reaprethistory.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int pos, long l) {
+                PARecord par = palist.get(pos);
+                if (par.tag.equals(PARecord.TAG_Problem)) {
+                    Intent i = new Intent(ctxt, Act_Problem.class);
+                    i.putExtra("PRSNo", par.getPRSNo());
+                    startActivity(i);
+                } else {
+                    Toast.makeText(ctxt, "MPSNo = " + par.getMPSNo(), Toast.LENGTH_SHORT).show();
+//                    Intent i = new Intent(ctxt, Act_Announcement.class);
+//                    i.putExtra("MPSNo", par.getMPSNo());
+//                    startActivity(i);
+                }
+            }
+        });
+        list_reaprethistory.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int pos, long l) {
+                final PARecord par = palist.get(pos);
+                if (par.tag.equals(PARecord.TAG_Problem)) {
+                    new AlertDialog.Builder(ctxt).setMessage("Completed ?").setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            UpdateStatus(par.getMPSNo(), Code.Completed);
+                        }
+                    }).setNegativeButton("No", null).show();
+                }
+                return true;
+            }
+        });
         list_reaprethistory.setAdapter(pa_adapter);
         //GCM Refresh
 //        mRefreshReceiver.setOnrefreshListener(this);
@@ -444,7 +390,7 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
         palist.clear();
         for (ProblemRecord pr : problemlist) {
             PARecord par = new PARecord();
-            par.tag = PARecord.TAG_PRecord;
+            par.tag = PARecord.TAG_Problem;
             par.setPRSNo(pr.getPRSNo());
             par.setCustomerNo(pr.getCustomerNo());
             par.setFLaborNo(pr.getFLaborNo());
@@ -458,7 +404,7 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
         }
         for (AnnouncementRecord ar : announcementlist) {
             PARecord par = new PARecord();
-            par.tag = PARecord.TAG_ARecord;
+            par.tag = PARecord.TAG_Announcement;
             par.setMPSNo(ar.getMPSNo());
             par.setPushContent(ar.getPushContent());
             par.setCreateID(ar.getCreateID());
@@ -469,8 +415,8 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
         for (int i = 0; i < palist.size() - 1; i++) {
             boolean swapped = false;
             for (int j = 0; j < palist.size() - i - 1; j++) {
-                if (palist.get(j).tag.equals(PARecord.TAG_PRecord)) {
-                    if (palist.get(j + 1).tag.equals(PARecord.TAG_PRecord)) {
+                if (palist.get(j).tag.equals(PARecord.TAG_Problem)) {
+                    if (palist.get(j + 1).tag.equals(PARecord.TAG_Problem)) {
                         String a = palist.get(j).getResponseDate();
                         String b = palist.get(j + 1).getResponseDate();
                         //設定日期格式
@@ -502,7 +448,7 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
                         }
                     }
                 } else {
-                    if (palist.get(j + 1).tag.equals(PARecord.TAG_PRecord)) {
+                    if (palist.get(j + 1).tag.equals(PARecord.TAG_Problem)) {
                         String a = palist.get(j).getCreateDate();
                         String b = palist.get(j + 1).getResponseDate();
                         //設定日期格式
@@ -540,23 +486,6 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
             }
         }
     }
-
-    private AdapterView.OnItemClickListener onitemclicklistener = new AdapterView.OnItemClickListener() {
-        public void onItemClick(AdapterView<?> parent, View view, int pos, long id) {
-            PARecord par = palist.get(pos);
-            if (par.tag.equals(PARecord.TAG_PRecord)) {
-                Intent i = new Intent(ctxt, Act_Problem.class);
-                i.putExtra("PRSNo", par.getPRSNo());
-                startActivity(i);
-            } else {
-                Intent i = new Intent(ctxt, Act_Announcement.class);
-                Bundle b = new Bundle();
-                b.putSerializable("AnnouncementRecord", palist.get(pos));
-                i.putExtras(b);
-                startActivity(i);
-            }
-        }
-    };
 
     public void onDestroy() {
         //unregisterReceiver(mRefreshReceiver);

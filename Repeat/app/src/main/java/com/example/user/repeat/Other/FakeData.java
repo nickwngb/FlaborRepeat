@@ -12,19 +12,28 @@ public class FakeData {
     public static List<PARecord> getPARecord() {
         List<PARecord> palist = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
-            PARecord par = new PARecord();
-            par.tag = PARecord.TAG_PRecord;
-            par.setProblemStatus(Code.Untreated);
-            par.setPRSNo(i + 1);
-            par.setResponseContent("Content" + i);
-            par.setResponseDate("10/1" + i);
-            par.setResponseID("ID" + i);
-            if (i % 3 == 0) {
-                par.setResponseRole(Code.Manager);
+            if (i % 4 != 0) {
+                PARecord par = new PARecord();
+                par.tag = PARecord.TAG_Problem;
+                par.setProblemStatus(Code.Untreated);
+                par.setPRSNo(i + 1);
+                par.setResponseContent("Content" + i);
+                par.setResponseDate("10/1" + i);
+                par.setResponseID("ID" + i);
+                if (i % 3 == 0) {
+                    par.setResponseRole(Code.Manager);
+                } else {
+                    par.setResponseRole(Code.Flabor);
+                }
+                palist.add(par);
             } else {
-                par.setResponseRole(Code.Flabor);
+                PARecord par = new PARecord();
+                par.tag = PARecord.TAG_Announcement;
+                par.setPushContent("Hello Every One");
+                par.setCreateDate("10/1" + i);
+                par.setCreateID("admin");
+                palist.add(par);
             }
-            palist.add(par);
         }
 
         return palist;

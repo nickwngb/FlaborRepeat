@@ -32,9 +32,14 @@ public class URLs {
      */
     public static final String url_addproblem = serverip + "pb_addproblem";
     /**
+     *   Update Status
+     */
+    public static final String url_updatestatus = serverip + "pb_updatestatus";
+    /**
      *   AddResponse
      */
     public static final String url_addresponse = serverip + "pb_addresponse";
+
     /**
      *   UpdateRating
      */

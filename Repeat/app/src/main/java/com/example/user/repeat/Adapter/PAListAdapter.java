@@ -75,7 +75,7 @@ public class PAListAdapter extends MyBaseAdapter {
             tag = (ViewTag) v.getTag();
         }
         PARecord par = getItem(position);
-        if (par.tag.equals(PARecord.TAG_PRecord)) {
+        if (par.tag.equals(PARecord.TAG_Problem)) {
             // setText
             tag.name.setText(par.getResponseID());
             tag.datetime.setText(par.getResponseDate());
