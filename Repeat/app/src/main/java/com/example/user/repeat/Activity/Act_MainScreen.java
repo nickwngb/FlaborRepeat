@@ -22,7 +22,10 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.user.repeat.Adapter.PAListAdapter;
+import com.example.user.repeat.Asyn.RegisterGCM;
+import com.example.user.repeat.Asyn.UploadPhoto;
 import com.example.user.repeat.Other.AnnouncementRecord;
+import com.example.user.repeat.Other.BitmapTransformer;
 import com.example.user.repeat.Other.Code;
 import com.example.user.repeat.Other.FakeData;
 import com.example.user.repeat.Other.Hardware;
@@ -89,73 +92,27 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
     public void gcmRegistered(boolean successfull, String regID) {
         Log.i("RegId Listener!!", successfull + " " + regID);
         if (successfull) {
-            Log.i("AddRegIdToAPPServer!", "Execute");
-            AddRegIdToAPPServer(regID);
+            RegisterGCMTask(regID);
         }
     }
-
     public boolean gcmSendRegistrationIdToAppServer(String regID) {
         return true;
     }
 
     // implements methods end
-    private void AddRegIdToAPPServer(String... datas) {
+    private void RegisterGCMTask(String id) {
         if (Net.isNetWork(ctxt)) {
-            new AddRegIdToAPPServer().execute(datas);
+            RegisterGCM task = new RegisterGCM(conn, new RegisterGCM.OnRegisterGCMListener() {
+                public void finish(Integer result) {
+                    Log.i("RegisterGCM ", "Result : " + result);
+                }
+            });
+            task.execute(id,user.getFLaborNo(),user.getCustomerNo());
+
         } else {
             Uti.t(ctxt, res.getString(R.string.msg_err_network));
         }
     }
-
-
-    class AddRegIdToAPPServer extends AsyncTask<String, Integer, Integer> {
-        private String regid = "";
-
-        @Override
-        protected Integer doInBackground(String... datas) {
-            Integer result = Code.ConnectTimeOut;
-            regid = datas[0];
-            if (regid.isEmpty()) {
-                return Code.RegIdEmpty;
-            }
-            try {
-                // put "phone" post out, get json
-                List<NameValuePair> postFields = new ArrayList<>();
-                postFields.add(new BasicNameValuePair("RegId", regid));
-                postFields.add(new BasicNameValuePair("CustomerNo", user.getCustomerNo()));
-                postFields.add(new BasicNameValuePair("FLaborNo", user.getFLaborNo()));
-
-                JSONObject jobj = conn.PostGetJson(URLs.url_gcm_register, postFields);
-                if (jobj != null) {
-                    result = jobj.getInt("success");
-                }
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            return result;
-        }
-
-        @Override
-        protected void onPostExecute(Integer result) {
-            Log.i("AddRegIdToAPPServer ", "Result : " + result);
-            switch (result) {
-                case Code.Success:
-                    //Uti.t(ctxt, "Set Push notification Success");
-                    break;
-                case Code.RegIdEmpty:
-                    //Uti.t(ctxt, "RegId is Empty");
-                    break;
-                case Code.ConnectTimeOut:
-                    break;
-                case Code.RegIdFail:
-                    //Uti.t(ctxt, "Push notification Fail\n" + "Insert Error");
-                    break;
-            }
-
-        }
-    }
-
     @Override
     public void setRefresh(String text) {
         Toast.makeText(ctxt, text, Toast.LENGTH_SHORT).show();
@@ -368,7 +325,7 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
                 }
 
             } catch (JSONException e) {
-                Log.i("JSONException", e.toString());
+                Log.i("LoadingAllAnnouncement", e.toString());
             }
             return result;
         }
@@ -391,6 +348,26 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
                 default:
                     Uti.t(ctxt, "error : " + result);
             }
+        }
+    }
+
+    private void UploadPhoto(String photo) {
+        if (Net.isNetWork(ctxt)) {
+            UploadPhoto task = new UploadPhoto(conn,new UploadPhoto.OnUpdatePhotoListener() {
+                public void finish(Integer result) {
+                    switch (result) {
+                        case Code.Success:
+                            break;
+                        case Code.ResultEmpty:
+                            break;
+                        case Code.ConnectTimeOut:
+                            break;
+                    }
+                }
+            });
+            task.execute(Code.Flabor, photo, user.getFLaborNo(), user.getCustomerNo());
+        } else {
+            Toast.makeText(ctxt, getResources().getString(R.string.msg_err_network), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -438,7 +415,6 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
             }
         });
         bt_image.setOnClickListener(new View.OnClickListener() {
-            @Override
             public void onClick(View v) {
                 Hardware.closeKeyBoard(ctxt, v);
                 Intent iPickPicture = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -567,10 +543,10 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
 
     private AdapterView.OnItemClickListener onitemclicklistener = new AdapterView.OnItemClickListener() {
         public void onItemClick(AdapterView<?> parent, View view, int pos, long id) {
-            PARecord par =palist.get(pos);
+            PARecord par = palist.get(pos);
             if (par.tag.equals(PARecord.TAG_PRecord)) {
                 Intent i = new Intent(ctxt, Act_Problem.class);
-                i.putExtra("PRSNo",par.getPRSNo());
+                i.putExtra("PRSNo", par.getPRSNo());
                 startActivity(i);
             } else {
                 Intent i = new Intent(ctxt, Act_Announcement.class);
@@ -626,13 +602,13 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
 
                     break;
                 case TRIM_PICTURE:
-                    Bitmap result = data.getParcelableExtra("data");
+                    final Bitmap result = data.getParcelableExtra("data");
 
                     ImageView iv = new ImageView(ctxt);
                     iv.setImageBitmap(result);
                     new AlertDialog.Builder(ctxt, AlertDialog.THEME_HOLO_LIGHT).setView(iv).setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialogInterface, int i) {
-
+                            UploadPhoto(BitmapTransformer.BitmapToBase64(result));
                         }
                     }).setNegativeButton("Cancel", null).show();
                     break;

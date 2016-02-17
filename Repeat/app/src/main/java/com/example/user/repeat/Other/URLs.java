@@ -22,7 +22,10 @@ public class URLs {
      *   Image
      */
     public static final String url_loadimage = serverip + "pb_loadimage";
-
+    public static final String url_uploadimage = serverip + "pb_uploadImage";
+    /**
+     *   LoadProblem
+     */
     public static final String url_allproblem = serverip + "pb_allproblem";
     /**
      *   AddProblem
@@ -36,5 +39,8 @@ public class URLs {
      *   UpdateRating
      */
     public static final String url_updatestart = serverip + "pb_updatestar";
+    /**
+     *   GCM
+     */
     public static final String url_gcm_register = serverip + "gcm_register";
 }

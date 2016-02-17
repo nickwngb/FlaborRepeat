@@ -18,6 +18,7 @@ import com.example.user.repeat.Other.Net;
 import com.example.user.repeat.Other.URLs;
 import com.example.user.repeat.Other.User;
 import com.example.user.repeat.Other.Uti;
+import com.example.user.repeat.Other.Vaild;
 import com.example.user.repeat.R;
 
 import org.apache.http.NameValuePair;
@@ -52,9 +53,9 @@ public class Act_Addwindow extends Activity {
         InitialAction();
     }
 
-    private void AddProblem(String... datas) {
+    private void AddProblem() {
         if (Net.isNetWork(ctxt)) {
-            new AddProblemTask().execute(datas);
+            new AddProblemTask().execute();
         } else {
             Uti.t(ctxt, res.getString(R.string.msg_err_network));
         }
@@ -71,12 +72,12 @@ public class Act_Addwindow extends Activity {
             pDialog.setIndeterminate(false);
             pDialog.setCancelable(true);
             pDialog.show();
+            content = edit_problemcontent.getText().toString();
         }
 
         @Override
         protected Integer doInBackground(String... datas) {
             Integer result = Code.ConnectTimeOut;
-            content = datas[0];
             try {
                 // put "phone" post out, get json
                 List<NameValuePair> postFields = new ArrayList<>();
@@ -140,22 +141,14 @@ public class Act_Addwindow extends Activity {
     }
 
     private void InitialAction() {
-        bt_submit.setOnClickListener(onclicklistener);
-    }
-
-
-    private View.OnClickListener onclicklistener = new View.OnClickListener() {
-
-        public void onClick(View v) {
-            // get Content
-            String content = edit_problemcontent.getText().toString();
-            if (content.isEmpty()) {
-                Uti.t(ctxt, res.getString(R.string.msg_err_empty));
-                return;
+        bt_submit.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                String content = edit_problemcontent.getText().toString();
+                if (Vaild.addProblem(ctxt, content)) {
+                    AddProblem();
+                }
             }
-            // Add Problem Task
-            AddProblem(content);
-        }
-    };
+        });
+    }
 
 }

@@ -65,10 +65,11 @@ public class PAListAdapter extends MyBaseAdapter {
         if (v == null) {
             v = getInflater().inflate(R.layout.item_problemlist, null);
             tag = new ViewTag();
-            tag.Photo = (CircleImageView) v.findViewById(R.id.img_item_photo);
-            tag.CreateProblemDate = (TextView) v.findViewById(R.id.tv_item_createproblemdate);
-            tag.ProblemContent = (TextView) v.findViewById(R.id.tv_item_problemcontent);
-            tag.Status = (ImageView) v.findViewById(R.id.img_item_status);
+            tag.photo = (CircleImageView) v.findViewById(R.id.img_item_photo);
+            tag.name = (TextView) v.findViewById(R.id.tv_item_name);
+            tag.datetime = (TextView) v.findViewById(R.id.tv_item_createproblemdate);
+            tag.content = (TextView) v.findViewById(R.id.tv_item_problemcontent);
+            tag.status = (ImageView) v.findViewById(R.id.img_item_status);
             v.setTag(tag);
         } else {
             tag = (ViewTag) v.getTag();
@@ -76,25 +77,27 @@ public class PAListAdapter extends MyBaseAdapter {
         PARecord par = getItem(position);
         if (par.tag.equals(PARecord.TAG_PRecord)) {
             // setText
-            tag.CreateProblemDate.setText(par.getResponseDate());
-            tag.ProblemContent.setText(par.getResponseContent());
+            tag.name.setText(par.getResponseID());
+            tag.datetime.setText(par.getResponseDate());
+            tag.content.setText(par.getResponseContent());
             // set status
             switch (getItem(position).getProblemStatus()) {
                 case Code.Untreated:
-                    tag.Status.setBackground(getResources().getDrawable(R.drawable.item_bg_untreated));
+                    tag.status.setBackground(getResources().getDrawable(R.drawable.item_bg_untreated));
                     break;
                 case Code.Processing:
-                    tag.Status.setBackground(getResources().getDrawable(R.drawable.item_bg_processing));
+                    tag.status.setBackground(getResources().getDrawable(R.drawable.item_bg_processing));
                     break;
                 case Code.Completed:
-                    tag.Status.setBackground(getResources().getDrawable(R.drawable.item_bg_completed));
+                    tag.status.setBackground(getResources().getDrawable(R.drawable.item_bg_completed));
                     break;
             }
             //LoadImage(tag.Photo, par.getResponseRole());
         } else {
-            tag.CreateProblemDate.setText(par.getCreateDate());
-            tag.ProblemContent.setText(par.getPushContent());
-            tag.Status.setBackgroundColor(Color.TRANSPARENT);
+            tag.name.setText(par.getCreateID());
+            tag.datetime.setText(par.getCreateDate());
+            tag.content.setText(par.getPushContent());
+            tag.status.setBackgroundColor(Color.TRANSPARENT);
         }
 
 
@@ -102,11 +105,11 @@ public class PAListAdapter extends MyBaseAdapter {
     }
 
     static class ViewTag {
-        public CircleImageView Photo;
-        public TextView CreateProblemDate;
-        public TextView ProblemContent;
-        public ImageView Status;
-
+        public CircleImageView photo;
+        public TextView name;
+        public TextView datetime;
+        public TextView content;
+        public ImageView status;
     }
 
     private static final String F = "0";
