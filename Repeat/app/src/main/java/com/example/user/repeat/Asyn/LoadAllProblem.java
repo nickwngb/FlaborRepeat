@@ -44,6 +44,7 @@ public class LoadAllProblem extends AsyncTask<String, Integer, Integer> {
         try {
             // put "phone" post out, get json
             List<NameValuePair> postFields = new ArrayList<>();
+			postFields.add(new BasicNameValuePair("role", Code.Flabor));
             postFields.add(new BasicNameValuePair("FLaborNo", fNo));
             postFields.add(new BasicNameValuePair("CustomerNo", cNo));
             JSONObject jobj = conn.PostGetJson(URLs.url_allproblem, postFields);

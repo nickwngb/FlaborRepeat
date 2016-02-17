@@ -3,6 +3,7 @@ package com.example.user.repeat.Adapter;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -93,6 +94,8 @@ public class PAListAdapter extends MyBaseAdapter {
                     break;
             }
             //LoadImage(tag.Photo, par.getResponseRole());
+            Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.test2);
+            tag.photo.setImageBitmap(bm);
         } else {
             tag.name.setText(par.getCreateID());
             tag.datetime.setText(par.getCreateDate());
