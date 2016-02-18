@@ -12,7 +12,7 @@ public class FakeData {
         PARecord par = new PARecord();
         par.tag = PARecord.TAG_Problem;
         par.setProblemStatus(Code.Untreated);
-        par.setPRSNo(4);
+        par.setPRSNo(2);
         par.setResponseContent("I want eat some food");
         par.setResponseDate("2/17");
         par.setResponseID("John");

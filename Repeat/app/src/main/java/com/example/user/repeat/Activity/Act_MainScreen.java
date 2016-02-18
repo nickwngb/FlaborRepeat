@@ -347,7 +347,7 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
                     i.putExtra("PRSNo", par.getPRSNo());
                     startActivity(i);
                 } else {
-                    Toast.makeText(ctxt, "MPSNo = " + par.getMPSNo(), Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(ctxt, "MPSNo = " + par.getMPSNo(), Toast.LENGTH_SHORT).show();
 //                    Intent i = new Intent(ctxt, Act_Announcement.class);
 //                    i.putExtra("MPSNo", par.getMPSNo());
 //                    startActivity(i);
@@ -361,7 +361,7 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
                 if (par.tag.equals(PARecord.TAG_Problem)) {
                     new AlertDialog.Builder(ctxt).setMessage("Completed ?").setPositiveButton("YES", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            UpdateStatus(par.getMPSNo(), Code.Completed);
+                            //UpdateStatus(par.getMPSNo(), Code.Completed);
                         }
                     }).setNegativeButton("No", null).show();
                 }
