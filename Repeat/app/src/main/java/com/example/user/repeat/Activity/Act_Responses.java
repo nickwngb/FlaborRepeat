@@ -213,8 +213,8 @@ public class Act_Responses extends Activity {
                 Hardware.closeKeyBoard(ctxt, view);
                 String content = et_content.getText().toString();
                 String datetime = getCurrentDateTime();
-                String role = user.getChineseName();
-                SendResponse(PRSNo + "", content, datetime, role);
+                String id = user.getChineseName();
+                SendResponse(PRSNo + "", content, datetime, id);
             }
         });
     }
