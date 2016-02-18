@@ -5,12 +5,10 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.example.user.repeat.Asyn.AddProblem;
 import com.example.user.repeat.Other.Code;
@@ -18,23 +16,14 @@ import com.example.user.repeat.Other.FreeDialog;
 import com.example.user.repeat.Other.Hardware;
 import com.example.user.repeat.Other.HttpConnection;
 import com.example.user.repeat.Other.Net;
-import com.example.user.repeat.Other.URLs;
 import com.example.user.repeat.Other.User;
 import com.example.user.repeat.Other.Uti;
 import com.example.user.repeat.Other.Vaild;
 import com.example.user.repeat.R;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 
 public class Act_Addwindow extends Activity {
@@ -50,7 +39,7 @@ public class Act_Addwindow extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.act_addwindow);
+        setContentView(R.layout.act_addproblem);
         InitialSomething();
         InitialUI();
         InitialAction();
@@ -90,8 +79,7 @@ public class Act_Addwindow extends Activity {
 
     private String getCurrentDateTime() {
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-        Date date = new Date();
-        return dateFormat.format(date);
+        return dateFormat.format(new Date());
     }
 
     private void InitialSomething() {

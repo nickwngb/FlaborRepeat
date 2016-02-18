@@ -30,14 +30,14 @@
             >
 
             <EditText
-                android:id="@+id/editText"
+                android:id="@+id/et_responses_content"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/white"
                 android:layout_weight="1"/>
 
             <Button
-                android:id="@+id/button"
+                android:id="@+id/bt_responses_send"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:background="@drawable/send2"/>

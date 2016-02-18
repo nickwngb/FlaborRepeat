@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.example.user.repeat.Other.Code;
 import com.example.user.repeat.Other.HttpConnection;
+import com.example.user.repeat.Other.ProblemRecord;
 import com.example.user.repeat.Other.ProblemResponse;
 import com.example.user.repeat.Other.URLs;
 
@@ -18,38 +19,40 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by hao_jun on 2016/2/18.
+ * Created by hao_jun on 2016/2/17.
  */
-public class LoadAllResponse extends AsyncTask<String, Integer, Integer> {
+public class LoadAllLastestResponse extends AsyncTask<List<Integer>, Integer, Integer> {
     public interface OnLoadAllResponseListener {
         void finish(Integer result, List<ProblemResponse> list);
     }
 
-    private final OnLoadAllResponseListener mListener;
     private final HttpConnection conn;
+    private final OnLoadAllResponseListener mListener;
     private List<ProblemResponse> list;
-    private String PRSNo;
+    private List<Integer> PRSNos;
 
-    public LoadAllResponse(HttpConnection conn, OnLoadAllResponseListener mListener) {
+    public LoadAllLastestResponse(HttpConnection conn, OnLoadAllResponseListener mListener) {
         this.conn = conn;
         this.mListener = mListener;
         this.list = new ArrayList<>();
     }
 
     @Override
-    protected Integer doInBackground(String... datas) {
+    protected Integer doInBackground(List<Integer>... datas) {
         Integer result = Code.ConnectTimeOut;
-        PRSNo = datas[0];
+        PRSNos = datas[0];
         try {
-            List<NameValuePair> params = new ArrayList<>();
-            params.add(new BasicNameValuePair("PRSNo", PRSNo));
-            JSONObject jobj = conn.PostGetJson(URLs.url_allresponse, params);
+            List<NameValuePair> postFields = new ArrayList<>();
+            for (Integer PRSNo : PRSNos) {
+                postFields.add(new BasicNameValuePair("PRSNos[]", PRSNo + ""));
+            }
+            JSONObject jobj = conn.PostGetJson(URLs.url_response, postFields);
             if (jobj != null) {
                 result = jobj.getInt("success");
                 if (result == Code.Success) {
-                    JSONArray jArray = jobj.getJSONArray("fresponse");
-                    for (int i = 0; i < jArray.length(); i++) {
-                        JSONObject ajobj = jArray.getJSONObject(i);
+                    JSONArray array = jobj.getJSONArray("fresponse");
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject ajobj = array.getJSONObject(i);
                         ProblemResponse rs = new ProblemResponse();
                         rs.setPRSNo(ajobj.getInt("PRSNo"));
                         rs.setResponseContent(ajobj.getString("ResponseContent"));
@@ -60,8 +63,9 @@ public class LoadAllResponse extends AsyncTask<String, Integer, Integer> {
                     }
                 }
             }
+
         } catch (JSONException e) {
-            Log.i("LoadAllResponse", e.toString());
+            Log.i("LoadAllLastestResponse", e.toString());
         }
         return result;
     }

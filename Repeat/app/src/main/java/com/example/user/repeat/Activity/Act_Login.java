@@ -16,12 +16,15 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.example.user.repeat.Asyn.Login;
 import com.example.user.repeat.Other.Code;
+import com.example.user.repeat.Other.FreeDialog;
 import com.example.user.repeat.Other.HttpConnection;
 import com.example.user.repeat.Other.Net;
 import com.example.user.repeat.Other.URLs;
 import com.example.user.repeat.Other.User;
 import com.example.user.repeat.Other.Uti;
+import com.example.user.repeat.Other.Vaild;
 import com.example.user.repeat.R;
 
 import org.apache.http.NameValuePair;
@@ -45,7 +48,7 @@ public class Act_Login extends AppCompatActivity {
     private static final String phoneField = "PHONE";
     // UI
     private Button bt_login;
-    private EditText edit_loginphone;
+    private EditText et_phont;
     // Other
     private String phone; // for preferences
 
@@ -58,98 +61,53 @@ public class Act_Login extends AppCompatActivity {
         readData();
     }
 
-    private void LoginTask(String... datas) {
+    private void LoginTask(String phoneL) {
         if (Net.isNetWork(ctxt)) {
-            new LoginTask().execute(datas);
+            final ProgressDialog pd = FreeDialog.getProgressDialog(ctxt,"Loading...");
+            Login task = new Login(conn, new Login.OnLoginListener() {
+                public void finish(Integer result, String CustomerNo, String FLaborNo, String ChineseName, String LaborPhoto,String phones) {
+                    pd.dismiss();
+                    switch (result){
+                        case Code.Success:
+                            phone = phones;
+                            saveData();
+                            Intent i = new Intent(ctxt, Act_MainScreen.class);
+                            startActivity(i);
+                            finishActivity();
+                            break;
+                        case Code.ResultEmpty:
+                            Uti.t(ctxt, "Phone number does not exist");
+                            break;
+                        case Code.ConnectTimeOut:
+                            Uti.t(ctxt, "Server no response");
+                            break;
+                        default:
+                            Uti.t(ctxt, "Error : " + result);
+                    }
+                }
+            });
+            task.execute(phoneL);
         } else {
             Uti.t(ctxt, res.getString(R.string.msg_err_network));
         }
     }
-
-    class LoginTask extends AsyncTask<String, String, Integer> {
-        private ProgressDialog pDialog;
-        private String mPhone;
-
-        @Override
-        protected void onPreExecute() {
-            pDialog = new ProgressDialog(ctxt);
-            pDialog.setMessage("Login...");
-            pDialog.setIndeterminate(false);
-            pDialog.setCancelable(true);
-            pDialog.show();
-        }
-
-        @Override
-        protected Integer doInBackground(String... datas) {
-            Integer result = Code.ConnectTimeOut;
-            mPhone = datas[0];
-            try {
-                // put "phone" post out, get json
-                List<NameValuePair> postFields = new ArrayList<>();
-                postFields.add(new BasicNameValuePair("phone", mPhone));
-                JSONObject jobj = conn.PostGetJson(URLs.url_login, postFields);
-                if (jobj != null) {
-                    result = jobj.getInt("success");
-                    if (result == Code.Success) {
-                        JSONArray jArray = jobj.getJSONArray("finfo");
-                        if (jArray != null) {
-                            JSONObject finfo = jArray.getJSONObject(0);
-                            if (finfo != null) {
-                                user.setCustomerNo(finfo.getString("CustomerNo"));
-                                user.setFLaborNo(finfo.getString("FLaborNo"));
-                                user.setCellPhone(mPhone);
-                                user.setChineseName(finfo.getString("ChineseName"));
-                                user.setLaborPhoto(finfo.getString("LaborPhoto"));
-                            }
-                        }
-                    }
-                }
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            return result;
-        }
-
-        protected void onPostExecute(Integer result) {
-            pDialog.dismiss();
-            Log.i("LoginTask ", "Result " + result);
-            switch (result) {
-                case Code.Success:
-                    phone = mPhone;
-                    saveData();
-                    Intent i = new Intent(ctxt, Act_MainScreen.class);
-                    startActivity(i);
-                    finish();
-                    break;
-                case Code.ResultEmpty:
-                    Uti.t(ctxt, "Phone number does not exist");
-                    break;
-                case Code.ConnectTimeOut:
-                    Uti.t(ctxt, "Server no response");
-                    break;
-                default:
-                    Uti.t(ctxt, "Error : " + result);
-            }
-        }
-    }
-
     private void InitialAction() {
         bt_login.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-//                String phone = edit_loginphone.getText().toString();
-//                if (!phone.isEmpty()) {
+//                String phone = et_phont.getText().toString();
+//                if(Vaild.login(ctxt,phone)){
 //                    LoginTask(phone);
 //                }
                 Intent i = new Intent(ctxt, Act_MainScreen.class);
                 startActivity(i);
+                finishActivity();
             }
         });
     }
 
     private void InitialUI() {
         bt_login = (Button) findViewById(R.id.bt_login);
-        edit_loginphone = (EditText) findViewById(R.id.edit_loginphone);
+        et_phont = (EditText) findViewById(R.id.edit_loginphone);
     }
 
     private void InitialSomething() {
@@ -171,5 +129,8 @@ public class Act_Login extends AppCompatActivity {
         settings.edit()
                 .putString(phoneField, phone)
                 .commit();
+    }
+    private void finishActivity(){
+        this.finish();
     }
 }

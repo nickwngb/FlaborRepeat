@@ -10,7 +10,6 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -23,8 +22,8 @@ import android.widget.Toast;
 
 import com.example.user.repeat.Adapter.PAListAdapter;
 import com.example.user.repeat.Asyn.LoadAllAnnouncement;
+import com.example.user.repeat.Asyn.LoadAllLastestResponse;
 import com.example.user.repeat.Asyn.LoadAllProblem;
-import com.example.user.repeat.Asyn.LoadAllResponse;
 import com.example.user.repeat.Asyn.RegisterGCM;
 import com.example.user.repeat.Asyn.UpdateStatus;
 import com.example.user.repeat.Asyn.UploadPhoto;
@@ -39,18 +38,11 @@ import com.example.user.repeat.Other.Net;
 import com.example.user.repeat.Other.PARecord;
 import com.example.user.repeat.Other.ProblemRecord;
 import com.example.user.repeat.Other.ProblemResponse;
-import com.example.user.repeat.Other.URLs;
 import com.example.user.repeat.Other.User;
 import com.example.user.repeat.Other.Uti;
 import com.example.user.repeat.R;
 import com.example.user.repeat.Receiver.RefreshReceiver;
 import com.example.user.repeat.UseForGCM.GoldBrotherGCM;
-
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -160,12 +152,12 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
     private void LoadAllResponse() {
         if (Net.isNetWork(ctxt)) {
             final ProgressDialog fd = FreeDialog.getProgressDialog(ctxt, "Loading...");
-            LoadAllResponse task = new LoadAllResponse(conn, new LoadAllResponse.OnLoadAllResponseListener() {
+            LoadAllLastestResponse task = new LoadAllLastestResponse(conn, new LoadAllLastestResponse.OnLoadAllResponseListener() {
                 public void finish(Integer result, List<ProblemResponse> list) {
                     fd.dismiss();
                     responselist = list;
-                    Log.i("LoadAllResponse", "Result " + result);
-                    Log.i("LoadAllResponse", "ListSize " + responselist.size());
+                    Log.i("LoadAllLastestResponse", "Result " + result);
+                    Log.i("LoadAllLastestResponse", "ListSize " + responselist.size());
                     switch (result) {
                         case Code.Success:
                         case Code.ResultEmpty:
@@ -343,7 +335,7 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
             public void onItemClick(AdapterView<?> adapterView, View view, int pos, long l) {
                 PARecord par = palist.get(pos);
                 if (par.tag.equals(PARecord.TAG_Problem)) {
-                    Intent i = new Intent(ctxt, Act_Problem.class);
+                    Intent i = new Intent(ctxt, Act_Responses.class);
                     i.putExtra("PRSNo", par.getPRSNo());
                     startActivity(i);
                 } else {
