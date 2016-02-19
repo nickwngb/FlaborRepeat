@@ -15,12 +15,14 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.user.repeat.Asyn.LoadPhoto;
 import com.example.user.repeat.Other.BitmapTransformer;
 import com.example.user.repeat.Other.Code;
 import com.example.user.repeat.Other.HttpConnection;
 import com.example.user.repeat.Other.Net;
 import com.example.user.repeat.Other.PARecord;
 import com.example.user.repeat.Other.URLs;
+import com.example.user.repeat.Other.Uti;
 import com.example.user.repeat.R;
 
 import org.apache.http.NameValuePair;
@@ -82,7 +84,7 @@ public class PAListAdapter extends MyBaseAdapter {
             tag.datetime.setText(par.getResponseDate());
             tag.content.setText(par.getResponseContent());
             // set status
-            switch (getItem(position).getProblemStatus()) {
+            switch (par.getProblemStatus()) {
                 case Code.Untreated:
                     tag.status.setBackground(getResources().getDrawable(R.drawable.item_bg_untreated));
                     break;
@@ -96,6 +98,12 @@ public class PAListAdapter extends MyBaseAdapter {
             //LoadImage(tag.Photo, par.getResponseRole());
             Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.test2);
             tag.photo.setImageBitmap(bm);
+            // photo
+            if (par.getResponseRole().equals(Code.Flabor)) {
+                LoadPhoto(tag.photo, par.getResponseRole(), par.getFLaborNo(), par.getCustomerNo());
+            } else {
+                LoadPhoto(tag.photo, par.getResponseRole(), par.getResponseID());
+            }
         } else {
             tag.name.setText(par.getCreateID());
             tag.datetime.setText(par.getCreateDate());
@@ -115,80 +123,14 @@ public class PAListAdapter extends MyBaseAdapter {
         public ImageView status;
     }
 
-    private static final String F = "0";
-    private static final String M = "1";
-
-    private void LoadImage(CircleImageView circleImageView, String... params) {
+    private void LoadPhoto(CircleImageView circleImageView, String... datas) {
         if (Net.isNetWork(getContext())) {
-            if (params.length == 2) {
-                new LoadImage(circleImageView, params[0], params[1]).execute();
-            } else if (params.length == 1) {
-                new LoadImage(circleImageView, params[0]).execute();
-            }
-        }
-    }
+            LoadPhoto task = new LoadPhoto(circleImageView, new HttpConnection(), new LoadPhoto.OnLoadPhotoListener() {
+                public void finish() {
 
-    class LoadImage extends AsyncTask<String, Integer, Bitmap> {
-
-        private WeakReference<CircleImageView> rf_circleImg;
-        private String role;
-        private String CustomerNo;
-        private String FLaborNo;
-
-        private String UserID;
-
-        public LoadImage(CircleImageView circleImageView, String CustomerNo, String FLaborNo) {
-            rf_circleImg = new WeakReference<>(circleImageView);
-            this.CustomerNo = CustomerNo;
-            this.FLaborNo = FLaborNo;
-            this.role = F;
-        }
-
-        public LoadImage(CircleImageView circleImageView, String UserID) {
-            rf_circleImg = new WeakReference<>(circleImageView);
-            this.UserID = UserID;
-            this.role = M;
-        }
-
-        @Override
-        protected Bitmap doInBackground(String... datas) {
-            try {
-                List<NameValuePair> params = new ArrayList<>();
-                if (role.equals(F)) {
-                    params.add(new BasicNameValuePair("CustomerNo", CustomerNo));
-                    params.add(new BasicNameValuePair("FLaborNo", FLaborNo));
-                } else if (role.equals(M)) {
-                    params.add(new BasicNameValuePair("UserID", UserID));
                 }
-                HttpConnection conn = new HttpConnection();
-                JSONObject jobj = conn.PostGetJson(URLs.url_loadimage, params);
-                if (jobj == null)
-                    return null;
-                int result = jobj.getInt("success");
-                if (result == Code.Success) {
-                    String base64 = jobj.getString("photo");
-                    return BitmapTransformer.Base64ToBitmap(base64);
-                }
-            } catch (JSONException e) {
-                Log.i("JSONException", e.toString());
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Bitmap bitmap) {
-            super.onPostExecute(bitmap);
-            if (rf_circleImg != null) {
-                ImageView imageView = rf_circleImg.get();
-                if (imageView != null) {
-                    if (bitmap != null) {
-                        imageView.setImageBitmap(bitmap);
-                    } else {
-//                        Drawable placeholder = imageView.getContext().getResources().getDrawable(R.drawable.placeholder);
-//                        imageView.setImageDrawable(placeholder);
-                    }
-                }
-            }
+            });
+            task.execute(datas);
         }
     }
 }

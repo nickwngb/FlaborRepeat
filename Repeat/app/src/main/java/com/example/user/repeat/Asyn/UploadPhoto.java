@@ -32,7 +32,6 @@ public class UploadPhoto extends AsyncTask<String, Integer, Integer> {
     private String photo;
     private String fNo;
     private String cNo;
-    private String uId;
 
     public UploadPhoto(HttpConnection conn, OnUpdatePhotoListener mListener) {
         this.conn = conn;
@@ -45,19 +44,17 @@ public class UploadPhoto extends AsyncTask<String, Integer, Integer> {
         try {
             role = datas[0];
             photo = datas[1];
+            fNo = datas[2];
+            cNo = datas[3];
             List<NameValuePair> params = new ArrayList<>();
             params.add(new BasicNameValuePair("Role", role));
-            if (role.equals(Code.Flabor)) {
-                fNo = datas[2];
-                cNo = datas[3];
-                params.add(new BasicNameValuePair("CustomerNo", cNo));
-                params.add(new BasicNameValuePair("FLaborNo", fNo));
-                params.add(new BasicNameValuePair("LaborPhoto", photo));
-            } else {
-                uId = datas[2];
-                params.add(new BasicNameValuePair("UserID", uId));
-                params.add(new BasicNameValuePair("UserPhoto", photo));
-            }
+            params.add(new BasicNameValuePair("CustomerNo", cNo));
+            params.add(new BasicNameValuePair("FLaborNo", fNo));
+            params.add(new BasicNameValuePair("LaborPhoto", photo));
+            // Fake Data Useless
+            params.add(new BasicNameValuePair("UserID", "12345"));
+            params.add(new BasicNameValuePair("UserPhoto", "12345"));
+
             JSONObject jobj = conn.PostGetJson(URLs.url_uploadimage, params);
             if (jobj != null) {
                 result = jobj.getInt("success");

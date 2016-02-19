@@ -3,7 +3,8 @@
     <string name="msg_err_network">No NetWork !</string>
     <string name="msg_err_noresponse">Server No Response!</string>
     <string name="msg_err_empty">Content can\'t be empty !</string>
-
+	<string name="msg_err_format">Cant contain special characters !</string>
+	
     <!-- Code -->
     <string-array name="code">
         <item>@string/Untreated</item>

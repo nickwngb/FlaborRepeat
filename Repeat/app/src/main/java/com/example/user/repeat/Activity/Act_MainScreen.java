@@ -529,7 +529,7 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
                     iv.setImageBitmap(result);
                     new AlertDialog.Builder(ctxt, AlertDialog.THEME_HOLO_LIGHT).setView(iv).setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            UploadPhoto(BitmapTransformer.BitmapToBase64(result));
+                            //UploadPhoto(BitmapTransformer.BitmapToBase64(result));
                         }
                     }).setNegativeButton("Cancel", null).show();
                     break;
