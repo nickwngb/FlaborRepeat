@@ -94,13 +94,10 @@ public class Act_Login extends AppCompatActivity {
     private void InitialAction() {
         bt_login.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-//                String phone = et_phont.getText().toString();
-//                if(Vaild.login(ctxt,phone)){
-//                    LoginTask(phone);
-//                }
-                Intent i = new Intent(ctxt, Act_MainScreen.class);
-                startActivity(i);
-                finishActivity();
+                String phone = et_phont.getText().toString();
+                if (Vaild.login(ctxt, phone)) {
+                    LoginTask(phone);
+                }
             }
         });
     }
@@ -119,9 +116,9 @@ public class Act_Login extends AppCompatActivity {
     public void readData() {
         settings = getSharedPreferences(data, 0);
         phone = settings.getString(phoneField, "");
-//        if (!phone.isEmpty()) {
-//            LoginTask(phone);
-//        }
+        if (!phone.isEmpty()) {
+            LoginTask(phone);
+        }
     }
 
     public void saveData() {

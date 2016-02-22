@@ -99,7 +99,7 @@ public class Act_Addwindow extends Activity {
                 Hardware.closeKeyBoard(ctxt, v);
                 String content = edit_problemcontent.getText().toString();
                 if (Vaild.addProblem(ctxt, content)) {
-                    //AddProblem();
+                    AddProblem();
                 }
             }
         });

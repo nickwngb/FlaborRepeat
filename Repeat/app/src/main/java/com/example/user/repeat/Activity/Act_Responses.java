@@ -66,7 +66,7 @@ public class Act_Responses extends Activity {
         InitialSomething();
         InitialUI();
         InitialAction();
-        //getExtrasAndExecute();
+        getExtrasAndExecute();
     }
 
     private void LoadAllResponse(String PRSNo) {
@@ -196,7 +196,6 @@ public class Act_Responses extends Activity {
         user = User.getUser();
         int PRSNo = getIntent().getIntExtra("PRSNo", 0);
 //        responses = new ArrayList<>();
-        responses = FakeData.getResponse(PRSNo);
         adapter = new ResponseListAdapter(ctxt, responses);
     }
 

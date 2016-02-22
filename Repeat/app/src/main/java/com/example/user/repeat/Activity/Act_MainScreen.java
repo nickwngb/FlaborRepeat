@@ -82,7 +82,7 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
         InitialSomething();
         InitialUI();
         InitialAction();
-        //LoadingAllProblem();
+        LoadingAllProblem();
     }
 
     // implements methods
@@ -295,7 +295,6 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
         announcementlist = new ArrayList<>();
         problemlist = new ArrayList<>();
         responselist = new ArrayList<>();
-        palist = FakeData.getPARecord();
         pa_adapter = new PAListAdapter(this, palist);
     }
 
