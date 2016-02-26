@@ -1,6 +1,7 @@
 package com.example.user.repeat.Asyn;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.example.user.repeat.Other.Code;
 import com.example.user.repeat.Other.HttpConnection;
@@ -21,7 +22,7 @@ import java.util.List;
  */
 public class LoadAllProblem extends AsyncTask<String, Integer, Integer> {
     public interface OnLoadAllProblemListener {
-        void finish(Integer result,List<ProblemRecord> list);
+        void finish(Integer result, List<ProblemRecord> list);
     }
 
     private final HttpConnection conn;
@@ -44,14 +45,14 @@ public class LoadAllProblem extends AsyncTask<String, Integer, Integer> {
         try {
             // put "phone" post out, get json
             List<NameValuePair> postFields = new ArrayList<>();
-			postFields.add(new BasicNameValuePair("role", Code.Flabor));
+            postFields.add(new BasicNameValuePair("Role", Code.Flabor));
             postFields.add(new BasicNameValuePair("FLaborNo", fNo));
             postFields.add(new BasicNameValuePair("CustomerNo", cNo));
             // Fake Data
-            postFields.add(new BasicNameValuePair("startday ", "2016/1/1 11:11:11"));
+            postFields.add(new BasicNameValuePair("startday", "2016/1/1 11:11:11"));
             postFields.add(new BasicNameValuePair("endday", "2016/1/1 11:11:11"));
-            postFields.add(new BasicNameValuePair("status ", "0"));
-            postFields.add(new BasicNameValuePair("dormid ","1234"));
+            postFields.add(new BasicNameValuePair("status", "0"));
+            postFields.add(new BasicNameValuePair("dormid", "1234"));
 
             JSONObject jobj = conn.PostGetJson(URLs.url_allproblem, postFields);
             if (jobj != null) {
@@ -79,6 +80,6 @@ public class LoadAllProblem extends AsyncTask<String, Integer, Integer> {
     @Override
     protected void onPostExecute(Integer result) {
         super.onPostExecute(result);
-        mListener.finish(result,list);
+        mListener.finish(result, list);
     }
 }

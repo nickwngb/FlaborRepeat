@@ -1,8 +1,10 @@
 package com.example.user.repeat.Asyn;
 
+import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.example.user.repeat.Other.BitmapTransformer;
 import com.example.user.repeat.Other.Code;
 import com.example.user.repeat.Other.HttpConnection;
 import com.example.user.repeat.Other.URLs;
@@ -33,9 +35,10 @@ public class UploadPhoto extends AsyncTask<String, Integer, Integer> {
     private String fNo;
     private String cNo;
 
-    public UploadPhoto(HttpConnection conn, OnUpdatePhotoListener mListener) {
+    public UploadPhoto(HttpConnection conn, OnUpdatePhotoListener mListener, Bitmap photo) {
         this.conn = conn;
         this.mListener = mListener;
+        this.photo = BitmapTransformer.BitmapToBase64(photo);
     }
 
     @Override
@@ -43,14 +46,15 @@ public class UploadPhoto extends AsyncTask<String, Integer, Integer> {
         Integer result = Code.ConnectTimeOut;
         try {
             role = datas[0];
-            photo = datas[1];
-            fNo = datas[2];
-            cNo = datas[3];
+            fNo = datas[1];
+            cNo = datas[2];
             List<NameValuePair> params = new ArrayList<>();
             params.add(new BasicNameValuePair("Role", role));
             params.add(new BasicNameValuePair("CustomerNo", cNo));
             params.add(new BasicNameValuePair("FLaborNo", fNo));
             params.add(new BasicNameValuePair("LaborPhoto", photo));
+            Log.d("UploadPhoto", role + " " + cNo + " " + fNo);
+            Log.d("UploadPhoto", photo);
             // Fake Data Useless
             params.add(new BasicNameValuePair("UserID", "12345"));
             params.add(new BasicNameValuePair("UserPhoto", "12345"));

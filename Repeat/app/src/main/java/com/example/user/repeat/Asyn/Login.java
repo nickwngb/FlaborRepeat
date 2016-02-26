@@ -1,6 +1,7 @@
 package com.example.user.repeat.Asyn;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.example.user.repeat.Other.Code;
 import com.example.user.repeat.Other.HttpConnection;
@@ -20,7 +21,7 @@ import java.util.List;
  */
 public class Login extends AsyncTask<String, String, Integer> {
     public interface OnLoginListener {
-        void finish(Integer result, String CustomerNo, String FLaborNo, String ChineseName, String LaborPhoto,String phone);
+        void finish(Integer result, String CustomerNo, String FLaborNo, String ChineseName, String LaborPhoto, String phone);
     }
 
     private final HttpConnection conn;
@@ -53,10 +54,11 @@ public class Login extends AsyncTask<String, String, Integer> {
                     if (jArray != null) {
                         JSONObject finfo = jArray.getJSONObject(0);
                         if (finfo != null) {
-                            CustomerNo=finfo.getString("CustomerNo");
-                            FLaborNo=finfo.getString("FLaborNo");
-                            ChineseName=finfo.getString("ChineseName");
-                            LaborPhoto=finfo.getString("LaborPhoto");
+                            CustomerNo = finfo.getString("CustomerNo");
+                            FLaborNo = finfo.getString("FLaborNo");
+                            ChineseName = finfo.getString("ChineseName");
+                            LaborPhoto = finfo.getString("LaborPhoto");
+                            Log.d("GET", CustomerNo + " " + FLaborNo);
                         }
                     }
                 }
@@ -71,6 +73,6 @@ public class Login extends AsyncTask<String, String, Integer> {
     @Override
     protected void onPostExecute(Integer integer) {
         super.onPostExecute(integer);
-        mListener.finish(integer, CustomerNo, FLaborNo, ChineseName, LaborPhoto,phone);
+        mListener.finish(integer, CustomerNo, FLaborNo, ChineseName, LaborPhoto, phone);
     }
 }

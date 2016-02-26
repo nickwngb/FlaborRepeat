@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -77,8 +78,8 @@ public class Act_Responses extends Activity {
                     pd.dismiss();
                     switch (result) {
                         case Code.Success:
-                            responses = list;
-                            Toast.makeText(ctxt, "Refresh", Toast.LENGTH_SHORT).show();
+                            responses.clear();
+                            responses.addAll(list);
                             refreshResponseContent();
                             break;
                         case Code.ResultEmpty:
@@ -194,8 +195,7 @@ public class Act_Responses extends Activity {
         res = getResources();
         conn = new HttpConnection();
         user = User.getUser();
-        int PRSNo = getIntent().getIntExtra("PRSNo", 0);
-//        responses = new ArrayList<>();
+        responses = new ArrayList<>();
         adapter = new ResponseListAdapter(ctxt, responses);
     }
 

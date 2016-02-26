@@ -22,6 +22,7 @@ import com.example.user.repeat.Other.HttpConnection;
 import com.example.user.repeat.Other.Net;
 import com.example.user.repeat.Other.PARecord;
 import com.example.user.repeat.Other.URLs;
+import com.example.user.repeat.Other.User;
 import com.example.user.repeat.Other.Uti;
 import com.example.user.repeat.R;
 
@@ -84,25 +85,26 @@ public class PAListAdapter extends MyBaseAdapter {
             tag.datetime.setText(par.getResponseDate());
             tag.content.setText(par.getResponseContent());
             // set status
-            switch (par.getProblemStatus()) {
-                case Code.Untreated:
-                    tag.status.setBackground(getResources().getDrawable(R.drawable.item_bg_untreated));
-                    break;
-                case Code.Processing:
-                    tag.status.setBackground(getResources().getDrawable(R.drawable.item_bg_processing));
-                    break;
-                case Code.Completed:
-                    tag.status.setBackground(getResources().getDrawable(R.drawable.item_bg_completed));
-                    break;
+            if (par.getProblemStatus() != null) {
+                switch (par.getProblemStatus()) {
+                    case Code.Untreated:
+                        tag.status.setBackground(getResources().getDrawable(R.drawable.item_bg_untreated));
+                        break;
+                    case Code.Processing:
+                        tag.status.setBackground(getResources().getDrawable(R.drawable.item_bg_processing));
+                        break;
+                    case Code.Completed:
+                        tag.status.setBackground(getResources().getDrawable(R.drawable.item_bg_completed));
+                        break;
+                }
             }
-            //LoadImage(tag.Photo, par.getResponseRole());
-            Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.test2);
-            tag.photo.setImageBitmap(bm);
             // photo
-            if (par.getResponseRole().equals(Code.Flabor)) {
-                LoadPhoto(tag.photo, par.getResponseRole(), par.getFLaborNo(), par.getCustomerNo());
-            } else {
-                LoadPhoto(tag.photo, par.getResponseRole(), par.getResponseID());
+            if (par.getResponseRole() != null) {
+                if (par.getResponseRole().equals(Code.Flabor)) {
+                    tag.photo.setImageBitmap(BitmapTransformer.Base64ToBitmap(User.getUser().getLaborPhoto()));
+                } else {
+                    LoadPhoto(tag.photo, par.getResponseRole(), par.getResponseID());
+                }
             }
         } else {
             tag.name.setText(par.getCreateID());

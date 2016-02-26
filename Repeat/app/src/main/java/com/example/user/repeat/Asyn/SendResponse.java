@@ -50,6 +50,7 @@ public class SendResponse extends AsyncTask<String, Integer, Integer> {
             params.add(new BasicNameValuePair("ResponseDate", ResponseDate));
             params.add(new BasicNameValuePair("ResponseID", ResponseID));
             params.add(new BasicNameValuePair("ResponseRole", Code.Flabor));
+            Log.d("SendResponse", PRSNo + " " + ResponseContent + " " + ResponseDate + " " + ResponseID);
             JSONObject jobj = conn.PostGetJson(URLs.url_addresponse, params);
             if (jobj != null) {
                 result = jobj.getInt("success");

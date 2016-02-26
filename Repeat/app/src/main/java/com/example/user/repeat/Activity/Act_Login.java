@@ -70,6 +70,11 @@ public class Act_Login extends AppCompatActivity {
                     switch (result){
                         case Code.Success:
                             phone = phones;
+                            user.setLaborPhoto(LaborPhoto);
+                            user.setChineseName(ChineseName);
+                            user.setCustomerNo(CustomerNo);
+                            user.setFLaborNo(FLaborNo);
+                            user.setCellPhone(phones);
                             saveData();
                             Intent i = new Intent(ctxt, Act_MainScreen.class);
                             startActivity(i);

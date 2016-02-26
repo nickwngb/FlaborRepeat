@@ -1,6 +1,7 @@
 package com.example.user.repeat.Adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -10,8 +11,10 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.example.user.repeat.Other.BitmapTransformer;
 import com.example.user.repeat.Other.Code;
 import com.example.user.repeat.Other.ProblemResponse;
+import com.example.user.repeat.Other.User;
 import com.example.user.repeat.R;
 
 import java.util.List;
@@ -65,7 +68,7 @@ public class ResponseListAdapter extends MyBaseAdapter {
         }
         if (item.getResponseRole().equals(Code.Flabor)) {
             tag.f_content.setText(item.getResponseContent());
-            //tag.f_photo
+            tag.f_photo.setImageBitmap(BitmapTransformer.Base64ToBitmap(User.getUser().getLaborPhoto()));
             tag.f_name.setText(item.getResponseID());
             tag.f_datetime.setText(item.getResponseDate());
         } else {

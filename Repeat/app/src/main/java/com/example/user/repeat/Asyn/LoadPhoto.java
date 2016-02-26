@@ -79,8 +79,10 @@ public class LoadPhoto extends AsyncTask<String, Integer, Integer> {
                 ImageView imageView = rf_circleImg.get();
                 if (imageView != null) {
                     if (bitmap != null) {
-                        imageView.setImageBitmap(bitmap);
-                        imageView.setTag(1);
+                        if (imageView.getTag() != null && !imageView.getTag().equals(1)) {
+                            imageView.setImageBitmap(bitmap);
+                            imageView.setTag(1);
+                        }
                         mListener.finish();
                     }
                 }

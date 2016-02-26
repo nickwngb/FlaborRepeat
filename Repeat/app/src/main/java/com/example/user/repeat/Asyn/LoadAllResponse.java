@@ -43,6 +43,7 @@ public class LoadAllResponse extends AsyncTask<String, Integer, Integer> {
         try {
             List<NameValuePair> params = new ArrayList<>();
             params.add(new BasicNameValuePair("PRSNo", PRSNo));
+            Log.d("LoadAllResponse", PRSNo + "");
             JSONObject jobj = conn.PostGetJson(URLs.url_allresponse, params);
             if (jobj != null) {
                 result = jobj.getInt("success");

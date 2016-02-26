@@ -229,7 +229,7 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
         }
     }
 
-    private void UploadPhoto(String photo) {
+    private void UploadPhoto(Bitmap photo) {
         if (Net.isNetWork(ctxt)) {
             final ProgressDialog fd = FreeDialog.getProgressDialog(ctxt, "Loading...");
             UploadPhoto task = new UploadPhoto(conn, new UploadPhoto.OnUpdatePhotoListener() {
@@ -248,8 +248,8 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
                             break;
                     }
                 }
-            });
-            task.execute(Code.Flabor, photo, user.getFLaborNo(), user.getCustomerNo());
+            },photo);
+            task.execute(Code.Flabor, user.getFLaborNo(), user.getCustomerNo());
         } else {
             Toast.makeText(ctxt, getResources().getString(R.string.msg_err_network), Toast.LENGTH_SHORT).show();
         }
@@ -528,12 +528,11 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
                     iv.setImageBitmap(result);
                     new AlertDialog.Builder(ctxt, AlertDialog.THEME_HOLO_LIGHT).setView(iv).setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            //UploadPhoto(BitmapTransformer.BitmapToBase64(result));
+                            UploadPhoto(result);
                         }
                     }).setNegativeButton("Cancel", null).show();
                     break;
             }
-
 
             if (requestCode == AddAct) {
 
