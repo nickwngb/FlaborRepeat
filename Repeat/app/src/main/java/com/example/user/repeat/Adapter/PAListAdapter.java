@@ -103,7 +103,11 @@ public class PAListAdapter extends MyBaseAdapter {
                 if (par.getResponseRole().equals(Code.Flabor)) {
                     tag.photo.setImageBitmap(BitmapTransformer.Base64ToBitmap(User.getUser().getLaborPhoto()));
                 } else {
-                    LoadPhoto(tag.photo, par.getResponseRole(), par.getResponseID());
+                    if (tag.photo.getTag() == null) {
+                        LoadPhoto(tag.photo, par.getResponseRole(), par.getResponseID());
+                    }else{
+                        Log.d("aaa" , "ready");
+                    }
                 }
             }
         } else {
@@ -129,7 +133,7 @@ public class PAListAdapter extends MyBaseAdapter {
         if (Net.isNetWork(getContext())) {
             LoadPhoto task = new LoadPhoto(circleImageView, new HttpConnection(), new LoadPhoto.OnLoadPhotoListener() {
                 public void finish() {
-
+                    Log.d("aaa" , "ok");
                 }
             });
             task.execute(datas);

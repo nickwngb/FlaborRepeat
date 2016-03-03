@@ -155,7 +155,8 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
             LoadAllLastestResponse task = new LoadAllLastestResponse(conn, new LoadAllLastestResponse.OnLoadAllResponseListener() {
                 public void finish(Integer result, List<ProblemResponse> list) {
                     fd.dismiss();
-                    responselist = list;
+                    responselist.clear();
+                    responselist.addAll(list);
                     Log.i("LoadAllLastestResponse", "Result " + result);
                     Log.i("LoadAllLastestResponse", "ListSize " + responselist.size());
                     switch (result) {
@@ -204,7 +205,8 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
             LoadAllAnnouncement task = new LoadAllAnnouncement(conn, new LoadAllAnnouncement.OnLoadAllAnnouncementListener() {
                 public void finish(Integer result, List<AnnouncementRecord> list) {
                     fd.dismiss();
-                    announcementlist = list;
+                    announcementlist.clear();
+                    announcementlist.addAll(list);
                     Log.i("LoadingAllAnnouncement", "Result " + result);
                     switch (result) {
                         case Code.Success:
@@ -248,7 +250,7 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
                             break;
                     }
                 }
-            },photo);
+            }, photo);
             task.execute(Code.Flabor, user.getFLaborNo(), user.getCustomerNo());
         } else {
             Toast.makeText(ctxt, getResources().getString(R.string.msg_err_network), Toast.LENGTH_SHORT).show();
