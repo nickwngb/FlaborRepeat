@@ -81,6 +81,7 @@ public class Act_Responses extends Activity {
                             responses.clear();
                             responses.addAll(list);
                             refreshResponseContent();
+                            scrollMyListViewToBottom();
                             break;
                         case Code.ResultEmpty:
                             Toast.makeText(ctxt, "Empty", Toast.LENGTH_SHORT).show();
@@ -105,6 +106,15 @@ public class Act_Responses extends Activity {
         }
     }
 
+    private void scrollMyListViewToBottom() {
+        lv_responses.post(new Runnable() {
+            public void run() {
+                // Select the last row so it will scroll into view...
+                lv_responses.setSelection(lv_responses.getCount() - 1);
+            }
+        });
+    }
+
     private void SendResponse(String... params) {
         if (Net.isNetWork(ctxt)) {
             final ProgressDialog pd = FreeDialog.getProgressDialog(ctxt, "Loading...");
@@ -113,6 +123,7 @@ public class Act_Responses extends Activity {
                     pd.dismiss();
                     switch (result) {
                         case Code.Success:
+                            et_content.setText("");
                             LoadAllResponse(PRSNo + "");
                             break;
                         case Code.Fail:

@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.example.user.repeat.Other.BitmapTransformer;
 import com.example.user.repeat.Other.Code;
+import com.example.user.repeat.Other.MyTime;
 import com.example.user.repeat.Other.ProblemResponse;
 import com.example.user.repeat.Other.User;
 import com.example.user.repeat.R;
@@ -70,12 +71,11 @@ public class ResponseListAdapter extends MyBaseAdapter {
             tag.f_content.setText(item.getResponseContent());
             tag.f_photo.setImageBitmap(BitmapTransformer.Base64ToBitmap(User.getUser().getLaborPhoto()));
             tag.f_name.setText(item.getResponseID());
-            tag.f_datetime.setText(item.getResponseDate());
+            tag.f_datetime.setText(MyTime.convertTimeForResponse(item.getResponseDate()));
         } else {
             tag.m_content.setText(item.getResponseContent());
-            //tag.m_photo
             tag.m_name.setText(item.getResponseID());
-            tag.m_datetime.setText(item.getResponseDate());
+            tag.m_datetime.setText(MyTime.convertTimeForResponse(item.getResponseDate()));
         }
 
         // show

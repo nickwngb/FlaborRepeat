@@ -1,24 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="10dp"
-    tools:context="com.example.user.repeat.item_problemlist">
+    android:padding="10dp">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="70dp"
         android:orientation="horizontal">
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            xmlns:app="http://schemas.android.com/apk/res-auto"
+        <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/img_item_photo"
             android:layout_width="60dp"
             android:layout_height="60dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="5dp"
             android:src="@drawable/peoople"
-            app:civ_border_color="#FF000000"/>
+            app:civ_border_color="#FF000000" />
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -30,7 +29,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right|bottom"
-                android:background="@drawable/list_complete"/>
+                android:background="@drawable/list_complete" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -49,7 +48,8 @@
                         android:layout_alignParentStart="true"
                         android:layout_centerVertical="true"
                         android:text="Name"
-                        android:textSize="24sp"/>
+                        android:textColor="@color/black"
+                        android:textSize="20sp" />
 
                     <TextView
                         android:id="@+id/tv_item_createproblemdate"
@@ -61,18 +61,17 @@
                         android:gravity="right"
                         android:text="2016/01/01 17:30"
                         android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:textSize="12sp"/>
+                        android:textSize="12sp" />
                 </RelativeLayout>
 
                 <TextView
                     android:id="@+id/tv_item_problemcontent"
-                    android:layout_width="wrap_content"
+                    android:layout_width="200dp"
                     android:layout_height="match_parent"
-                    android:text="Content"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:singleLine="true"
                     android:ellipsize="end"
-                    android:textSize="16sp"/>
+                    android:maxLines="2"
+                    android:text="Content"
+                    android:textSize="14sp" />
             </LinearLayout>
 
         </FrameLayout>

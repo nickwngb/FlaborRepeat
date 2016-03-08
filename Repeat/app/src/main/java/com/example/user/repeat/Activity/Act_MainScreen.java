@@ -125,9 +125,8 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
             LoadAllProblem task = new LoadAllProblem(conn, new LoadAllProblem.OnLoadAllProblemListener() {
                 public void finish(Integer result, List<ProblemRecord> list) {
                     fd.dismiss();
-                    problemlist = list;
-                    Log.i("LoadAllProblem ", "Result " + result);
-                    Log.i("LoadAllProblem", "ListSize " + problemlist.size());
+                    problemlist.clear();
+                    problemlist.addAll(list);
                     switch (result) {
                         case Code.Success:
                             LoadAllResponse();
@@ -157,8 +156,6 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
                     fd.dismiss();
                     responselist.clear();
                     responselist.addAll(list);
-                    Log.i("LoadAllLastestResponse", "Result " + result);
-                    Log.i("LoadAllLastestResponse", "ListSize " + responselist.size());
                     switch (result) {
                         case Code.Success:
                         case Code.ResultEmpty:
@@ -207,7 +204,6 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
                     fd.dismiss();
                     announcementlist.clear();
                     announcementlist.addAll(list);
-                    Log.i("LoadingAllAnnouncement", "Result " + result);
                     switch (result) {
                         case Code.Success:
                         case Code.ResultEmpty:

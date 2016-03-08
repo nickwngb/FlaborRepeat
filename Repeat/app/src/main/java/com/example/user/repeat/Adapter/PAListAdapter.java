@@ -19,6 +19,7 @@ import com.example.user.repeat.Asyn.LoadPhoto;
 import com.example.user.repeat.Other.BitmapTransformer;
 import com.example.user.repeat.Other.Code;
 import com.example.user.repeat.Other.HttpConnection;
+import com.example.user.repeat.Other.MyTime;
 import com.example.user.repeat.Other.Net;
 import com.example.user.repeat.Other.PARecord;
 import com.example.user.repeat.Other.URLs;
@@ -32,7 +33,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -78,11 +84,11 @@ public class PAListAdapter extends MyBaseAdapter {
         } else {
             tag = (ViewTag) v.getTag();
         }
-        PARecord par = getItem(position);
+        final PARecord par = getItem(position);
         if (par.tag.equals(PARecord.TAG_Problem)) {
             // setText
             tag.name.setText(par.getResponseID());
-            tag.datetime.setText(par.getResponseDate());
+            tag.datetime.setText(MyTime.convertTime(par.getResponseDate()));
             tag.content.setText(par.getResponseContent());
             // set status
             if (par.getProblemStatus() != null) {
@@ -105,21 +111,22 @@ public class PAListAdapter extends MyBaseAdapter {
                 } else {
                     if (tag.photo.getTag() == null) {
                         LoadPhoto(tag.photo, par.getResponseRole(), par.getResponseID());
-                    }else{
-                        Log.d("aaa" , "ready");
                     }
                 }
             }
         } else {
             tag.name.setText(par.getCreateID());
-            tag.datetime.setText(par.getCreateDate());
+            tag.datetime.setText(MyTime.convertTime(par.getCreateDate()));
             tag.content.setText(par.getPushContent());
             tag.status.setBackgroundColor(Color.TRANSPARENT);
+            if (tag.photo.getTag() == null) {
+                LoadPhoto(tag.photo, Code.Manager, par.getCreateID());
+            }
         }
-
-
         return v;
     }
+
+
 
     static class ViewTag {
         public CircleImageView photo;
@@ -133,7 +140,7 @@ public class PAListAdapter extends MyBaseAdapter {
         if (Net.isNetWork(getContext())) {
             LoadPhoto task = new LoadPhoto(circleImageView, new HttpConnection(), new LoadPhoto.OnLoadPhotoListener() {
                 public void finish() {
-                    Log.d("aaa" , "ok");
+
                 }
             });
             task.execute(datas);
