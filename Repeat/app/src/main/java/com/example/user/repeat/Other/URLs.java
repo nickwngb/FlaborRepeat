@@ -47,5 +47,5 @@ public class URLs {
     /**
      *   GCM
      */
-    public static final String url_gcm_register = serverip + "gcm_register";
+    public static final String url_gcm_register = serverip + "gcm_signup";
 }

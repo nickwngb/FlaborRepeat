@@ -7,6 +7,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -87,7 +88,7 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
 
     // implements methods
     public void gcmRegistered(boolean successfull, String regID) {
-        Log.i("RegId Listener!!", successfull + " " + regID);
+        Log.i("RegId Listener", successfull + " " + regID);
         if (successfull) {
             RegisterGCMTask(regID);
         }
@@ -253,41 +254,14 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
         }
     }
 
-    private void UpdateStatus(int MPSNo, String status) {
-        if (Net.isNetWork(ctxt)) {
-            final ProgressDialog fd = FreeDialog.getProgressDialog(ctxt, "Loading...");
-            UpdateStatus task = new UpdateStatus(conn, new UpdateStatus.OnUpdateStatusListener() {
-                public void finish(Integer result) {
-                    fd.dismiss();
-                    Log.i("UpdateStatus", "Result " + result);
-                    switch (result) {
-                        case Code.Success:
-                            Toast.makeText(ctxt, "Completed", Toast.LENGTH_SHORT).show();
-                            LoadingAllProblem();
-                            break;
-                        case Code.ResultEmpty:
-                            Toast.makeText(ctxt, "Upload Fail", Toast.LENGTH_SHORT).show();
-                            break;
-                        case Code.ConnectTimeOut:
-                            Toast.makeText(ctxt, getResources().getString(R.string.msg_err_noresponse), Toast.LENGTH_SHORT).show();
-                            break;
-                    }
-                }
-            });
-            task.execute(MPSNo + "", status);
-        } else {
-            Toast.makeText(ctxt, getResources().getString(R.string.msg_err_network), Toast.LENGTH_SHORT).show();
-        }
-    }
-
     private void InitialSomething() {
         user = User.getUser();
         res = getResources();
         // http
         conn = new HttpConnection();
         // receiver
-//        mGBGCM = new GoldBrotherGCM(this);
-//        mRefreshReceiver = new RefreshReceiver();
+        mGBGCM = new GoldBrotherGCM(this);
+        mRefreshReceiver = new RefreshReceiver();
         // List
         palist = new ArrayList<>();
         announcementlist = new ArrayList<>();
@@ -304,13 +278,13 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
 
     private void InitialAction() {
         // Other
-//        if (mGBGCM.getRegistrationId().isEmpty()) {
-//            mGBGCM.setMagicLenGCMListener(this);
-//            mGBGCM.openGCM();
-//        } else {
-//            Log.i("RegId is Exsit:", mGBGCM.getRegistrationId());
-//            AddRegIdToAPPServer(mGBGCM.getRegistrationId());
-//        }
+        if (mGBGCM.getRegistrationId().isEmpty()) {
+            mGBGCM.setMagicLenGCMListener(this);
+            mGBGCM.openGCM();
+        } else {
+            Log.i("RegId is Exsit", mGBGCM.getRegistrationId());
+            RegisterGCMTask(mGBGCM.getRegistrationId());
+        }
         // UI
         bt_repeat.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -359,13 +333,11 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
         });
         list_reaprethistory.setAdapter(pa_adapter);
         //GCM Refresh
-//        mRefreshReceiver.setOnrefreshListener(this);
-//
-//        IntentFilter intentFilter = new IntentFilter();
-//
-//        intentFilter.addAction("Refresh");
-//
-//        registerReceiver(mRefreshReceiver, intentFilter);
+        mRefreshReceiver.setOnrefreshListener(this);
+
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("Refresh");
+        registerReceiver(mRefreshReceiver, intentFilter);
     }
 
     private void refreshPAList() {
