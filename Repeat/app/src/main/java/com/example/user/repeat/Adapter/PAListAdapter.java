@@ -1,44 +1,20 @@
 package com.example.user.repeat.Adapter;
 
 import android.content.Context;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.os.AsyncTask;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.example.user.repeat.Asyn.LoadPhoto;
+import com.example.user.repeat.ImageLoadHelp.ImageLoader;
 import com.example.user.repeat.Other.BitmapTransformer;
 import com.example.user.repeat.Other.Code;
-import com.example.user.repeat.Other.HttpConnection;
 import com.example.user.repeat.Other.MyTime;
-import com.example.user.repeat.Other.Net;
 import com.example.user.repeat.Other.PARecord;
-import com.example.user.repeat.Other.URLs;
 import com.example.user.repeat.Other.User;
-import com.example.user.repeat.Other.Uti;
 import com.example.user.repeat.R;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.lang.ref.WeakReference;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -49,10 +25,12 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class PAListAdapter extends MyBaseAdapter {
 
     private List<PARecord> list;
+    private ImageLoader imageLoader;
 
     public PAListAdapter(Context context, List<PARecord> list) {
         super(context);
         this.list = list;
+        this.imageLoader = new ImageLoader(context);
     }
 
     public int getCount() {
@@ -109,9 +87,8 @@ public class PAListAdapter extends MyBaseAdapter {
                 if (par.getResponseRole().equals(Code.Flabor)) {
                     tag.photo.setImageBitmap(BitmapTransformer.Base64ToBitmap(User.getUser().getLaborPhoto()));
                 } else {
-                    if (tag.photo.getTag() == null) {
-                        LoadPhoto(tag.photo, par.getResponseRole(), par.getResponseID());
-                    }
+
+                    imageLoader.DisplayImage(par.getResponseID(), tag.photo);
                 }
             }
         } else {
@@ -119,13 +96,10 @@ public class PAListAdapter extends MyBaseAdapter {
             tag.datetime.setText(MyTime.convertTime(par.getCreateDate()));
             tag.content.setText(par.getPushContent());
             tag.status.setBackgroundColor(Color.TRANSPARENT);
-            if (tag.photo.getTag() == null) {
-                LoadPhoto(tag.photo, Code.Manager, par.getCreateID());
-            }
+            imageLoader.DisplayImage(par.getCreateID(), tag.photo);
         }
         return v;
     }
-
 
 
     static class ViewTag {
@@ -134,16 +108,5 @@ public class PAListAdapter extends MyBaseAdapter {
         public TextView datetime;
         public TextView content;
         public ImageView status;
-    }
-
-    private void LoadPhoto(CircleImageView circleImageView, String... datas) {
-        if (Net.isNetWork(getContext())) {
-            LoadPhoto task = new LoadPhoto(circleImageView, new HttpConnection(), new LoadPhoto.OnLoadPhotoListener() {
-                public void finish() {
-
-                }
-            });
-            task.execute(datas);
-        }
     }
 }

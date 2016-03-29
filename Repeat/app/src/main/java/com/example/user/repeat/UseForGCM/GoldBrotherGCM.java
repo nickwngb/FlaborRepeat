@@ -235,16 +235,8 @@ public class GoldBrotherGCM {
                 if (regid == null || regid.isEmpty()) {
                     return "";
                 }
-
                 // 儲存regID
                 storeRegistrationId(regid);
-
-//                if (listener != null) {
-//                    if (!listener.gcmSendRegistrationIdToAppServer(regid)) {
-//                        storeRegistrationId("");
-//                        return "";
-//                    }
-//                }
             } catch (IOException ex) {
 
             }

@@ -88,7 +88,6 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
 
     // implements methods
     public void gcmRegistered(boolean successfull, String regID) {
-        Log.i("RegId Listener", successfull + " " + regID);
         if (successfull) {
             RegisterGCMTask(regID);
         }
@@ -260,7 +259,7 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
         // http
         conn = new HttpConnection();
         // receiver
-        mGBGCM = new GoldBrotherGCM(this);
+        mGBGCM = new GoldBrotherGCM(this,this);
         mRefreshReceiver = new RefreshReceiver();
         // List
         palist = new ArrayList<>();
@@ -282,7 +281,7 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
             mGBGCM.setMagicLenGCMListener(this);
             mGBGCM.openGCM();
         } else {
-            Log.i("RegId is Exsit", mGBGCM.getRegistrationId());
+            Log.i("GCM", mGBGCM.getRegistrationId());
             RegisterGCMTask(mGBGCM.getRegistrationId());
         }
         // UI
@@ -449,7 +448,7 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
     }
 
     public void onDestroy() {
-        //unregisterReceiver(mRefreshReceiver);
+        unregisterReceiver(mRefreshReceiver);
         super.onDestroy();
     }
 
