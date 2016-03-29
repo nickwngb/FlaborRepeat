@@ -80,22 +80,12 @@ public class ResponseListAdapter extends MyBaseAdapter {
 
         // show
         if (item.getResponseRole().equals(Code.Flabor)) {
-            final int sdk = android.os.Build.VERSION.SDK_INT;
-            if (sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-                tag.background.setBackgroundDrawable(getResources().getDrawable(R.drawable.textbox_content));
-            } else {
-                tag.background.setBackground(getResources().getDrawable(R.drawable.textbox_content));
-            }
+            tag.background.setBackground(getResources().getDrawable(R.drawable.block_flabor));
             tag.f_block.setVisibility(View.VISIBLE);
             tag.m_block.setVisibility(View.GONE);
 
         } else {
-            final int sdk = android.os.Build.VERSION.SDK_INT;
-            if (sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-                tag.background.setBackgroundDrawable(getResources().getDrawable(R.drawable.textbox_reponse));
-            } else {
-                tag.background.setBackground(getResources().getDrawable(R.drawable.textbox_reponse));
-            }
+            tag.background.setBackground(getResources().getDrawable(R.drawable.block_manager));
             tag.f_block.setVisibility(View.GONE);
             tag.m_block.setVisibility(View.VISIBLE);
         }

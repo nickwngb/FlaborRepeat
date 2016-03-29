@@ -94,13 +94,13 @@ public class PAListAdapter extends MyBaseAdapter {
             if (par.getProblemStatus() != null) {
                 switch (par.getProblemStatus()) {
                     case Code.Untreated:
-                        tag.status.setBackground(getResources().getDrawable(R.drawable.item_bg_untreated));
+                        tag.status.setBackground(getResources().getDrawable(R.drawable.status_untreated));
                         break;
                     case Code.Processing:
-                        tag.status.setBackground(getResources().getDrawable(R.drawable.item_bg_processing));
+                        //tag.status.setBackground(getResources().getDrawable(R.drawable.item_bg_processing));
                         break;
                     case Code.Completed:
-                        tag.status.setBackground(getResources().getDrawable(R.drawable.item_bg_completed));
+                        tag.status.setBackground(getResources().getDrawable(R.drawable.status_completed));
                         break;
                 }
             }

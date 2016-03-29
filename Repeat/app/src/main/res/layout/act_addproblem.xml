@@ -24,7 +24,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="start"
-            android:textCursorDrawable="@color/black"
+            android:background="@drawable/cust_edittext_add"
             android:hint="Enter problem"
             android:padding="10dp"
             android:textSize="24sp"/>
