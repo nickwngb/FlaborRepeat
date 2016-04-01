@@ -11,6 +11,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.example.user.repeat.ImageLoadHelp.ImageLoader;
 import com.example.user.repeat.Other.BitmapTransformer;
 import com.example.user.repeat.Other.Code;
 import com.example.user.repeat.Other.MyTime;
@@ -26,11 +27,14 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * Created by v on 2016/2/16.
  */
 public class ResponseListAdapter extends MyBaseAdapter {
+
     private List<ProblemResponse> list;
+    private ImageLoader imageLoader;
 
     public ResponseListAdapter(Context context, List<ProblemResponse> list) {
         super(context);
         this.list = list;
+        this.imageLoader = new ImageLoader(context);
     }
 
     @Override
@@ -74,6 +78,7 @@ public class ResponseListAdapter extends MyBaseAdapter {
             tag.f_datetime.setText(MyTime.convertTimeForResponse(item.getResponseDate()));
         } else {
             tag.m_content.setText(item.getResponseContent());
+            imageLoader.DisplayImage(item.getResponseID(), tag.m_photo);
             tag.m_name.setText(item.getResponseID());
             tag.m_datetime.setText(MyTime.convertTimeForResponse(item.getResponseDate()));
         }

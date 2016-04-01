@@ -87,7 +87,6 @@ public class PAListAdapter extends MyBaseAdapter {
                 if (par.getResponseRole().equals(Code.Flabor)) {
                     tag.photo.setImageBitmap(BitmapTransformer.Base64ToBitmap(User.getUser().getLaborPhoto()));
                 } else {
-
                     imageLoader.DisplayImage(par.getResponseID(), tag.photo);
                 }
             }
