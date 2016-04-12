@@ -36,8 +36,7 @@ public class GcmBroadcastReceiver extends WakefulBroadcastReceiver {
                 i.setAction("android.intent.action.MAIN");
                 i.addCategory("android.intent.category.LAUNCHER");
                 // send a Notification
-                GoldBrotherGCM.sendLocalNotification(context, NOTIFICATION_ID,
-                        R.drawable.icon, "You have a notification", extras.getString("message"), "Golden Brother", true,
+                GoldBrotherGCM.sendLocalNotification(context, NOTIFICATION_ID,extras.getString("message"),
                         PendingIntent.getActivity(context, 0, i, PendingIntent.FLAG_CANCEL_CURRENT));
                 // push a intent to refresh reveiver
                 Intent refresh_intent = new Intent();

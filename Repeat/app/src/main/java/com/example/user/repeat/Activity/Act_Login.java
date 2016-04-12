@@ -6,35 +6,21 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import com.example.user.repeat.Asyn.Login;
 import com.example.user.repeat.Other.Code;
-import com.example.user.repeat.Other.FreeDialog;
+import com.example.user.repeat.Other.MyDialog;
 import com.example.user.repeat.Other.HttpConnection;
 import com.example.user.repeat.Other.Net;
-import com.example.user.repeat.Other.URLs;
 import com.example.user.repeat.Other.User;
 import com.example.user.repeat.Other.Uti;
 import com.example.user.repeat.Other.Vaild;
 import com.example.user.repeat.R;
-
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class Act_Login extends AppCompatActivity {
     //
@@ -63,7 +49,7 @@ public class Act_Login extends AppCompatActivity {
 
     private void LoginTask(String phoneL) {
         if (Net.isNetWork(ctxt)) {
-            final ProgressDialog pd = FreeDialog.getProgressDialog(ctxt,"Loading...");
+            final ProgressDialog pd = MyDialog.getProgressDialog(ctxt, "Loading...");
             Login task = new Login(conn, new Login.OnLoginListener() {
                 public void finish(Integer result, String CustomerNo, String FLaborNo, String ChineseName, String LaborPhoto,String phones) {
                     pd.dismiss();

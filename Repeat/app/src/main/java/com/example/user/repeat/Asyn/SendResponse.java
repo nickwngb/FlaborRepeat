@@ -25,14 +25,12 @@ public class SendResponse extends AsyncTask<String, Integer, Integer> {
     }
 
     private final OnSendResponseListener mListener;
-    private final HttpConnection conn;
     private String PRSNo;
     private String ResponseContent;
     private String ResponseDate;
     private String ResponseID;
 
-    public SendResponse(HttpConnection conn, OnSendResponseListener mListener) {
-        this.conn = conn;
+    public SendResponse(OnSendResponseListener mListener) {
         this.mListener = mListener;
     }
 
@@ -51,7 +49,7 @@ public class SendResponse extends AsyncTask<String, Integer, Integer> {
             params.add(new BasicNameValuePair("ResponseID", ResponseID));
             params.add(new BasicNameValuePair("ResponseRole", Code.Flabor));
             Log.d("SendResponse", PRSNo + " " + ResponseContent + " " + ResponseDate + " " + ResponseID);
-            JSONObject jobj = conn.PostGetJson(URLs.url_addresponse, params);
+            JSONObject jobj = new HttpConnection().PostGetJson(URLs.url_addresponse, params);
             if (jobj != null) {
                 result = jobj.getInt("success");
             }

@@ -25,14 +25,12 @@ public class LoadAllProblem extends AsyncTask<String, Integer, Integer> {
         void finish(Integer result, List<ProblemRecord> list);
     }
 
-    private final HttpConnection conn;
     private final OnLoadAllProblemListener mListener;
     private List<ProblemRecord> list;
     private String fNo;
     private String cNo;
 
-    public LoadAllProblem(HttpConnection conn, OnLoadAllProblemListener mListener) {
-        this.conn = conn;
+    public LoadAllProblem( OnLoadAllProblemListener mListener) {
         this.mListener = mListener;
         this.list = new ArrayList<>();
     }
@@ -54,7 +52,7 @@ public class LoadAllProblem extends AsyncTask<String, Integer, Integer> {
             postFields.add(new BasicNameValuePair("status", "0"));
             postFields.add(new BasicNameValuePair("dormid", "1234"));
 
-            JSONObject jobj = conn.PostGetJson(URLs.url_allproblem, postFields);
+            JSONObject jobj = new HttpConnection().PostGetJson(URLs.url_allproblem, postFields);
             if (jobj != null) {
                 result = jobj.getInt("success");
                 if (result == Code.Success) {

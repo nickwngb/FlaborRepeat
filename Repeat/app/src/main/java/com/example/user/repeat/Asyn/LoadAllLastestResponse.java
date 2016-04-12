@@ -26,13 +26,11 @@ public class LoadAllLastestResponse extends AsyncTask<List<Integer>, Integer, In
         void finish(Integer result, List<ProblemResponse> list);
     }
 
-    private final HttpConnection conn;
     private final OnLoadAllResponseListener mListener;
     private List<ProblemResponse> list;
     private List<Integer> PRSNos;
 
-    public LoadAllLastestResponse(HttpConnection conn, OnLoadAllResponseListener mListener) {
-        this.conn = conn;
+    public LoadAllLastestResponse(OnLoadAllResponseListener mListener) {
         this.mListener = mListener;
         this.list = new ArrayList<>();
     }
@@ -47,7 +45,7 @@ public class LoadAllLastestResponse extends AsyncTask<List<Integer>, Integer, In
                 Log.d("LoadAllLastestResponse", PRSNo + "");
                 postFields.add(new BasicNameValuePair("PRSNos", PRSNo + ""));
             }
-            JSONObject jobj = conn.PostGetJson(URLs.url_response, postFields);
+            JSONObject jobj = new HttpConnection().PostGetJson(URLs.url_response, postFields);
             if (jobj != null) {
                 result = jobj.getInt("success");
                 if (result == Code.Success) {

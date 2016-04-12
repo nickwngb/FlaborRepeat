@@ -26,13 +26,10 @@ import com.example.user.repeat.Asyn.LoadAllAnnouncement;
 import com.example.user.repeat.Asyn.LoadAllLastestResponse;
 import com.example.user.repeat.Asyn.LoadAllProblem;
 import com.example.user.repeat.Asyn.RegisterGCM;
-import com.example.user.repeat.Asyn.UpdateStatus;
 import com.example.user.repeat.Asyn.UploadPhoto;
 import com.example.user.repeat.Other.AnnouncementRecord;
-import com.example.user.repeat.Other.BitmapTransformer;
 import com.example.user.repeat.Other.Code;
-import com.example.user.repeat.Other.FakeData;
-import com.example.user.repeat.Other.FreeDialog;
+import com.example.user.repeat.Other.MyDialog;
 import com.example.user.repeat.Other.Hardware;
 import com.example.user.repeat.Other.HttpConnection;
 import com.example.user.repeat.Other.Net;
@@ -56,7 +53,6 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
     //
     private Context ctxt = Act_MainScreen.this;
     private Resources res;
-    private HttpConnection conn;
     private GoldBrotherGCM mGBGCM;
     private RefreshReceiver mRefreshReceiver;
 
@@ -67,7 +63,8 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
     private static final int TAKE_PICTURE = 2;
     private static final int TRIM_PICTURE = 3;
     // UI
-    private Button bt_repeat, bt_image;
+    private Button bt_repeat;
+    private ImageView bt_image;
     private ListView list_reaprethistory;
     // Other
     private List<ProblemRecord> problemlist;
@@ -100,8 +97,8 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
     // implements methods end
     private void RegisterGCMTask(String id) {
         if (Net.isNetWork(ctxt)) {
-            final ProgressDialog fd = FreeDialog.getProgressDialog(ctxt, "Loading...");
-            RegisterGCM task = new RegisterGCM(conn, new RegisterGCM.OnRegisterGCMListener() {
+            final ProgressDialog fd = MyDialog.getProgressDialog(ctxt, "Loading...");
+            RegisterGCM task = new RegisterGCM(new RegisterGCM.OnRegisterGCMListener() {
                 public void finish(Integer result) {
                     fd.dismiss();
                     Log.i("RegisterGCM ", "Result : " + result);
@@ -121,8 +118,8 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
 
     private void LoadingAllProblem() {
         if (Net.isNetWork(ctxt)) {
-            final ProgressDialog fd = FreeDialog.getProgressDialog(ctxt, "Loading...");
-            LoadAllProblem task = new LoadAllProblem(conn, new LoadAllProblem.OnLoadAllProblemListener() {
+            final ProgressDialog fd = MyDialog.getProgressDialog(ctxt, "Loading...");
+            LoadAllProblem task = new LoadAllProblem(new LoadAllProblem.OnLoadAllProblemListener() {
                 public void finish(Integer result, List<ProblemRecord> list) {
                     fd.dismiss();
                     problemlist.clear();
@@ -150,8 +147,8 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
 
     private void LoadAllResponse() {
         if (Net.isNetWork(ctxt)) {
-            final ProgressDialog fd = FreeDialog.getProgressDialog(ctxt, "Loading...");
-            LoadAllLastestResponse task = new LoadAllLastestResponse(conn, new LoadAllLastestResponse.OnLoadAllResponseListener() {
+            final ProgressDialog fd = MyDialog.getProgressDialog(ctxt, "Loading...");
+            LoadAllLastestResponse task = new LoadAllLastestResponse(new LoadAllLastestResponse.OnLoadAllResponseListener() {
                 public void finish(Integer result, List<ProblemResponse> list) {
                     fd.dismiss();
                     responselist.clear();
@@ -198,8 +195,8 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
 
     private void LoadingAllAnnouncement() {
         if (Net.isNetWork(ctxt)) {
-            final ProgressDialog fd = FreeDialog.getProgressDialog(ctxt, "Loading...");
-            LoadAllAnnouncement task = new LoadAllAnnouncement(conn, new LoadAllAnnouncement.OnLoadAllAnnouncementListener() {
+            final ProgressDialog fd = MyDialog.getProgressDialog(ctxt, "Loading...");
+            LoadAllAnnouncement task = new LoadAllAnnouncement(new LoadAllAnnouncement.OnLoadAllAnnouncementListener() {
                 public void finish(Integer result, List<AnnouncementRecord> list) {
                     fd.dismiss();
                     announcementlist.clear();
@@ -229,8 +226,8 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
 
     private void UploadPhoto(Bitmap photo) {
         if (Net.isNetWork(ctxt)) {
-            final ProgressDialog fd = FreeDialog.getProgressDialog(ctxt, "Loading...");
-            UploadPhoto task = new UploadPhoto(conn, new UploadPhoto.OnUpdatePhotoListener() {
+            final ProgressDialog fd = MyDialog.getProgressDialog(ctxt, "Loading...");
+            UploadPhoto task = new UploadPhoto(new UploadPhoto.OnUpdatePhotoListener() {
                 public void finish(Integer result) {
                     fd.dismiss();
                     Log.i("UploadPhoto", "Result " + result);
@@ -256,10 +253,8 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
     private void InitialSomething() {
         user = User.getUser();
         res = getResources();
-        // http
-        conn = new HttpConnection();
         // receiver
-        mGBGCM = new GoldBrotherGCM(this,this);
+        mGBGCM = new GoldBrotherGCM(this, this);
         mRefreshReceiver = new RefreshReceiver();
         // List
         palist = new ArrayList<>();
@@ -271,7 +266,7 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
 
     private void InitialUI() {
         bt_repeat = (Button) findViewById(R.id.bt_repeat);
-        bt_image = (Button) findViewById(R.id.bt_image);
+        bt_image = (ImageView) findViewById(R.id.bt_main_image);
         list_reaprethistory = (ListView) findViewById(R.id.list_repeathistory);
     }
 
@@ -284,6 +279,12 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
             Log.i("GCM", mGBGCM.getRegistrationId());
             RegisterGCMTask(mGBGCM.getRegistrationId());
         }
+		//GCM Refresh
+        mRefreshReceiver.setOnrefreshListener(this);
+
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("Refresh");
+        registerReceiver(mRefreshReceiver, intentFilter);
         // UI
         bt_repeat.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -306,7 +307,10 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
                 PARecord par = palist.get(pos);
                 if (par.tag.equals(PARecord.TAG_Problem)) {
                     Intent i = new Intent(ctxt, Act_Responses.class);
+                    i.putExtra("PAR",par);
                     i.putExtra("PRSNo", par.getPRSNo());
+                    i.putExtra("Status",par.getProblemStatus());
+                    i.putExtra("Rate",par.getSatisfactionDegree());
                     startActivity(i);
                 } else {
                     //Toast.makeText(ctxt, "MPSNo = " + par.getMPSNo(), Toast.LENGTH_SHORT).show();
@@ -316,27 +320,8 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
                 }
             }
         });
-        list_reaprethistory.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int pos, long l) {
-                final PARecord par = palist.get(pos);
-                if (par.tag.equals(PARecord.TAG_Problem)) {
-                    new AlertDialog.Builder(ctxt).setMessage("Completed ?").setPositiveButton("YES", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            //UpdateStatus(par.getMPSNo(), Code.Completed);
-                        }
-                    }).setNegativeButton("No", null).show();
-                }
-                return true;
-            }
-        });
         list_reaprethistory.setAdapter(pa_adapter);
-        //GCM Refresh
-        mRefreshReceiver.setOnrefreshListener(this);
-
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction("Refresh");
-        registerReceiver(mRefreshReceiver, intentFilter);
+        
     }
 
     private void refreshPAList() {

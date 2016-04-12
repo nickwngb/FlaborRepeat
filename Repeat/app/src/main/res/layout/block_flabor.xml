@@ -1,115 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <ImageView
-        android:id="@+id/bg_item_who"
+    <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
-        android:layout_marginTop="5dp"
-        android:background="@drawable/block_flabor"/>
-
-    <LinearLayout
-        android:id="@+id/block_flabor"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:visibility="visible">
-
-        <TextView
-            android:id="@+id/tv_item_flabor_content"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:padding="10dp"
-            android:text="Content"
-            android:textSize="20sp" />
+        android:layout_margin="5dp">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:id="@+id/block_flabor"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="10dp"
             android:visibility="visible">
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/img_item_flabor_photo"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_gravity="center"
-                android:src="@drawable/peoople" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/img_item_flabor_photo"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_gravity="top"
+                    android:src="@drawable/people" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="10dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tv_item_flabor_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="Name"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/tv_item_flabor_datetime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="10/10"
+                        android:textSize="16sp" />
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp"
+                android:background="@color/divider_flabor" />
+
 
             <TextView
-                android:id="@+id/tv_item_flabor_name"
+                android:id="@+id/tv_item_flabor_content"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="Name"
-                android:textSize="16sp" />
-
-            <TextView
-                android:id="@+id/tv_item_flabor_datetime"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="10/10"
-                android:textSize="14sp" />
-
-
+                android:layout_height="100dp"
+                android:ellipsize="end"
+                android:maxLines="4"
+                android:paddingLeft="5dp"
+                android:text="Content"
+                android:textSize="20sp" />
         </LinearLayout>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/block_manager"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:visibility="gone">
-
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="10dp"
-            android:visibility="visible">
-
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/img_item_manager_photo"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_gravity="center"
-                android:src="@drawable/peoople" />
-
-            <TextView
-                android:id="@+id/tv_item_manager_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="Name"
-                android:textSize="16sp" />
-
-            <TextView
-                android:id="@+id/tv_item_manager_datetime"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="10/10"
-                android:textSize="16sp" />
-
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/tv_item_manager_content"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:padding="10dp"
-            android:text="Content"
-            android:textSize="24sp" />
-    </LinearLayout>
-
-</FrameLayout>
+    </android.support.v7.widget.CardView>
+</RelativeLayout>

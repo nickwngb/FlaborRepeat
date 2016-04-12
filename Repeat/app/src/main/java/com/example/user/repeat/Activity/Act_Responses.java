@@ -1,24 +1,28 @@
 package com.example.user.repeat.Activity;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.RatingBar;
 import android.widget.Toast;
 
 import com.example.user.repeat.Adapter.ResponseListAdapter;
 import com.example.user.repeat.Asyn.LoadAllResponse;
 import com.example.user.repeat.Asyn.SendResponse;
+import com.example.user.repeat.Asyn.UpdateRating;
 import com.example.user.repeat.Other.Code;
-import com.example.user.repeat.Other.FakeData;
-import com.example.user.repeat.Other.FreeDialog;
+import com.example.user.repeat.Other.MyDialog;
 import com.example.user.repeat.Other.Hardware;
 import com.example.user.repeat.Other.HttpConnection;
 import com.example.user.repeat.Other.Net;
@@ -39,24 +43,22 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.SimpleFormatter;
 
 
 public class Act_Responses extends Activity {
     //
     private Context ctxt = Act_Responses.this;
-    private HttpConnection conn;
     private User user;
     private Resources res;
-    private PARecord par;
     // UI
     private ListView lv_responses;
+    private RatingBar rb_satisfyrate;
     private EditText et_content;
     private Button bt_send;
     // adapter
     private ResponseListAdapter adapter;
     // other
-    private int PRSNo;
+    private PARecord par;
     private List<ProblemResponse> responses;
 
 
@@ -72,8 +74,8 @@ public class Act_Responses extends Activity {
 
     private void LoadAllResponse(String PRSNo) {
         if (Net.isNetWork(ctxt)) {
-            final ProgressDialog pd = FreeDialog.getProgressDialog(ctxt, "Loading...");
-            LoadAllResponse task = new LoadAllResponse(conn, new LoadAllResponse.OnLoadAllResponseListener() {
+            final ProgressDialog pd = MyDialog.getProgressDialog(ctxt, "Loading...");
+            LoadAllResponse task = new LoadAllResponse(new LoadAllResponse.OnLoadAllResponseListener() {
                 public void finish(Integer result, List<ProblemResponse> list) {
                     pd.dismiss();
                     switch (result) {
@@ -117,16 +119,19 @@ public class Act_Responses extends Activity {
 
     private void SendResponse(String... params) {
         if (Net.isNetWork(ctxt)) {
-            final ProgressDialog pd = FreeDialog.getProgressDialog(ctxt, "Loading...");
-            SendResponse task = new SendResponse(conn, new SendResponse.OnSendResponseListener() {
+            final ProgressDialog pd = MyDialog.getProgressDialog(ctxt, "Loading...");
+            SendResponse task = new SendResponse(new SendResponse.OnSendResponseListener() {
                 public void finish(Integer result) {
                     pd.dismiss();
                     switch (result) {
                         case Code.Success:
                             et_content.setText("");
-                            LoadAllResponse(PRSNo + "");
+                            LoadAllResponse(par.getPRSNo() + "");
                             break;
                         case Code.Fail:
+                            break;
+                        case Code.ConnectTimeOut:
+                            Uti.t(ctxt, "Server no response");
                             break;
                     }
                 }
@@ -137,63 +142,28 @@ public class Act_Responses extends Activity {
         }
     }
 
-    private void RatingTask(String... datas) {
+    private void RatingTask(String rating) {
         if (Net.isNetWork(ctxt)) {
-            new RatingTask().execute(datas);
+            final ProgressDialog pd = MyDialog.getProgressDialog(ctxt, "Loading...");
+            UpdateRating task = new UpdateRating(new UpdateRating.OnUpdateStatusListener() {
+                public void finish(Integer result) {
+                    pd.dismiss();
+                    switch (result) {
+                        case Code.Success:
+                            Uti.t(ctxt, "Rating Success");
+                            break;
+                        case Code.ResultEmpty:
+                            Uti.t(ctxt, "Rating Fail");
+                            break;
+                        case Code.ConnectTimeOut:
+                            Uti.t(ctxt, "Server no response");
+                            break;
+                    }
+                }
+            });
+            task.execute(par.getPRSNo() + "", rating);
         } else {
             Uti.t(ctxt, res.getString(R.string.msg_err_network));
-        }
-    }
-
-    class RatingTask extends AsyncTask<String, Integer, Integer> {
-        private ProgressDialog pDialog;
-        private String rating;
-
-        @Override
-        protected void onPreExecute() {
-            pDialog = new ProgressDialog(ctxt);
-            pDialog.setMessage("Rating...");
-            pDialog.setIndeterminate(false);
-            pDialog.setCancelable(true);
-            pDialog.show();
-        }
-
-        @Override
-        protected Integer doInBackground(String... datas) {
-            Integer result = Code.ConnectTimeOut;
-            rating = datas[0];
-            try {
-                // put "phone" post out, get json
-                List<NameValuePair> postFields = new ArrayList<>();
-                postFields.add(new BasicNameValuePair("PRSNo", String.valueOf(par.getPRSNo())));
-                postFields.add(new BasicNameValuePair("star", rating));
-
-                JSONObject jobj = conn.PostGetJson(URLs.url_updatestart, postFields);
-                if (jobj != null) {
-                    result = jobj.getInt("success");
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            return result;
-        }
-
-        @Override
-        protected void onPostExecute(Integer result) {
-            pDialog.dismiss();
-            switch (result) {
-                case Code.Success:
-                    Uti.t(ctxt, "Rating Success");
-                    break;
-                case Code.ResultEmpty:
-                    Uti.t(ctxt, "Rating Fail");
-                    break;
-                case Code.ConnectTimeOut:
-                    Uti.t(ctxt, "Connection Fail");
-                    break;
-                default:
-                    Uti.t(ctxt, "Error : " + result);
-            }
         }
     }
 
@@ -204,7 +174,6 @@ public class Act_Responses extends Activity {
 
     private void InitialSomething() {
         res = getResources();
-        conn = new HttpConnection();
         user = User.getUser();
         responses = new ArrayList<>();
         adapter = new ResponseListAdapter(ctxt, responses);
@@ -212,25 +181,51 @@ public class Act_Responses extends Activity {
 
     private void InitialUI() {
         lv_responses = (ListView) findViewById(R.id.lv_responses);
+        rb_satisfyrate = (RatingBar) findViewById(R.id.rb_satisfyrate);
         et_content = (EditText) findViewById(R.id.et_responses_content);
         bt_send = (Button) findViewById(R.id.bt_responses_send);
     }
 
     private void InitialAction() {
-        lv_responses.setAdapter(adapter);
         bt_send.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 Hardware.closeKeyBoard(ctxt, view);
                 String content = et_content.getText().toString();
                 String datetime = getCurrentDateTime();
                 String id = user.getChineseName();
-                SendResponse(PRSNo + "", content, datetime, id);
+                SendResponse(par.getPRSNo() + "", content, datetime, id);
+            }
+        });
+        lv_responses.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                MyDialog.showTextDialog(ctxt, responses.get(position).getResponseContent());
+            }
+        });
+        lv_responses.setAdapter(adapter);
+        rb_satisfyrate.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+            @Override
+            public void onRatingChanged(RatingBar ratingBar, final float rating, boolean fromUser) {
+                AlertDialog.Builder b = new AlertDialog.Builder(ctxt);
+                b.setTitle("Rating?");
+                b.setMessage("Rating " + rating + " star?");
+                b.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        RatingTask(Integer.toString((int) rating));
+                    }
+                });
+                b.setNegativeButton("CANCEL", null);
+                b.show();
             }
         });
     }
 
     private void getExtrasAndExecute() {
-        PRSNo = getIntent().getIntExtra("PRSNo", 0);
-        LoadAllResponse(PRSNo + "");
+        par = (PARecord) getIntent().getSerializableExtra("PAR");
+        LoadAllResponse(par.getPRSNo() + "");
+
+        if (par.getProblemStatus() != Code.Untreated) {
+            rb_satisfyrate.setVisibility(View.VISIBLE);
+            rb_satisfyrate.setRating(par.getSatisfactionDegree() != null ? Float.valueOf(par.getSatisfactionDegree()) : 0);
+        }
     }
 }

@@ -66,16 +66,16 @@ public class PAListAdapter extends MyBaseAdapter {
         if (par.tag.equals(PARecord.TAG_Problem)) {
             // setText
             tag.name.setText(par.getResponseID());
-            tag.datetime.setText(MyTime.convertTime(par.getResponseDate()));
+            tag.datetime.setText(par.getResponseDate() != null ? MyTime.convertTime(par.getResponseDate()) : "");
             tag.content.setText(par.getResponseContent());
             // set status
             if (par.getProblemStatus() != null) {
                 switch (par.getProblemStatus()) {
                     case Code.Untreated:
-                        tag.status.setBackground(getResources().getDrawable(R.drawable.status_untreated));
+                        tag.status.setBackground(getResources().getDrawable(R.drawable.status_untreate));
                         break;
                     case Code.Processing:
-                        //tag.status.setBackground(getResources().getDrawable(R.drawable.item_bg_processing));
+                        tag.status.setBackground(getResources().getDrawable(R.drawable.status_processing));
                         break;
                     case Code.Completed:
                         tag.status.setBackground(getResources().getDrawable(R.drawable.status_completed));

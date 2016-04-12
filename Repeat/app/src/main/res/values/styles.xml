@@ -1,21 +1,9 @@
 <resources>
 
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-        <!-- colorPrimary is used for the default action bar background -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
-
-        <!-- colorPrimaryDark is used for the status bar -->
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-
-        <!-- colorAccent is used as the default value for colorControlActivated,
-             which is used to tint widgets -->
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="myRatingBar" parent="@android:style/Widget.Holo.Light.RatingBar">
-        <item name="android:minHeight">48dip</item>
-        <item name="android:maxHeight">48dip</item>
-    </style>
 </resources>

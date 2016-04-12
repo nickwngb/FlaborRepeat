@@ -2,9 +2,13 @@
 <resources>
 
     <!-- THEME -->
-    <color name="colorPrimary">@color/black</color>
-    <color name="colorAccent">@color/black</color>
-    <color name="colorPrimaryDark">@color/black</color>
+    <color name="colorPrimary">@color/topic2</color>
+    <color name="colorPrimaryDark">@color/topic1</color>
+    <color name="colorAccent">@color/topic3</color>
+    <!-- Topic Color -->
+    <color name="topic1">#EFB420</color>
+    <color name="topic2">#F2C91F</color>
+    <color name="topic3">#FFD740</color>
 
     <!--  Basic Color -->
     <color name="black">#000000</color>
@@ -17,9 +21,12 @@
     <color name="trans">#00FFFFFF</color>
 
     <!-- Code Color -->
-    <color name="Untreated">#EA7500</color>
-    <color name="Processing">#CE0000</color>
-    <color name="Completed">#0072E3</color>
+    <color name="Untreated">#FF1744</color>
+    <color name="Processing">#FFEA00</color>
+    <color name="Completed">#00E676</color>
     <!-- Login -->
     <color name="button_color">#325d81</color>
+    <!-- Response Color -->
+    <color name="divider_flabor">#E6CD3D</color>
+    <color name="divider_manager">#5087C5</color>
 </resources>

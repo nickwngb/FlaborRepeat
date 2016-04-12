@@ -27,14 +27,12 @@ public class LoadAllAnnouncement extends AsyncTask<String, Integer, Integer> {
         void finish(Integer result, List<AnnouncementRecord> list);
     }
 
-    private final HttpConnection conn;
     private final OnLoadAllAnnouncementListener mListener;
     private List<AnnouncementRecord> list;
     private String fNo;
     private String cNo;
 
-    public LoadAllAnnouncement(HttpConnection conn, OnLoadAllAnnouncementListener mListener) {
-        this.conn = conn;
+    public LoadAllAnnouncement(OnLoadAllAnnouncementListener mListener) {
         this.mListener = mListener;
         this.list = new ArrayList<>();
     }
@@ -48,7 +46,7 @@ public class LoadAllAnnouncement extends AsyncTask<String, Integer, Integer> {
             List<NameValuePair> postFields = new ArrayList<>();
             postFields.add(new BasicNameValuePair("FLaborNo", fNo));
             postFields.add(new BasicNameValuePair("CustomerNo", cNo));
-            JSONObject jobj = conn.PostGetJson(URLs.url_allannouncement, postFields);
+            JSONObject jobj = new HttpConnection().PostGetJson(URLs.url_allannouncement, postFields);
             if (jobj != null) {
                 result = jobj.getInt("success");
                 if (result == Code.Success) {

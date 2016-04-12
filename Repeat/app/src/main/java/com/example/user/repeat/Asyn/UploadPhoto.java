@@ -28,15 +28,13 @@ public class UploadPhoto extends AsyncTask<String, Integer, Integer> {
 
     }
 
-    private HttpConnection conn;
     private OnUpdatePhotoListener mListener;
     private String role;
     private String photo;
     private String fNo;
     private String cNo;
 
-    public UploadPhoto(HttpConnection conn, OnUpdatePhotoListener mListener, Bitmap photo) {
-        this.conn = conn;
+    public UploadPhoto(OnUpdatePhotoListener mListener, Bitmap photo) {
         this.mListener = mListener;
         this.photo = BitmapTransformer.BitmapToBase64(photo);
     }
@@ -59,7 +57,7 @@ public class UploadPhoto extends AsyncTask<String, Integer, Integer> {
             params.add(new BasicNameValuePair("UserID", "12345"));
             params.add(new BasicNameValuePair("UserPhoto", "12345"));
 
-            JSONObject jobj = conn.PostGetJson(URLs.url_uploadimage, params);
+            JSONObject jobj = new HttpConnection().PostGetJson(URLs.url_uploadimage, params);
             if (jobj != null) {
                 result = jobj.getInt("success");
             }

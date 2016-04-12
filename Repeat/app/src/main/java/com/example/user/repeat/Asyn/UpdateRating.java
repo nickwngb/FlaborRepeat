@@ -16,37 +16,37 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by v on 2016/2/17.
+ * Created by asus on 2016/4/9.
  */
-public class RegisterGCM extends AsyncTask<String, Integer, Integer> {
-    public interface OnRegisterGCMListener {
+public class UpdateRating extends AsyncTask<String, Integer, Integer> {
+
+    public interface OnUpdateStatusListener {
         void finish(Integer result);
     }
 
-    private OnRegisterGCMListener mListener;
+    private final OnUpdateStatusListener mListener;
+    private String PRSNo;
+    private String rating;
 
-    public RegisterGCM(OnRegisterGCMListener mListener) {
+    public UpdateRating(OnUpdateStatusListener mListener) {
         this.mListener = mListener;
     }
-
-    @Override
     protected Integer doInBackground(String... datas) {
         Integer result = Code.ConnectTimeOut;
+        PRSNo = datas[0];
+        rating = datas[1];
         try {
-            Log.i("RegisterGCM", datas[0]);
-            Log.i("RegisterGCM", datas[1]);
-            Log.i("RegisterGCM", datas[2]);
-            List<NameValuePair> params = new ArrayList<>();
-            params.add(new BasicNameValuePair("GCMid", datas[0]));
-            params.add(new BasicNameValuePair("FLaborNo", datas[1]));
-            params.add(new BasicNameValuePair("CustomerNo", datas[2]));
-            JSONObject jobj = new HttpConnection().PostGetJson(URLs.url_gcm_register, params);
+            Log.d("UpdateRating",PRSNo);
+            Log.d("UpdateRating",rating);
+            List<NameValuePair> postFields = new ArrayList<>();
+            postFields.add(new BasicNameValuePair("PRSNo", PRSNo));
+            postFields.add(new BasicNameValuePair("Star", rating));
+            JSONObject jobj = new HttpConnection().PostGetJson(URLs.url_updatestart, postFields);
             if (jobj != null) {
                 result = jobj.getInt("success");
             }
         } catch (JSONException e) {
             e.printStackTrace();
-            Log.i("RegisterGCM", e.toString());
         }
         return result;
     }

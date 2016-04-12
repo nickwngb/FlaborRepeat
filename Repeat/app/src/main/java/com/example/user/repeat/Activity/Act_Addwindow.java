@@ -12,7 +12,7 @@ import android.widget.EditText;
 
 import com.example.user.repeat.Asyn.AddProblem;
 import com.example.user.repeat.Other.Code;
-import com.example.user.repeat.Other.FreeDialog;
+import com.example.user.repeat.Other.MyDialog;
 import com.example.user.repeat.Other.Hardware;
 import com.example.user.repeat.Other.HttpConnection;
 import com.example.user.repeat.Other.Net;
@@ -48,7 +48,7 @@ public class Act_Addwindow extends Activity {
     private void AddProblem() {
         if (Net.isNetWork(ctxt)) {
             AddProblem task = new AddProblem(conn, new AddProblem.OnAddProblemListener() {
-                final ProgressDialog fd = FreeDialog.getProgressDialog(ctxt, "Loading...");
+                final ProgressDialog fd = MyDialog.getProgressDialog(ctxt, "Loading...");
 
                 public void finish(Integer result) {
                     fd.dismiss();
