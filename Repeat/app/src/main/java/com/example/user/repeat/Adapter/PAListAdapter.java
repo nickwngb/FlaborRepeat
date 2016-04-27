@@ -1,6 +1,7 @@
 package com.example.user.repeat.Adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup;
@@ -85,7 +86,10 @@ public class PAListAdapter extends MyBaseAdapter {
             // photo
             if (par.getResponseRole() != null) {
                 if (par.getResponseRole().equals(Code.Flabor)) {
-                    tag.photo.setImageBitmap(BitmapTransformer.Base64ToBitmap(User.getUser().getLaborPhoto()));
+                    Bitmap photo = BitmapTransformer.Base64ToBitmap(User.getUser().getLaborPhoto());
+                    if (photo != null) {
+                        tag.photo.setImageBitmap(photo);
+                    }
                 } else {
                     imageLoader.DisplayImage(par.getResponseID(), tag.photo);
                 }

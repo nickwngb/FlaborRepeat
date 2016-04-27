@@ -12,6 +12,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.support.v4.app.NotificationCompat;
 
@@ -80,13 +81,11 @@ public class GoldBrotherGCM {
         NotificationCompat.Builder b = new NotificationCompat.Builder(context);
 
         b.setSmallIcon(R.drawable.notify_icon);
+        b.setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.icon));
+        b.setColor(Color.YELLOW);
         b.setContentTitle(context.getResources().getString(R.string.app_name));
         b.setContentText(msg);
         b.setAutoCancel(true);
-        //long[] vibrates = {1000,500,1000,400,1000,300,1000,200,1000,100};
-        //b.setVibrate(vibrates);
-        //b.setContentInfo("Info");
-        b.setDefaults(Notification.DEFAULT_ALL);
 
         if (msg.length() > 10) {
             b.setStyle(new NotificationCompat.BigTextStyle()

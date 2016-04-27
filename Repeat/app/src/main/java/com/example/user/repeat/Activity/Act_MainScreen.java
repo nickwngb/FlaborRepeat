@@ -62,6 +62,7 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
     private static final int PICK_PICTURE = 1;
     private static final int TAKE_PICTURE = 2;
     private static final int TRIM_PICTURE = 3;
+    private static final int ResponseAct = 4;
     // UI
     private Button bt_repeat;
     private ImageView bt_image;
@@ -279,7 +280,7 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
             Log.i("GCM", mGBGCM.getRegistrationId());
             RegisterGCMTask(mGBGCM.getRegistrationId());
         }
-		//GCM Refresh
+        //GCM Refresh
         mRefreshReceiver.setOnrefreshListener(this);
 
         IntentFilter intentFilter = new IntentFilter();
@@ -307,11 +308,11 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
                 PARecord par = palist.get(pos);
                 if (par.tag.equals(PARecord.TAG_Problem)) {
                     Intent i = new Intent(ctxt, Act_Responses.class);
-                    i.putExtra("PAR",par);
+                    i.putExtra("PAR", par);
                     i.putExtra("PRSNo", par.getPRSNo());
-                    i.putExtra("Status",par.getProblemStatus());
-                    i.putExtra("Rate",par.getSatisfactionDegree());
-                    startActivity(i);
+                    i.putExtra("Status", par.getProblemStatus());
+                    i.putExtra("Rate", par.getSatisfactionDegree());
+                    startActivityForResult(i, ResponseAct);
                 } else {
                     //Toast.makeText(ctxt, "MPSNo = " + par.getMPSNo(), Toast.LENGTH_SHORT).show();
 //                    Intent i = new Intent(ctxt, Act_Announcement.class);
@@ -321,7 +322,7 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
             }
         });
         list_reaprethistory.setAdapter(pa_adapter);
-        
+
     }
 
     private void refreshPAList() {
@@ -467,6 +468,9 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
                         LoadingAllProblem();
                     }
                     break;
+                case ResponseAct:
+                    LoadingAllProblem();
+                    break;
                 case PICK_PICTURE:
                     Uri uri = data.getData();
                     doCropPhoto(uri);
@@ -486,6 +490,7 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
                         }
                     }).setNegativeButton("Cancel", null).show();
                     break;
+
             }
 
             if (requestCode == AddAct) {

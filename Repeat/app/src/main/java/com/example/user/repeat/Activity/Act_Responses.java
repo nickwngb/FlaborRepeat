@@ -205,16 +205,18 @@ public class Act_Responses extends Activity {
         rb_satisfyrate.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
             public void onRatingChanged(RatingBar ratingBar, final float rating, boolean fromUser) {
-                AlertDialog.Builder b = new AlertDialog.Builder(ctxt);
-                b.setTitle("Rating?");
-                b.setMessage("Rating " + rating + " star?");
-                b.setPositiveButton("YES", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        RatingTask(Integer.toString((int) rating));
-                    }
-                });
-                b.setNegativeButton("CANCEL", null);
-                b.show();
+                if(fromUser) {
+                    AlertDialog.Builder b = new AlertDialog.Builder(ctxt);
+                    b.setTitle("Rating?");
+                    b.setMessage("Rating " + rating + " star?");
+                    b.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            RatingTask(Integer.toString((int) rating));
+                        }
+                    });
+                    b.setNegativeButton("CANCEL", null);
+                    b.show();
+                }
             }
         });
     }
@@ -223,9 +225,20 @@ public class Act_Responses extends Activity {
         par = (PARecord) getIntent().getSerializableExtra("PAR");
         LoadAllResponse(par.getPRSNo() + "");
 
-        if (par.getProblemStatus() != Code.Untreated) {
+        if (par.getSatisfactionDegree() != null && par.getProblemStatus() != Code.Untreated) {
             rb_satisfyrate.setVisibility(View.VISIBLE);
-            rb_satisfyrate.setRating(par.getSatisfactionDegree() != null ? Float.valueOf(par.getSatisfactionDegree()) : 0);
+            float ok_rating = 0;
+            try {
+                ok_rating = Float.valueOf(par.getSatisfactionDegree());
+            }catch (Exception e){
+            }
+            rb_satisfyrate.setRating(Float.valueOf(ok_rating));
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        setResult(RESULT_OK);
+        super.onBackPressed();
     }
 }
