@@ -113,7 +113,7 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
 
     @Override
     public void setRefresh(String text) {
-        Toast.makeText(ctxt, text, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(ctxt, text, Toast.LENGTH_SHORT).show();
         LoadingAllProblem();
     }
 
@@ -475,13 +475,8 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
                     Uri uri = data.getData();
                     doCropPhoto(uri);
                     break;
-                case TAKE_PICTURE:
-                    Bitmap iBitmap = (Bitmap) data.getExtras().get("data");
-
-                    break;
                 case TRIM_PICTURE:
                     final Bitmap result = data.getParcelableExtra("data");
-
                     ImageView iv = new ImageView(ctxt);
                     iv.setImageBitmap(result);
                     new AlertDialog.Builder(ctxt, AlertDialog.THEME_HOLO_LIGHT).setView(iv).setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -490,10 +485,6 @@ public class Act_MainScreen extends Activity implements GoldBrotherGCM.MagicLenG
                         }
                     }).setNegativeButton("Cancel", null).show();
                     break;
-
-            }
-
-            if (requestCode == AddAct) {
 
             }
         }

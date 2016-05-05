@@ -82,7 +82,7 @@ public class GoldBrotherGCM {
 
         b.setSmallIcon(R.drawable.notify_icon);
         b.setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.icon));
-        b.setColor(Color.YELLOW);
+        b.setColor(context.getResources().getColor(R.color.topic1));
         b.setContentTitle(context.getResources().getString(R.string.app_name));
         b.setContentText(msg);
         b.setAutoCancel(true);

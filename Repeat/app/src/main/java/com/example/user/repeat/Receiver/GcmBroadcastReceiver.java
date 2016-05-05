@@ -9,6 +9,7 @@ import android.support.v4.content.WakefulBroadcastReceiver;
 import android.util.Log;
 
 import com.example.user.repeat.Activity.Act_Login;
+import com.example.user.repeat.Other.Code;
 import com.example.user.repeat.R;
 import com.example.user.repeat.UseForGCM.GoldBrotherGCM;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
@@ -36,16 +37,20 @@ public class GcmBroadcastReceiver extends WakefulBroadcastReceiver {
                 i.setAction("android.intent.action.MAIN");
                 i.addCategory("android.intent.category.LAUNCHER");
                 // send a Notification
-                GoldBrotherGCM.sendLocalNotification(context, NOTIFICATION_ID,extras.getString("message"),
-                        PendingIntent.getActivity(context, 0, i, PendingIntent.FLAG_CANCEL_CURRENT));
-                // push a intent to refresh reveiver
-                Intent refresh_intent = new Intent();
-                // name = 'Refresh'
-                refresh_intent.setAction("Refresh");
-                // datas
-                refresh_intent.putExtra("message", extras.getString("message"));
-                // send
-                context.sendBroadcast(refresh_intent);
+                String who = extras.getString("who");
+                String message = extras.getString("message");
+                if (who.equals(Code.Flabor)) {
+                    GoldBrotherGCM.sendLocalNotification(context, NOTIFICATION_ID, message,
+                            PendingIntent.getActivity(context, 0, i, PendingIntent.FLAG_CANCEL_CURRENT));
+                    // push a intent to refresh reveiver
+                    Intent refresh_intent = new Intent();
+                    // name = 'Refresh'
+                    refresh_intent.setAction("Refresh");
+                    // datas
+                    refresh_intent.putExtra("message", message);
+                    // send
+                    context.sendBroadcast(refresh_intent);
+                }
             }
         }
         setResultCode(Activity.RESULT_OK);

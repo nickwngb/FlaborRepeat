@@ -12,7 +12,7 @@ import java.util.Date;
 public class MyTime {
     public static String convertTime(String time) {
         try {
-            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             Date d = dateFormat.parse(time);
             Date now = new Date();
             Calendar c1 = Calendar.getInstance();
